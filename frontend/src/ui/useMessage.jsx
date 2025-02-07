@@ -11,7 +11,7 @@ export const useMessage = () => {
         setTimeout(() => {
             setShowAlert(false); // 3秒後に非表示
         }, 3000);
-    }, []);
+    }, []);//test
 
     const AlertComponent = (
         <SuccessAlert show={showAlert} message={alertMessage} />
