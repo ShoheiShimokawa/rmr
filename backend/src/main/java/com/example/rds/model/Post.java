@@ -30,24 +30,29 @@ public class Post {
 	private Integer userId;
 	/** 読書ID */
 	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reading_id")
+	@JoinColumn(name = "reading_id")
 	private Reading reading;
 	/** いいね数 */
 	private Integer goodCount;
 	/** ポスト日 */
 	private LocalDate registerDate;
-	/** 更新日*/
+	/** 更新日 */
 	private LocalDate updateDate;
-	
-	/** 感想をポストします。*/
-//	public static Post registerPost(PostRepository rep,Integer readingId) {
-//		return rep.save(readingId);
-//	}
+
+	/** 感想をポストします。 */
+	// public static Post registerPost(PostRepository rep,Integer readingId) {
+	// return rep.save(readingId);
+	// }
 	/** 登録パラメタ */
-	
-	
+
 	/** ユーザに紐づくポストを全て返します。 */
-	public static List<Post> getPostAll(PostRepository rep,Integer userId){
+	public static List<Post> getPostAllByUser(PostRepository rep, Integer userId) {
+		return rep.findByUserId(userId);
+	}
+
+	/** ポストを返却します。（タイムライン用） */
+	public static List<Post> getPostAll(PostRepository rep, Integer userId) {
 		return rep.findAll();
 	}
+
 }

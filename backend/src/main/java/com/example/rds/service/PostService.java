@@ -13,9 +13,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostService {
 	private final PostRepository rep;
-	
+
 	/** ユーザに紐づくポストを全て返します。 */
-	public List<Post>getPostAll(Integer userId){
+	public List<Post> getPostAllByUser(Integer userId) {
+		return Post.getPostAll(rep, userId);
+	}
+
+	/** ポストを返却します。（タイムライン用） */
+	public List<Post> getPostAll(Integer userId) {
 		return Post.getPostAll(rep, userId);
 	}
 }
