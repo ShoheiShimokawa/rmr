@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { BookList } from "./components/BookList"
-import { BookShelf } from "./components/BookShelf"
+import { UserBookShelf } from "./components/UserBookShelf"
 import { BookSearch } from "./components/BookSearch"
 import { ReadingAnalytics } from './components/ReadingAnalytics';
 import { Information } from "./components/Information"
@@ -31,7 +31,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/book" element={<BookSearch />} />
-                <Route path="/bookShelf" element={<BookShelf />} />
+                <Route path="/bookShelf" element={<UserBookShelf />} />
                 <Route path="/analytics" element={<ReadingAnalytics />} />
                 <Route path="/information" element={<Information />} />
               </Routes>
