@@ -33,7 +33,7 @@ export const BookSearchDetail = ({ reading, book, updated }) => {
         if (result) {
             const rParam = {
                 bookId: result.data.bookId,
-                userId: user.sub,
+                userId: user.userId,
                 rate: 0,
                 thoughts: "",
                 description: "",
@@ -50,7 +50,7 @@ export const BookSearchDetail = ({ reading, book, updated }) => {
         if (result) {
             const rParam = {
                 bookId: result.data.bookId,
-                userId: user.sub,
+                userId: user.userId,
                 rate: 0,
                 thoughts: "",
                 description: "",
@@ -147,7 +147,6 @@ export const BookSearchDetail = ({ reading, book, updated }) => {
             </div>
             <Divider sx={{ m: 0.5 }} />
             <div className="text-base font-sans">{book.description}</div>
-
         </div>
     )
 }

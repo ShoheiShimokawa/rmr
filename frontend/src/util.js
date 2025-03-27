@@ -98,5 +98,7 @@ export const genreToEnum = (genre) => {
             return "TRAVEL"
         case "True Crime":
             return "TRUE_CRIME"
+        default:
+            return "UNKNOWN"
     }
 }

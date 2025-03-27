@@ -2,7 +2,10 @@ import logo from './logo.svg';
 import './App.css';
 import { BookList } from "./components/BookList"
 import { UserBookShelf } from "./components/UserBookShelf"
-import { BookSearch } from "./components/BookSearch"
+import { Posts } from "./components/Posts"
+import { BookSearch } from "./components/BookSearch";
+import {MyPage} from "./components/MyPage";
+import {PostRegister} from "./components/PostRegister";
 import { ReadingAnalytics } from './components/ReadingAnalytics';
 import { Information } from "./components/Information"
 import { Login } from "./components/Login";
@@ -31,9 +34,12 @@ function App() {
               <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/book" element={<BookSearch />} />
-                <Route path="/bookShelf" element={<UserBookShelf />} />
+                <Route path="/posts" element={<Posts />} />
                 <Route path="/analytics" element={<ReadingAnalytics />} />
                 <Route path="/information" element={<Information />} />
+                <Route path="/mypage" element={<MyPage />} />
+                <Route path="/postRegister" element={<PostRegister />} />
+
               </Routes>
 
             </Box>

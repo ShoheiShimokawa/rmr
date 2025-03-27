@@ -7,7 +7,7 @@ export const getPostAll = (userId) => {
 }
 
 export const getPostAllByUser = (userId) => {
-    return axios.get(url + "post/user", userId);
+    return axios.get(url + "post/user", {params:{userId}});
 }
 
 export const getGooder = (postId) => {

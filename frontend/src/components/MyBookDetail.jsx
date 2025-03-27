@@ -77,15 +77,15 @@ export const MyBookDetail = ({ reading, show, updated }) => {
                     Review
                 </DialogTitle>
                 <DialogContent>
-                    <ReadingRegister reading={reading} updated={() => handleCloseUpdate()} />
+                    <ReadingRegister reading={reading} book={reading.book} updated={() => handleCloseUpdate()} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => handleCloseUpdate()}>Cancel</Button>
                 </DialogActions>
             </Dialog>
-            <div className="flex">
+            <div>
                 <BookDetail book={reading.book} />
-                <Divider sx={{ height: 'auto', m: 1 }} orientation="vertical" />
+                <Divider sx={{ height: 'auto', m: 1 }}  />
                 <div >
                     <Chip icon={judgeIcon(reading.statusType)} label={statusTypeStr(reading.statusType)}></Chip>
                     <Rating name="read-only" value={reading.rate} size="small" readOnly />
@@ -133,10 +133,10 @@ export const MyBookDetail = ({ reading, show, updated }) => {
                         }}
                     ><div >
                             <MenuItem >
-                                <div onClick={() => { handleOpenUpdate() }}>edit records</div>
+                                <div onClick={() => { handleOpenUpdate() }}>edit</div>
                             </MenuItem>
                             <MenuItem >
-                                <div onClick={() => { handleDelete() }}>Remove this from my bookshelf</div>
+                                <div onClick={() => { handleDelete() }}>remove from bookshelf</div>
                             </MenuItem>
                         </div>
                     </Menu>

@@ -10,6 +10,9 @@ import { TextField, Button, Rating } from '@mui/material';
 export const ReadingRegister = ({ book, reading, updated }) => {
 
     const { user } = useContext(UserContext);
+
+    const isDisabled = book ? false : true;
+
     const formSchema = z.object({
         rate: z.number().min(1, "rate is required."),
         thoughts: z.string().min(1, "thoughts is required."),
@@ -21,15 +24,17 @@ export const ReadingRegister = ({ book, reading, updated }) => {
         defaultValues: {
             rate: reading ? reading.rate : null,
             thoughts: reading ? reading.thoughts : '',
-            description: reading ? reading.description : ''
+            memo: reading ? reading.desriotion : ''
         }
     });
     const onSubmit = async (values) => {
+        console.log("ugegegege!!")
+        console.log(reading)
         if (reading) {
             const updateParam = {
                 ...values,
                 bookId: reading.book.bookId,
-                userId: user.sub,
+                userId: user.userId,
                 statusType: "DONE",
                 readingId: reading.readingId
             }
@@ -40,10 +45,11 @@ export const ReadingRegister = ({ book, reading, updated }) => {
             const param = {
                 ...values,
                 bookId: book ? book.bookId : reading.book.bookId,
-                userId: user.sub,
+                userId: user.userId,
                 statusType: "DONE"
             }
-            await registerReading(param);
+            const result=await registerReading(param);
+            console.log(result)
             console.log("success register reading.")
             updated && updated()
         }
@@ -51,8 +57,8 @@ export const ReadingRegister = ({ book, reading, updated }) => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '400px', margin: '0 auto' }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+            <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '400px' }}>
+                <div style={{ display: 'flex',  marginBottom: '16px' }}>
                     <Controller
                         name="rate"
                         control={control}
@@ -60,7 +66,8 @@ export const ReadingRegister = ({ book, reading, updated }) => {
                             <Rating
                                 {...field}
                                 value={field.value || 0}
-                                onChange={(event, newValue) => field.onChange(newValue || 0)} // 値をフォームに反映
+                                disabled = {isDisabled}
+                                onChange={(event, newValue) => field.onChange(newValue || 0)} 
                             />
                         )}
                     />
@@ -78,18 +85,24 @@ export const ReadingRegister = ({ book, reading, updated }) => {
                     margin="normal"
                     error={!!errors.thoughts}
                     helperText={errors.thoughts?.message}
+                    disabled = {isDisabled}
                 />
                 <TextField
-                    {...register('description')}
-                    label="description"
+                    {...register('memo')}
+                    label="memo"
                     variant="outlined"
                     fullWidth
                     margin="normal"
-                    error={!!errors.description}
-                    helperText={errors.description?.message}
+                    error={!!errors.memo}
+                    helperText={errors.memo?.message}
+                    disabled = {isDisabled}
                 />
-                <Button type="submit" variant="contained" color="primary" fullWidth>
-                    Register
+                <Button 
+                type="submit" variant="contained" color="primary" fullWidth disabled = {isDisabled} 
+                sx={{ textTransform: 'none' }} 
+                // endIcon={<SendIcon />}
+                >
+                    Post
                 </Button>
             </form>
         </div>

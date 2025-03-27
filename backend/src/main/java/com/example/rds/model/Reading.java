@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.rds.context.AccountRepository;
 import com.example.rds.context.BookRepository;
 import com.example.rds.context.ReadingRepository;
 import com.example.rds.type.BookStatusType;
@@ -19,6 +20,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -45,7 +47,9 @@ public class Reading {
 	private Book book;
 	/** ユーザID */
 	@NotNull
-	private Integer userId;
+	@ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id",referencedColumnName = "userId")
+	private Account user;
 	/** 進捗状態 */
 	@Enumerated
 	@NotNull
@@ -79,11 +83,13 @@ public class Reading {
 	
 	/** 読書を登録します。 */
 	@Transactional
-	public static Reading register(ReadingRepository rep,BookRepository bRep,RegisterReading param) {
+	public static Reading register(ReadingRepository rep,BookRepository bRep,AccountRepository aRep,RegisterReading param) {
 		Book book= Book.get(bRep,param.bookId).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+		Account user = Account.get(aRep,param.userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
 		//TODO:ユーザIDで検索して、読書を全件取得。その後bookIDで検索して存在するんだったら返却する。
 		Reading reading=RegisterReading.builder().userId(param.userId).rate(param.rate).thoughts(param.thoughts).statusType(param.statusType).description(param.description).build().create();
 		reading.setBook(book);
+		reading.setUser(user);
 		if(reading.getStatusType().equals(BookStatusType.DONE)) {
 			reading.setReadDate(LocalDate.now());
 		}
@@ -93,7 +99,7 @@ public class Reading {
 	@Builder
 	public record RegisterReading(Integer userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts,String description) {
 		public Reading create() {
-			return Reading.builder().userId(this.userId).rate(this.rate).statusType(this.statusType).thoughts(this.thoughts).description(this.description).registerDate(LocalDate.now()).build();
+			return Reading.builder().rate(this.rate).statusType(this.statusType).thoughts(this.thoughts).description(this.description).registerDate(LocalDate.now()).build();
 		}
 	}
 	

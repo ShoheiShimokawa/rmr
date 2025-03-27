@@ -7,7 +7,10 @@ export const getProfile = (userId) => {
 }
 
 export const getFollower = (userId) => {
-    return axios.get(url + "account/follow", userId);
+    return axios.get(url + "account/follower", {params:{userId}});
+}
+export const getFollow = (followerId)=>{
+    return axios.get(url + "account/follow",{params:{followerId}});
 }
 
 export const follow = (params) => {

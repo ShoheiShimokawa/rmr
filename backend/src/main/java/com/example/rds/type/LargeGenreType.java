@@ -9,5 +9,6 @@ public enum LargeGenreType {
 	 ENTERTAINMENT,
 	 ACADEMICS_RESEARCH,
 	 PRACTICAL_HOBBIES,
-	 OTHER
+	 OTHER,
+	 UNKNOWN
 }

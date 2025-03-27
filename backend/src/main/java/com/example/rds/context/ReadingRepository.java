@@ -13,7 +13,7 @@ public interface ReadingRepository extends JpaRepository<Reading, Integer> {
     Reading findByBookId(@Param("bookId") Integer bookId);
 
     // test
-    @Query("SELECT r FROM Reading r WHERE r.userId = :userId")
+    @Query("SELECT r FROM Reading r WHERE r.user.userId = :userId")
     List<Reading> findReadingsByUserId(@Param("userId") Integer userId);
 
     @Query("""
@@ -22,7 +22,7 @@ public interface ReadingRepository extends JpaRepository<Reading, Integer> {
                        COUNT(r.book.genre) AS genre_count
                 FROM Reading r
                 JOIN r.book b
-                WHERE r.userId = :userId AND r.statusType = BookStatusType.DONE
+                WHERE r.user.userId = :userId AND r.statusType = BookStatusType.DONE
                 GROUP BY TO_CHAR(DATE_TRUNC('month', r.readDate), 'YYYY-MM'), r.book.genre
                 ORDER BY TO_CHAR(DATE_TRUNC('month', r.readDate), 'YYYY-MM')
             """)

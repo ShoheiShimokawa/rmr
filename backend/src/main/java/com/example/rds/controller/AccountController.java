@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,14 +28,21 @@ public class AccountController {
 		return service.getProfile(userId);
 	}
 
-	@GetMapping("/account/follow")
+	@GetMapping("/account/follower")
 	public List<Follow> getFollower(Integer userId) {
 		return foService.getFollower(userId);
 	}
 
-	@PostMapping("/account/follow")
-	public Follow follow(Integer userId, Integer followerId) {
-		return foService.follow(userId, followerId);
+	//TODO:フォロー者の名前もかえすAPIに変える
+
+	@GetMapping("/account/follow")
+	public List<Follow> getFollow(Integer followerId){
+		return foService.getFollow(followerId);
 	}
+
+	// @PostMapping("/account/follow")
+	// public Follow follow(Integer userId, Integer followerId) {
+	// 	return foService.follow(userId, followerId);
+	// }
 
 }

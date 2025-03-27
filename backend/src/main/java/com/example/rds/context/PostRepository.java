@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.example.rds.model.Post;
 
 public interface PostRepository extends JpaRepository<Post,Integer>{
-	@Query("SELECT p FROM Post p WHERE p.userId = :userId")
+	@Query("SELECT p FROM Post p WHERE p.user.userId = :userId")
 	List<Post> findByUserId(@Param("userId")Integer userId);
 
 }

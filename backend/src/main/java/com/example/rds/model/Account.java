@@ -43,6 +43,11 @@ public class Account {
 	/** 更新日 */
 	private LocalDate UpdateDate;
 	
+	/** ユーザを返します。 */
+	public static Optional<Account> get(AccountRepository rep,Integer userId){
+		return rep.findByUserId(userId);
+	}
+
 	/** 全てのユーザを返します。*/
 	public static List<Account> getAll(AccountRepository rep) {
 		return rep.findAll();
