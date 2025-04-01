@@ -1,4 +1,5 @@
 import { registerReading, findReadingByUser } from "../api/reading";
+import { registerBook } from "../api/book";
 import { useContext, useEffect, useState } from "react";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import { IconButton } from "@mui/material";
@@ -18,6 +19,7 @@ import { BookSearch } from "./BookSearch";
 import { BookDetail } from "./BookDetail";
 import { statusTypeStr, judgeIcon } from "../badge/index";
 import UserContext from "./UserProvider";
+import { genreToEnum } from "../util";
 
 export const PostRegister = () => {
   const { user } = useContext(UserContext);
@@ -57,9 +59,31 @@ export const PostRegister = () => {
     setOpen(true);
   };
 
-  const fromPost = (something) => {
-    setAddedBook(something.volumeInfo && something.volumeInfo);
-    console.log(addedBook);
+  const fromPost = async (selectedBook) => {
+    const isbn = selectedBook.volumeInfo.industryIdentifiers
+      ? selectedBook.volumeInfo.industryIdentifiers.filter(
+          (id) => id.type === "ISBN_13"
+        )
+      : "";
+    const author = selectedBook.volumeInfo.authors
+      ? selectedBook.volumeInfo.authors[0]
+      : "";
+    const genre = selectedBook.volumeInfo?.categories
+      ? selectedBook.volumeInfo.categories[0]
+      : "";
+    const book = {
+      isbn: isbn.identifier ? isbn.identifier : "",
+      id: selectedBook.id,
+      title: selectedBook.volumeInfo.title,
+      author: author,
+      genre: genreToEnum(genre),
+      description: selectedBook.volumeInfo.description,
+      thumbnail: selectedBook.volumeInfo.imageLinks.thumbnail,
+      publishedDate: selectedBook.volumeInfo.publishedDate,
+    };
+    const result = await registerBook(book);
+    setAddedBook(result && result.data);
+    setSelectedBook(result.data);
     setOpen(false);
   };
 
@@ -97,11 +121,7 @@ export const PostRegister = () => {
             {addedBook && (
               <Box
                 component="img"
-                src={
-                  addedBook.imageLinks
-                    ? addedBook.imageLinks.thumbnail
-                    : addedBook.imageLinks.smallThumbnail
-                }
+                src={addedBook.thumbnail && addedBook.thumbnail}
               />
             )}
           </div>
@@ -109,6 +129,10 @@ export const PostRegister = () => {
             <ReadingRegister
               book={selectedBook && selectedBook}
               reading={selectedReading && selectedReading}
+              updated={() => {
+                find();
+                setSelectedBook(null);
+              }}
             />
           </div>
         </div>

@@ -1,15 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import '@fontsource/nunito-sans'; // デフォルト（400ウェイト）
-import '@fontsource/nunito-sans/600.css'; // 特定のウェイト
-import '@fontsource/nunito-sans/700.css'; // 太字
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import "@fontsource/nunito-sans"; // デフォルト（400ウェイト）
+import "@fontsource/nunito-sans/600.css"; // 特定のウェイト
+import "@fontsource/nunito-sans/700.css"; // 太字
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId="754065057535-s105f0ntpquil7nt7c5hj058u7r89c88.apps.googleusercontent.com">

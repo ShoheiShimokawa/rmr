@@ -44,8 +44,13 @@ public class Account {
 	private LocalDate UpdateDate;
 	
 	/** ユーザを返します。 */
-	public static Optional<Account> get(AccountRepository rep,Integer userId){
+	public static Optional<Account> get(AccountRepository rep, Integer userId) {
 		return rep.findByUserId(userId);
+	}
+	
+	/** ハンドルに紐づくユーザを返します。 */
+	public static Optional<Account> getByHandle(AccountRepository rep,String handle) {
+		return rep.findByHandle(handle);
 	}
 
 	/** 全てのユーザを返します。*/

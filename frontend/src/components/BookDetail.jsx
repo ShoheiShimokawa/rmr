@@ -1,6 +1,21 @@
 import { Divider } from "@mui/material";
 import { Box } from "@mui/material";
-export const BookDetail = ({ book }) => {
+import { statusTypeStr } from "../badge";
+import Chip from "@mui/material/Chip";
+import FiberNewRoundedIcon from "@mui/icons-material/FiberNewRounded";
+import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+
+export const BookDetail = ({ book, reading }) => {
+  const judgeIcon = (str) => {
+    if (str === "NONE") {
+      return <FiberNewRoundedIcon />;
+    } else if (str === "DOING") {
+      return <AutoStoriesRoundedIcon />;
+    } else {
+      return <CheckCircleOutlineRoundedIcon />;
+    }
+  };
   return (
     <div className="flex">
       <div>
@@ -20,6 +35,13 @@ export const BookDetail = ({ book }) => {
                   published Date :{" "}
                   {book.publishedDate ? book.publishedDate : "unknown"}
                 </div>
+                {reading && (
+                  <Chip
+                    icon={judgeIcon(reading.statusType)}
+                    label={statusTypeStr(reading.statusType)}
+                    size="small"
+                  ></Chip>
+                )}
               </div>
             </div>
 

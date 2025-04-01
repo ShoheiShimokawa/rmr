@@ -7,9 +7,9 @@ import UserContext from "./UserProvider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { statusTypeStr, judgeIcon } from "../badge/index";
-import { MyBookDetail } from "../components/MyBookDetail";
-import { BookRegister } from "../components/BookRegister";
-import { ReadingRegister } from "../components/ReadingRegister";
+import { MyBookDetail } from "./MyBookDetail";
+import { BookRegister } from "./BookRegister";
+import { ReadingRegister } from "./ReadingRegister";
 import { findReadingByUser } from "../api/reading";
 import { getReading } from "../api/reading";
 import { useMessage } from "../ui/useMessage";
@@ -27,7 +27,7 @@ import {
   Paper,
 } from "@mui/material";
 
-export const BookShelf = () => {
+export const BookShelf = ({ account }) => {
   const [readings, setReadings] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const { user } = useContext(UserContext);
@@ -91,7 +91,9 @@ export const BookShelf = () => {
   };
 
   const find = async () => {
-    const result = await findReadingByUser(user?.userId);
+    const userId =
+      account.userId === user?.userId ? user?.userId : account.userId;
+    const result = await findReadingByUser(userId);
     setReadings(result.data);
   };
   useEffect(() => {
@@ -154,7 +156,7 @@ export const BookShelf = () => {
       <div className="text-xl ">Recently</div>
 
       {recent.length !== 0 ? (
-        <BookArray books={recent} />
+        <BookArray books={recent} handleSelect={handleSelect} />
       ) : (
         <Box sx={{ height: "140px", width: "100%" }} />
       )}
@@ -165,55 +167,55 @@ export const BookShelf = () => {
       {fiction.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Fiction</div>
-          <BookArray books={fiction} />
+          <BookArray books={fiction} handleSelect={handleSelect} />
         </>
       )}
       {nonFiction.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Non Fiction</div>
-          <BookArray books={nonFiction} />
+          <BookArray books={nonFiction} handleSelect={handleSelect} />
         </>
       )}
       {tech.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Professional & Technical</div>
-          <BookArray books={tech} />
+          <BookArray books={tech} handleSelect={handleSelect} />
         </>
       )}
       {art.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Arts & Culture</div>
-          <BookArray books={art} />
+          <BookArray books={art} handleSelect={handleSelect} />
         </>
       )}
       {study.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Education & Study-aids</div>
-          <BookArray books={study} />
+          <BookArray books={study} handleSelect={handleSelect} />
         </>
       )}
       {entertainment.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Entertainment</div>
-          <BookArray books={entertainment} />
+          <BookArray books={entertainment} handleSelect={handleSelect} />
         </>
       )}
       {academic.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Academics & Research</div>
-          <BookArray books={academic} />
+          <BookArray books={academic} handleSelect={handleSelect} />
         </>
       )}
       {practical.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Practical & Hobbies</div>
-          <BookArray books={practical} />
+          <BookArray books={practical} handleSelect={handleSelect} />
         </>
       )}
       {other.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Other</div>
-          <BookArray books={other} />
+          <BookArray books={other} handleSelect={handleSelect} />
         </>
       )}
     </>

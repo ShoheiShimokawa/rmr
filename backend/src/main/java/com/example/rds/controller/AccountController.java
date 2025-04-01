@@ -28,12 +28,15 @@ public class AccountController {
 		return service.getProfile(userId);
 	}
 
+	@GetMapping("/account/handle")
+	public Optional<Account> getByHandle(String handle) {
+		return service.getByHandle(handle);
+	}
+
 	@GetMapping("/account/follower")
 	public List<Follow> getFollower(Integer userId) {
 		return foService.getFollower(userId);
 	}
-
-	//TODO:フォロー者の名前もかえすAPIに変える
 
 	@GetMapping("/account/follow")
 	public List<Follow> getFollow(Integer followerId){
