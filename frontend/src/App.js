@@ -14,6 +14,8 @@ import { Sidebar } from "./components/Sidebar";
 import { UserProvider } from "./components/UserProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Box, CssBaseline } from "@mui/material";
+import { HandleRegister } from "./components/HandleRegister";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
   return (
@@ -32,14 +34,29 @@ function App() {
               }}
             >
               <Routes>
-                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/book" element={<BookSearch />} />
                 <Route path="/posts" element={<Posts />} />
-                <Route path="/analytics" element={<ReadingAnalytics />} />
+                <Route
+                  path="/analytics"
+                  element={
+                    <RequireAuth>
+                      <ReadingAnalytics />
+                    </RequireAuth>
+                  }
+                />
                 <Route path="/information" element={<Information />} />
-                <Route path="/mypage" element={<MyPage />} />
+                <Route
+                  path="/mypage"
+                  element={
+                    <RequireAuth>
+                      <MyPage />
+                    </RequireAuth>
+                  }
+                />
                 <Route path="/postRegister" element={<PostRegister />} />
                 <Route path="/userPage/:handle" element={<UserPage />} />
+                <Route path="/handleRegister" element={<HandleRegister />} />
               </Routes>
             </Box>
           </Box>

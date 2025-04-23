@@ -4,13 +4,13 @@ import { z } from "zod";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button, Rating } from "@mui/material";
-import { updateProfile } from "../api/account";
+import { TextField, Button, Rating, InputAdornment } from "@mui/material";
+import { generateHandleId } from "../util";
 
-export const ProfileChange = ({ account, update }) => {
+export const HandleRegister = ({ account }) => {
   const formSchema = z.object({
-    name: z.string().min(1, "name is required."),
-    description: z.string().max(200).optional(),
+    handle: z.string().min(1, "ID is required.").max(12),
+    name: z.string().min(1, "name is required.").max(30),
   });
   const {
     control,
@@ -21,24 +21,30 @@ export const ProfileChange = ({ account, update }) => {
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      handle: "",
       name: account.name && account.name,
-      description: account.description ? account.description : "",
     },
   });
-  const onSubmit = async (values) => {
-    if (account) {
-      var params = {
-        ...values,
-        userId: account.userId,
-      };
-    }
-    const result = await updateProfile(params);
-    console.log("success!!");
-    update && update();
-  };
+  const onSubmit = async () => {};
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "400px" }}>
+        <TextField
+          {...register("handle")}
+          label="your ID"
+          variant="standard"
+          fullWidth
+          margin="normal"
+          error={!!errors.handle}
+          helperText={
+            errors.handle?.message
+              ? errors.handle.message
+              : "ID cannot be changed later."
+          }
+          InputProps={{
+            startAdornment: <InputAdornment position="start">@</InputAdornment>,
+          }}
+        />
         <TextField
           {...register("name")}
           label="name"
@@ -48,17 +54,7 @@ export const ProfileChange = ({ account, update }) => {
           margin="normal"
           error={!!errors.name}
           helperText={errors.name?.message}
-        />
-        <TextField
-          {...register("description")}
-          label="introduction"
-          variant="standard"
-          multiline
-          rows={6}
-          fullWidth
-          margin="normal"
-          error={!!errors.description}
-          helperText={errors.description?.message}
+          focused
         />
         <Button
           type="submit"
@@ -66,9 +62,10 @@ export const ProfileChange = ({ account, update }) => {
           color="primary"
           fullWidth
           sx={{ textTransform: "none" }}
+
           // endIcon={<SendIcon />}
         >
-          Post
+          create!
         </Button>
       </form>
     </div>

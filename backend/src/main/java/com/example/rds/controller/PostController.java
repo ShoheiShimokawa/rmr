@@ -1,16 +1,21 @@
 package com.example.rds.controller;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rds.model.Good;
 import com.example.rds.model.Post;
 import com.example.rds.model.Post.PostWithUser;
+import com.example.rds.model.Post.YearlyPostRecord;
 import com.example.rds.service.GoodService;
 import com.example.rds.service.PostService;
 
@@ -39,9 +44,26 @@ public class PostController {
 		return goService.getGooder(postId);
 	}
 
-	@PostMapping("/post/good")
-	public Good good(Integer postId, Integer userId) {
-		return goService.good(postId, userId);
+	@GetMapping("/post/good/user")
+	public List<Good> getGoodPostAll(Integer userId) {
+		return goService.getGoodPostAll(userId);
 	}
+
+	@GetMapping("/post/record")
+	public List<YearlyPostRecord> getPostRecord(@RequestParam Integer userId) {
+		return service.getPostRecord(userId);
+	}
+
+	@PostMapping("/post/good")
+	public Good good(SpecifyGood params) {
+		return goService.good(params.postId, params.userId);
+	}
+
+	@PostMapping("/post/good/delete")
+	public void delete(Integer goodId) {
+		goService.delete(goodId);
+	}
+	public static record SpecifyGood(Integer postId,Integer userId) {
+    }
 
 }

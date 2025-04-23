@@ -12,7 +12,7 @@ public interface ReadingRepository extends JpaRepository<Reading, Integer> {
     @Query("SELECT r FROM Reading r WHERE r.book.bookId = :bookId")
     Reading findByBookId(@Param("bookId") Integer bookId);
 
-    // test
+   
     @Query("SELECT r FROM Reading r WHERE r.user.userId = :userId")
     List<Reading> findReadingsByUserId(@Param("userId") Integer userId);
 

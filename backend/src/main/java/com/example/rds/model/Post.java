@@ -2,7 +2,10 @@ package com.example.rds.model;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,7 +52,7 @@ public class Post {
 
 	/** 感想をポストします。 */
 	public static Post registerPost(PostRepository rep,ReadingRepository rRep,Integer readingId) {
-		var reading = rRep.findById(readingId).orElseThrow(() -> new RuntimeException("Reading not found"));
+		var reading = rRep.findById(readingId).orElseThrow(() -> new RuntimeException("Post not found"));
 		var post =Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDate.now()).build();
 		return rep.save(post);
 	}
@@ -58,37 +61,61 @@ public class Post {
 	public static List<PostWithUser> getPostAllByUser(PostRepository rep,AccountRepository aRep, Integer userId) {
 		Optional<Account> opUser = aRep.findByUserId(userId);
 		if (opUser.isEmpty()) {
-        return Collections.emptyList(); // Accountが見つからない場合は空リストを返す
+        return Collections.emptyList(); 
     }	
 		Account user = opUser.get();
 		return rep.findByUserId(userId).stream()
 				.map(post -> PostWithUser.from(post, user))
-				.collect(Collectors.toList());// Optional の処理をシンプルに	}
+				.collect(Collectors.toList());
 	}
 
 	/** ポストを返却します。（タイムライン用） */
 	public static List<Post> getPostAll(PostRepository rep, Integer userId) {
 		return rep.findAll();
 	}
+
 	@Builder
 	public record PostWithUser(
-		Integer postId,
-		Integer userId,
-		Reading reading,
-		LocalDate registerDate,
-		LocalDate updateDate,
-		String name,
-		String handle){
-		public static PostWithUser from(Post post,Account account){
+			Integer postId,
+			Integer userId,
+			Reading reading,
+			LocalDate registerDate,
+			LocalDate updateDate,
+			String name,
+			String handle) {
+		public static PostWithUser from(Post post, Account account) {
 			return PostWithUser.builder()
-                .postId(post.getPostId())
-				.userId(post.user.getUserId())
-				.reading(post.reading)
-				.registerDate(post.registerDate)
-				.updateDate(post.updateDate)
-                .name(account.getName())
-                .handle(account.getHandle())
-                .build();
+					.postId(post.getPostId())
+					.userId(post.user.getUserId())
+					.reading(post.reading)
+					.registerDate(post.registerDate)
+					.updateDate(post.updateDate)
+					.name(account.getName())
+					.handle(account.getHandle())
+					.build();
 		}
 	}
+	
+	/** 年間ポスト数を返します。 */
+	public static List<YearlyPostRecord> getPostRecord(PostRepository rep, Integer userId) {
+		List<Post> posts = rep.findByUserId(userId);
+		var a = posts.stream().collect(Collectors.groupingBy((Post post) -> post.getRegisterDate()));
+		Map<LocalDate, Integer> map = new HashMap<>();
+		for (var b : a.entrySet()) {
+			map.putIfAbsent(b.getKey(), b.getValue().toArray().length);
+		}
+		//→[{postId,userId,readingId,...},{}]
+		//こういうデータに整形したい。→→ex:){registerDate:2024/03/03,posts:4}
+		
+		return map.entrySet().stream().map(v->{
+			LocalDate yearMonth=v.getKey();
+			Integer postCount = v.getValue();
+
+			return YearlyPostRecord.builder().date(yearMonth).posts(postCount).build();
+		}).toList();
+	}
+
+	/** 年間ポスト数 */
+	@Builder
+	public record YearlyPostRecord(LocalDate date,Integer posts){}
 }

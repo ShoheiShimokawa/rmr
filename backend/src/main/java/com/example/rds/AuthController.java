@@ -47,7 +47,7 @@ public class AuthController {
     	 }else {
     		 var kari=Account.builder().googleSub((String)userInfo.get("sub")).email((String)userInfo.get("email"))
     				 .name((String)userInfo.get("name")).picture((String)userInfo.get("picture")).build();
-    		user=service.register(rep, kari);
+    		user=service.register(kari);
     	 }
          return ResponseEntity.ok(Map.of("user",user));
      } else {

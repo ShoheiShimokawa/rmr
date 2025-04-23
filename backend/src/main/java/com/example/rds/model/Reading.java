@@ -71,7 +71,7 @@ public class Reading {
 	public static List<Reading> findAll(ReadingRepository rep){
 		return rep.findAll();
 	}
-	/** ユーザに紐づく本を全て返します*/
+	/** ユーザに紐づく読書を全て返します*/
 	public static List<Reading> findReadingsByUserId(ReadingRepository rep,Integer userId) {
 		return rep.findReadingsByUserId(userId);
 	}
@@ -136,8 +136,8 @@ public class Reading {
 	
 	/** 読書を削除します。*/
 	@Transactional
-	public static void delete(ReadingRepository rep,Integer readingId) {
-		Reading reading = rep.findById(readingId).orElseThrow(()->new EntityNotFoundException("Reading not found"));
+	public static void delete(ReadingRepository rep, Integer readingId) {
+		Reading reading = rep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Reading not found"));
 		rep.deleteById(reading.readingId);
 	}
 	

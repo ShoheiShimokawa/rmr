@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.rds.context.AccountRepository;
+import com.example.rds.type.BookStatusType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -59,14 +61,16 @@ public class Account {
 	}
 	
 	/** ハンドルを発行します。 */
-	public static String registerHandle(AccountRepository rep,String handle) {
-		var a=rep.findByHandle(handle);
-		if(a.isPresent()) {
-			return "すでに存在しているIDです。";
-		}else {
-		return "OK!";
-		}
-	}
+	// public static Account registerHandle(AccountRepository rep,Integer userId,String handle) {
+	// 	var a=rep.findByHandle(handle);
+	// 	if(a.isPresent()) {
+	// 		return "すでに存在しているIDです。";
+	// 	} else {
+	// 		var b = rep.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("good not found"));
+	// 		b.setHandle(handle);
+	// 	return rep.save(b);
+	// 	}
+	// };
 	
 	/** アカウントを登録します。 */
 	public static Account register(AccountRepository rep,Account account) {
@@ -76,9 +80,19 @@ public class Account {
 	/** ログアウトします。 */
 	
 	/** プロフィールを変更します。（初期段階は自己紹介文のみ）*/
-//	public static String updateProfile() {
-//		
-//	}
+	public static Account update(AccountRepository rep,UpdateProfile params) {
+		var user=rep.findByUserId(params.userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
+		user.setName(params.name);
+		user.setDescription(params.description);
+		return rep.save(user);
+	}
+		/** 変更パラメタ */
+	@Builder
+	public record UpdateProfile(Integer userId,String name,String description) {
+		public Account create() {
+			return Account.builder().userId(this.userId).name(this.name).description(this.description).build();
+		}
+	}
 	/** プロフィール情報を返します。 */
 	public static Optional<Account> getProfile(Integer userId,AccountRepository rep) {
 		return rep.findById(userId);

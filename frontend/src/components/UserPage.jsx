@@ -5,6 +5,9 @@ import { MyPosts } from "./MyPosts";
 import { useState, useEffect } from "react";
 import { Divider, Tabs, Tab, Box } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import { Link } from "react-router-dom";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 
 export const UserPage = () => {
   const { handle } = useParams();
@@ -33,6 +36,9 @@ export const UserPage = () => {
   };
   return (
     <div>
+      <IconButton component={Link} to="/posts" size="small">
+        <ArrowBackIosNewRoundedIcon />
+      </IconButton>
       {user && <Profile account={user} />}
       <Divider />
       <Tabs value={tabIndex} onChange={handleTabChange} centered>

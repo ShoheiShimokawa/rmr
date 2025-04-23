@@ -106,15 +106,16 @@ export const BookSearch = ({ fromPost }) => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      console.log("clear");
       event.preventDefault();
       handleSearch();
     }
   };
 
   const find = useCallback(async () => {
-    const myR = await findReadingByUser(user.userId);
-    setMyReadings(myR.data);
+    if (user) {
+      const myR = await findReadingByUser(user && user.userId);
+      setMyReadings(myR.data);
+    }
   }, [myReadings]);
 
   useEffect(() => {

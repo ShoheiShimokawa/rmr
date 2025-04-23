@@ -2,7 +2,10 @@ import { useContext, useEffect, useState, useCallback } from "react";
 import { getPostAll } from "../api/post";
 import { debounce } from "lodash";
 import { Link } from "react-router-dom";
+import UserContext from "./UserProvider";
 import { registerReading } from "../api/reading";
+import { HandleRegister } from "./HandleRegister";
+import { good, deleteGood, getGooder, getGoodPostAll } from "../api/post";
 import {
   Avatar,
   Card,
@@ -11,26 +14,59 @@ import {
   Box,
   Divider,
   IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
+import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import PostAddRoundedIcon from "@mui/icons-material/PostAddRounded";
 
 export const Posts = ({}) => {
   const [posts, setPosts] = useState([]);
+  const { user } = useContext(UserContext);
+  const [goodPosts, setGoodPosts] = useState({});
+  const [selectedPost, setSelectedPost] = useState();
+  const [kari, setKari] = useState(false);
 
   const find = async () => {
     const result = await getPostAll();
     setPosts(result.data);
+    const initGood = {};
+    const goodList = await getGoodPostAll(user && user.userId);
+    var a = goodList && goodList.data.map((good) => good.post.postId);
+    setGoodPosts(a);
   };
   const handleSelectUser = (user) => {};
 
-  const handleLike = useCallback(
-    debounce(async () => {
-      //    const result =await
-    }, 500), // 500ms の間に連打されても 1 回だけリクエスト
+  const handleKari = () => {
+    setKari(true);
+  };
+
+  const handleCloseKari = () => {
+    setKari(false);
+  };
+
+  const handleGood = useCallback(
+    debounce(async (selectedPost) => {
+      setGoodPosts([...goodPosts, selectedPost]);
+      //   if (true) {
+      //     const param = {
+      //       postId: selectedPost.postId,
+      //       userId: user && user.userId,
+      //     };
+      //     const result = await good(param);
+      //   } else {
+      //     await deleteGood();
+      //   }
+    }, 400), // 500ms の間に連打されても 1 回だけリクエスト
     []
   );
 
+  const handleCancel = (selectedPost) => {
+    setGoodPosts(goodPosts.filter((post) => post !== selectedPost));
+  };
   useEffect(() => {
     find();
   }, []);
@@ -41,8 +77,23 @@ export const Posts = ({}) => {
           <PostAddRoundedIcon />
         </IconButton>
       </div>
-      <div className="container mx-auto space-y-3">
-        {posts && (
+      <Button
+        size="small"
+        variant="contained"
+        onClick={() => {
+          handleKari();
+        }}
+      >
+        kari_registerHandle
+      </Button>
+      <Dialog onClose={handleCloseKari} open={kari}>
+        <DialogTitle>create Account</DialogTitle>
+        <DialogContent>
+          <HandleRegister account={user} />
+        </DialogContent>
+      </Dialog>
+      <div className="container mx-auto space-y-1">
+        {posts.length !== 0 && (
           <>
             {posts.map((post) => (
               <Card key={post.postId} sx={{ maxWidth: 800 }}>
@@ -81,8 +132,25 @@ export const Posts = ({}) => {
                               <div>{post.reading.book.author}</div>
                             </div>
                           </div>
-                          <FavoriteBorderRoundedIcon />{" "}
-                          <div>いいね数をここに表示</div>
+                          {goodPosts.length > 0 &&
+                          !goodPosts.includes(post.postId) ? (
+                            <IconButton
+                              onClick={() => {
+                                handleGood(post.postId);
+                              }}
+                            >
+                              <FavoriteBorderRoundedIcon color="error" />a
+                            </IconButton>
+                          ) : (
+                            <IconButton
+                              onClick={() => {
+                                handleCancel(post.postId);
+                              }}
+                            >
+                              <FavoriteRoundedIcon color="error" />
+                            </IconButton>
+                          )}{" "}
+                          <div>いいね数をここに表示{}</div>
                         </div>
                       </>
                     )}

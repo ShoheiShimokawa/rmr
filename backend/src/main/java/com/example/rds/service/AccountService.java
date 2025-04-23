@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.rds.context.AccountRepository;
 import com.example.rds.model.Account;
+import com.example.rds.model.Account.UpdateProfile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +31,12 @@ public class AccountService {
 	}
 	
 	/** アカウントをアプリに登録します。 */
-	public Account register(AccountRepository rep,Account account) {
+	public Account register(Account account) {
 		return Account.register(rep, account);
+	}
+	
+	/** アカウント情報を更新します。 */
+	public Account update( UpdateProfile params) {
+		return Account.update(rep,params);
 	}
 }

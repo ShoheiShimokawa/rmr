@@ -3,7 +3,7 @@ import axios from "axios";
 const url = "http://localhost:8080/api/";
 
 export const getProfile = (userId) => {
-  return axios.get(url + "account", userId);
+  return axios.get(url + "account", { params: { userId } });
 };
 
 export const getByHandle = (handle) => {
@@ -19,4 +19,11 @@ export const getFollow = (followerId) => {
 
 export const follow = (params) => {
   return axios.post(url + "account/follow", params);
+};
+
+export const deleteFollow = (id) => {
+  return axios.post(url + "account/follow/delete", { id });
+};
+export const updateProfile = (params) => {
+  return axios.post(url + "account/update", params);
 };
