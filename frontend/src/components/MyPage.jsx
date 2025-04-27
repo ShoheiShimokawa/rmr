@@ -23,7 +23,7 @@ export const MyPage = () => {
   const TabPanel = ({ children, value, index }) => {
     return (
       <div hidden={value !== index}>
-        {value === index && <Box p={2}>{children}</Box>}
+        {value === index && <Box p={1}>{children}</Box>}
       </div>
     );
   };
@@ -38,14 +38,14 @@ export const MyPage = () => {
       </div>
       <Divider />
       <Tabs value={tabIndex} onChange={handleTabChange} centered>
-        <Tab label="Posts" />
         <Tab label="BookShelf" />
+        <Tab label="Posts" />
       </Tabs>
       <TabPanel value={tabIndex} index={0}>
-        <MyPosts account={user} />
+        <BookShelf account={user} />
       </TabPanel>
       <TabPanel value={tabIndex} index={1}>
-        <BookShelf account={user} />
+        <MyPosts account={user} />
       </TabPanel>
     </div>
   );

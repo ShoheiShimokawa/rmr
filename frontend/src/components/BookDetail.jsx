@@ -29,10 +29,20 @@ export const BookDetail = ({ book, reading }) => {
               />
               <div>
                 <div className="text-xl"> {book.title}</div>
-                <div>authored by {book.author}</div>
-                <div>{book.genre}</div>
+                <div className="text-zinc-500">
+                  {book.author && book.author}
+                </div>
+                <Chip
+                  label={book.genre}
+                  sx={{
+                    "&:hover .MuiChip-label": {
+                      textDecoration: "none",
+                    },
+                  }}
+                />
+
                 <div>
-                  published Date :{" "}
+                  Published{" "}
                   {book.publishedDate ? book.publishedDate : "unknown"}
                 </div>
                 {reading && (

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.rds.context.AccountRepository;
-import com.example.rds.type.BookStatusType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;

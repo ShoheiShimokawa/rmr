@@ -153,20 +153,20 @@ export const BookShelf = ({ account }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <div className="text-xl ">Recently</div>
+      <div className="text-lgfont-medium">Recently</div>
 
       {recent.length !== 0 ? (
         <BookArray books={recent} handleSelect={handleSelect} />
       ) : (
-        <Box sx={{ height: "140px", width: "100%" }} />
+        <Box sx={{ height: "155px", width: "100%" }} />
       )}
 
       <Divider sx={{ height: "auto", m: 1 }} />
       {AlertComponent}
-      <div className="text-xl font-sans"> Books in My Past</div>
+      {/* <div className="text-xl font-sans"> Books in My Past</div> */}
       {fiction.length !== 0 && (
         <>
-          <div className="text-lg font-sans"> Fiction</div>
+          <div className="text-lg  font-medium"> Fiction</div>
           <BookArray books={fiction} handleSelect={handleSelect} />
         </>
       )}

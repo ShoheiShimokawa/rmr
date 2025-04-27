@@ -48,6 +48,7 @@ export const MyPosts = ({ account }) => {
                             <Box
                               component="img"
                               src={post.reading.book.thumbnail}
+                              sx={{ width: "20%", height: "auto" }}
                             />
                             <div className="ml-2">
                               <div>{post.reading.book.title}</div>

@@ -39,7 +39,7 @@ export const HandleRegister = ({ account }) => {
           helperText={
             errors.handle?.message
               ? errors.handle.message
-              : "ID cannot be changed later."
+              : "ID can be changed later."
           }
           InputProps={{
             startAdornment: <InputAdornment position="start">@</InputAdornment>,

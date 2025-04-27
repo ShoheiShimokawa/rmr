@@ -124,7 +124,16 @@ export const BookSearch = ({ fromPost }) => {
 
   return (
     <div>
-      <Dialog open={open} maxWidth={"md"}>
+      <Dialog
+        open={open}
+        maxWidth={"md"}
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "700px", // 自由に設定
+            maxWidth: "none",
+          },
+        }}
+      >
         <DialogTitle>detail</DialogTitle>
         <DialogContent>
           <BookSearchDetail reading={myReading} book={selectedBook} />

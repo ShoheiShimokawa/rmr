@@ -4,6 +4,8 @@ import { Card, CardContent, Tooltip } from "@mui/material";
 import { statusTypeStr, judgeIcon } from "../badge/index";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
+import { RiBookShelfFill } from "react-icons/ri";
+import { GiBookshelf } from "react-icons/gi";
 import { findBooks } from "../api/book";
 import { Paper, CircularProgress } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
@@ -23,6 +25,7 @@ import {
   DialogContentText,
   DialogTitle,
   Chip,
+  Box,
 } from "@mui/material";
 import { ReadingRegister } from "./ReadingRegister";
 
@@ -107,70 +110,104 @@ export const BookSearchDetail = ({ reading, book, updated }) => {
         </DialogActions>
       </Dialog>
       <div className="flex">
-        <img src={book.thumbnail} />
-        <div>
+        <Box
+          component="img"
+          sx={{
+            // width: "120px",
+            // height: "170px",
+            objectFit: "cover",
+          }}
+          src={book.thumbnail}
+        />
+        <div className="ml-3">
           <div> {book.title}</div>
-          <div>authored by {book.author}</div>
-          <div>{book.genre}</div>
-          <div>
-            published Date :{" "}
-            {book.publishedDate ? book.publishedDate : "unknown"}
+          <div className="mt-2 text-sm">{book.author}</div>
+          <br></br>
+          <Chip
+            label={book.genre}
+            sx={{
+              "&:hover .MuiChip-label": {
+                textDecoration: "none",
+              },
+            }}
+          />
+          <div className="text-base text-stone-600">
+            published : {book.publishedDate ? book.publishedDate : "unknown"}
           </div>
           <div>
-            <Tooltip title="add my bookshelf" arrow placement="top">
-              <IconButton onClick={handleOpen}>
+            {/* <Tooltip title="add my bookshelf" arrow placement="top"> */}
+            {/* <IconButton>
                 <FaBook size={20} style={{ color: "black" }} />{" "}
-              </IconButton>
-              <Menu
-                className="absolute bottom-0"
-                id="long-menu"
-                MenuListProps={{
-                  "aria-labelledby": "long-button",
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                slotProps={{
-                  paper: {
-                    style: {
-                      width: "auto",
-                    },
+              </IconButton> */}
+            <div className="mt-5 ml-1">
+              <Button
+                variant="contained"
+                endIcon={<GiBookshelf />}
+                onClick={handleOpen}
+                sx={{
+                  textTransform: "none",
+                  backgroundColor: "#000", // 黒
+                  color: "#fff", // 文字は白
+                  fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: "#333", // ホバー時は少し明るめに
                   },
                 }}
               >
-                <div>
-                  <MenuItem
-                    onClick={() => {
-                      handleRegisterWithNone();
-                      handleClose();
-                    }}
-                  >
-                    Next in Line
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      handleRegisterWithDoing();
-                      handleClose();
-                    }}
-                  >
-                    Reading
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      handleRegisterWithDone();
-                      handleClose();
-                    }}
-                  >
-                    Polished!
-                  </MenuItem>
-                </div>
-              </Menu>
-            </Tooltip>
+                add bookshelf
+              </Button>
+            </div>
+            <Menu
+              className="absolute bottom-0"
+              id="long-menu"
+              MenuListProps={{
+                "aria-labelledby": "long-button",
+              }}
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              slotProps={{
+                paper: {
+                  style: {
+                    width: "auto",
+                  },
+                },
+              }}
+            >
+              <div>
+                <MenuItem
+                  onClick={() => {
+                    handleRegisterWithNone();
+                    handleClose();
+                  }}
+                >
+                  Next in Line
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleRegisterWithDoing();
+                    handleClose();
+                  }}
+                >
+                  Reading
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleRegisterWithDone();
+                    handleClose();
+                  }}
+                >
+                  Polished!
+                </MenuItem>
+              </div>
+            </Menu>
+            {/* </Tooltip> */}
           </div>
         </div>
       </div>
+
       <Divider sx={{ m: 0.5 }} />
-      <div className="text-base font-sans">{book.description}</div>
+      <div className="text-sm font-sans mt-2">{book.description}</div>
     </div>
   );
 };

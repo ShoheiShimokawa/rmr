@@ -48,6 +48,11 @@ export const ProfileChange = ({ account, update }) => {
           margin="normal"
           error={!!errors.name}
           helperText={errors.name?.message}
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+          }}
         />
         <TextField
           {...register("description")}
@@ -59,6 +64,11 @@ export const ProfileChange = ({ account, update }) => {
           margin="normal"
           error={!!errors.description}
           helperText={errors.description?.message}
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+          }}
         />
         <Button
           type="submit"
@@ -68,7 +78,7 @@ export const ProfileChange = ({ account, update }) => {
           sx={{ textTransform: "none" }}
           // endIcon={<SendIcon />}
         >
-          Post
+          Edit
         </Button>
       </form>
     </div>

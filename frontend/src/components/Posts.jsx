@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import { getPostAll } from "../api/post";
+import { Book } from "../components/book/Book";
 import { debounce } from "lodash";
 import { Link } from "react-router-dom";
 import UserContext from "./UserProvider";
 import { registerReading } from "../api/reading";
 import { HandleRegister } from "./HandleRegister";
+import { BookDetail } from "./BookDetail";
 import { good, deleteGood, getGooder, getGoodPostAll } from "../api/post";
 import {
   Avatar,
@@ -29,6 +31,8 @@ export const Posts = ({}) => {
   const [goodPosts, setGoodPosts] = useState({});
   const [selectedPost, setSelectedPost] = useState();
   const [kari, setKari] = useState(false);
+  const [showBookDetail, setShowBookDetail] = useState(false);
+  const [selectedBook, setSelectedBook] = useState();
 
   const find = async () => {
     const result = await getPostAll();
@@ -67,6 +71,13 @@ export const Posts = ({}) => {
   const handleCancel = (selectedPost) => {
     setGoodPosts(goodPosts.filter((post) => post !== selectedPost));
   };
+  const handleShowBookDetail = (selectedBook) => {
+    setSelectedBook(selectedBook);
+    setShowBookDetail(true);
+  };
+  const handleCloseBookDetail = () => {
+    setShowBookDetail(false);
+  };
   useEffect(() => {
     find();
   }, []);
@@ -92,13 +103,19 @@ export const Posts = ({}) => {
           <HandleRegister account={user} />
         </DialogContent>
       </Dialog>
+      <Dialog onClose={handleCloseBookDetail} open={showBookDetail}>
+        <DialogTitle>Detail</DialogTitle>
+        <DialogContent>
+          <BookDetail book={selectedBook} />
+        </DialogContent>
+      </Dialog>
       <div className="container mx-auto space-y-1">
         {posts.length !== 0 && (
           <>
             {posts.map((post) => (
-              <Card key={post.postId} sx={{ maxWidth: 800 }}>
+              <Card key={post.postId} sx={{ maxWidth: 700 }}>
                 <CardContent>
-                  <div className="flex">
+                  <div className="flex ">
                     <Link
                       to={`/userPage/${post.user.handle}`}
                       style={{ textDecoration: "none" }}
@@ -111,25 +128,30 @@ export const Posts = ({}) => {
                     </Link>
                     <div>
                       <div>{post.user.name}</div>
-                      <div>{post.user.handle}</div>
+                      <div className="text-sm text-zinc-500">
+                        {post.user.handle}
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-6">
                     {post.reading && (
                       <>
                         <div className="space-y-2">
-                          <div className="mt-2 mb-4">
+                          <div className="mt-4 mb-4 ">
                             {post.reading.thoughts}
                           </div>
-                          <div className="flex">
-                            <Box
-                              component="img"
-                              sx={{ width: "20%", height: "auto" }}
-                              src={post.reading.book.thumbnail}
+                          <div className="flex mt-2">
+                            <Book
+                              book={post.reading.book}
+                              onClick={() => {
+                                handleShowBookDetail(post.reading.book);
+                              }}
                             />
-                            <div className="ml-2">
+                            <div className="ml-2 text-sm">
                               <div>{post.reading.book.title}</div>
-                              <div>{post.reading.book.author}</div>
+                              <div className="text-zinc-500 mt-2 text-sm">
+                                {post.reading.book.author}
+                              </div>
                             </div>
                           </div>
                           {goodPosts.length > 0 &&

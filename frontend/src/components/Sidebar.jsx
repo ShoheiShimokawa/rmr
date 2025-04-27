@@ -48,45 +48,56 @@ export const Sidebar = () => {
   };
   const handleLogout = () => {
     setUser(null);
-    console.log("complete!!");
   };
   return (
     <div>
-      <Drawer
+      <Box
         sx={{
-          [`& .MuiDrawer-paper`]: { width: 200, boxSizing: "border-box" },
+          width: "250px", // 固定幅
+          height: "100vh", // 画面いっぱいの高さ
+          position: "fixed", // スクロールしても固定
+          left: "100px", // 左に余白をとる
+          top: 10,
+          bgcolor: "background.paper",
+          borderRight: "1px solid #ddd",
+          p: 1, // 内側余白（padding）
         }}
-        variant="permanent"
       >
-        <Stack sx={{ justifyContent: "space-between" }}>
-          <List dense>
-            {items.map((item) => (
-              <ListItem
-                key={item.text}
-                disablePadding
-                sx={{ display: "block" }}
+        <List>
+          {items.map((item) => (
+            <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                component={Link}
+                to={item.path}
+                sx={{
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: "none", // 👈 ホバー時も
+                  },
+                  "& a": {
+                    textDecoration: "none", // ← これを追加する！
+                    color: "inherit", // 色も引き継ぎたいなら
+                  },
+                  "&:hover a": {
+                    textDecoration: "none",
+                  },
+                }}
               >
-                <ListItemButton component={Link} to={item.path}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List dense>
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton component={Link} to={"/information"}>
-                <ListItemIcon>
-                  {" "}
-                  <InfoIcon />
-                </ListItemIcon>
-                <ListItemText primary="About" />
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText
+                  primary={item.text}
+                  sx={{
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "none", // 👈 ホバー時も
+                    },
+                  }}
+                />
               </ListItemButton>
             </ListItem>
-          </List>
-          <Divider />
-          <Stack
+          ))}
+        </List>
+        {/* <Stack
             direction="row"
             sx={{
               p: 2,
@@ -99,9 +110,8 @@ export const Sidebar = () => {
             <Avatar
               component={Link}
               to={"/mypage"}
-              sizes="small"
               src={user && user.picture}
-              sx={{ width: 22, height: 24 }}
+              sx={{ width: 32, height: 32 }}
             />
 
             <IconButton
@@ -133,9 +143,8 @@ export const Sidebar = () => {
                 </MenuItem>
               )}
             </Menu>
-          </Stack>
-        </Stack>
-      </Drawer>
+          </Stack> */}
+      </Box>
     </div>
   );
 };

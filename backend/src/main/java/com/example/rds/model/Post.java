@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -104,8 +103,6 @@ public class Post {
 		for (var b : a.entrySet()) {
 			map.putIfAbsent(b.getKey(), b.getValue().toArray().length);
 		}
-		//→[{postId,userId,readingId,...},{}]
-		//こういうデータに整形したい。→→ex:){registerDate:2024/03/03,posts:4}
 		
 		return map.entrySet().stream().map(v->{
 			LocalDate yearMonth=v.getKey();

@@ -9,6 +9,7 @@ import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
 import { ProfileChange } from "./ProfileChange";
 import { ContributionMap } from "./ContributionMap";
+import { Header } from "./Header";
 import {
   Avatar,
   Dialog,
@@ -112,8 +113,8 @@ export const Profile = ({ account }) => {
           <Follower userId={account.userId && account.userId} />
         </DialogContent>
       </Dialog>
-      <div className="flex" style={{ width: "300px", height: "auto" }}>
-        <div className="flex">
+      <div className="flex w-[300px]">
+        <div className="flex w-full justify-between ">
           <div className="flex mr-4">
             <Avatar src={account.picture} className="mr-2" />
             <Typography component="h2">
@@ -121,7 +122,7 @@ export const Profile = ({ account }) => {
               <div className="text-zinc-500">{account.handle}</div>
             </Typography>
           </div>
-          <div className="h-[50px] ml-6">
+          <div className="flex h-[50px] justify-end">
             {account.userId === user.userId ? (
               <Button
                 size="small"

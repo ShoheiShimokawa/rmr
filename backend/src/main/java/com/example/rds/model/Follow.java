@@ -5,7 +5,6 @@ import java.util.List;
 import com.example.rds.context.AccountRepository;
 import com.example.rds.context.FollowRepository;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.GeneratedValue;
