@@ -1,22 +1,22 @@
-import { BookDetail } from "./BookDetail";
+import { Book } from "./Book";
+import { Post } from "../Post";
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, Tooltip } from "@mui/material";
-import { statusTypeStr, judgeIcon } from "../badge/index";
+import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { useContext } from "react";
-import UserContext from "./UserProvider";
+import UserContext from "../UserProvider";
 import { RiBookShelfFill } from "react-icons/ri";
 import { GiBookshelf } from "react-icons/gi";
-import { findBooks } from "../api/book";
-import { Paper, CircularProgress } from "@mui/material";
-import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import { findReadingByUser, registerReading } from "../api/reading";
-import { genreToEnum } from "../util";
+import {
+  findReadingByUser,
+  registerReading,
+  findReadingById,
+} from "../../api/reading";
+import { genreToEnum } from "../../util";
 import { Menu, MenuItem, MenuIcon } from "@mui/material";
 import { FaBook } from "react-icons/fa";
-import { registerBook } from "../api/book";
+import { registerBook } from "../../api/book";
+import { findPostByBookId } from "../../api/post";
 import {
   Button,
   Dialog,
@@ -27,15 +27,16 @@ import {
   Chip,
   Box,
 } from "@mui/material";
-import { ReadingRegister } from "./ReadingRegister";
+import { ReadingRegister } from "../ReadingRegister";
 
-export const BookSearchDetail = ({ reading, book, updated }) => {
+export const BookDetail = ({ reading, book, updated }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(UserContext);
   const [bookForReading, setBookForReading] = useState();
+  const [posts, setPosts] = useState([]);
 
   const handleRegisterWithNone = async () => {
     const result = await registerBook(book);
@@ -95,6 +96,15 @@ export const BookSearchDetail = ({ reading, book, updated }) => {
     setOpen(false);
   };
 
+  const find = async () => {
+    var result = await findPostByBookId(book.id && book.id);
+    setPosts(result.data);
+  };
+
+  useEffect(() => {
+    find();
+  }, []);
+
   return (
     <div>
       <Dialog open={openRegister}>
@@ -110,36 +120,26 @@ export const BookSearchDetail = ({ reading, book, updated }) => {
         </DialogActions>
       </Dialog>
       <div className="flex">
-        <Box
-          component="img"
-          sx={{
-            // width: "120px",
-            // height: "170px",
-            objectFit: "cover",
-          }}
-          src={book.thumbnail}
-        />
+        <Book book={book} />
         <div className="ml-3">
           <div> {book.title}</div>
-          <div className="mt-2 text-sm">{book.author}</div>
-          <br></br>
+          <div className="mt-1 text-sm">{book.author}</div>
           <Chip
             label={book.genre}
+            className="mt-1"
+            size="small"
             sx={{
               "&:hover .MuiChip-label": {
                 textDecoration: "none",
               },
             }}
           />
-          <div className="text-base text-stone-600">
-            published : {book.publishedDate ? book.publishedDate : "unknown"}
+          <div className="ml-1 text-sm text-stone-600">
+            published : {book.publishedDate ? book.publishedDate : "-"}
           </div>
           <div>
             {/* <Tooltip title="add my bookshelf" arrow placement="top"> */}
-            {/* <IconButton>
-                <FaBook size={20} style={{ color: "black" }} />{" "}
-              </IconButton> */}
-            <div className="mt-5 ml-1">
+            <div className="mt-2 ml-1">
               <Button
                 variant="contained"
                 endIcon={<GiBookshelf />}
@@ -201,13 +201,12 @@ export const BookSearchDetail = ({ reading, book, updated }) => {
                 </MenuItem>
               </div>
             </Menu>
-            {/* </Tooltip> */}
           </div>
         </div>
       </div>
-
-      <Divider sx={{ m: 0.5 }} />
-      <div className="text-sm font-sans mt-2">{book.description}</div>
+      <div className="text-sm font-sans mt-3">{book.description}</div>
+      <div className="mt-2">Review</div>
+      {posts && posts.map((post) => <Post post={post} />)}
     </div>
   );
 };

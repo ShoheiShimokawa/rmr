@@ -68,9 +68,15 @@ public class Reading {
 	private LocalDate readDate;
 	
 	/** 全ての読書を返します。 */
-	public static List<Reading> findAll(ReadingRepository rep){
+	public static List<Reading> findAll(ReadingRepository rep) {
 		return rep.findAll();
 	}
+	
+	/** ID(google)に紐付く読書を全て返します。 */
+	public static List<Reading> findById(ReadingRepository rep,String id) {
+		return rep.findById(id);
+	}
+
 	/** ユーザに紐づく読書を全て返します*/
 	public static List<Reading> findReadingsByUserId(ReadingRepository rep,Integer userId) {
 		return rep.findReadingsByUserId(userId);

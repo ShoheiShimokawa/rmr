@@ -29,6 +29,11 @@ public class ReadingService {
 		return Reading.findAll(rep);
 	}
 
+	/** ID(google)に紐付く読書を全て返します。 */
+	public  List<Reading> findById(String id) {
+		return rep.findById(id);
+	}
+
 	/** ユーザに紐づく全ての読書を返します */
 	public List<Reading> findReadingsByUserId(Integer userId) {
 		return Reading.findReadingsByUserId(rep, userId);

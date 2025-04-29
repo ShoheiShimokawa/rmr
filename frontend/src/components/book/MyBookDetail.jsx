@@ -1,8 +1,8 @@
 import { BookDetail } from "./BookDetail";
 import Button from "@mui/material/Button";
-import { statusTypeStr } from "../badge";
+import { statusTypeStr } from "../../badge";
 import { useState, useMemo } from "react";
-import { ReadingRegister } from "../components/ReadingRegister";
+import { ReadingRegister } from "../ReadingRegister";
 import {
   Dialog,
   DialogActions,
@@ -17,8 +17,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Divider from "@mui/material/Divider";
-import { deleteReading, toDoing } from "../api/reading";
-import { useMessage } from "../ui/useMessage";
+import { deleteReading, toDoing } from "../../api/reading";
+import { useMessage } from "../../ui/useMessage";
 
 export const MyBookDetail = ({ reading, show, updated }) => {
   const [anchorEl, setAnchorEl] = useState(null);

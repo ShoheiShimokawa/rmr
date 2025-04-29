@@ -1,14 +1,11 @@
 package com.example.rds.model;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.example.rds.context.AccountRepository;
 import com.example.rds.context.PostRepository;
 import com.example.rds.context.ReadingRepository;
 
@@ -49,24 +46,34 @@ public class Post {
 	/** 更新日 */
 	private LocalDate updateDate;
 
+	/** ID(google)に紐付く投稿を全て返します。 */
+	public static List<Post> findById(PostRepository rep,String id) {
+		return rep.findById(id);
+	}
+
 	/** 感想をポストします。 */
-	public static Post registerPost(PostRepository rep,ReadingRepository rRep,Integer readingId) {
+	public static Post registerPost(PostRepository rep, ReadingRepository rRep, Integer readingId) {
 		var reading = rRep.findById(readingId).orElseThrow(() -> new RuntimeException("Post not found"));
-		var post =Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDate.now()).build();
+		var post = Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDate.now()).build();
 		return rep.save(post);
+	}
+	
+	/** ユーザに紐づくポストを全て返します。 */
+	public static List<Post> getPostAllByUser(PostRepository rep,Integer userId) {
+		return rep.findByUserId(userId);
 	}
 
 	/** ユーザに紐づくポストを全て返します。 */
-	public static List<PostWithUser> getPostAllByUser(PostRepository rep,AccountRepository aRep, Integer userId) {
-		Optional<Account> opUser = aRep.findByUserId(userId);
-		if (opUser.isEmpty()) {
-        return Collections.emptyList(); 
-    }	
-		Account user = opUser.get();
-		return rep.findByUserId(userId).stream()
-				.map(post -> PostWithUser.from(post, user))
-				.collect(Collectors.toList());
-	}
+	// public static List<PostWithUser> getPostAllByUser(PostRepository rep,AccountRepository aRep, Integer userId) {
+	// 	Optional<Account> opUser = aRep.findByUserId(userId);
+	// 	if (opUser.isEmpty()) {
+    //     return Collections.emptyList(); 
+    // }	
+	// 	Account user = opUser.get();
+	// 	return rep.findByUserId(userId).stream()
+	// 			.map(post -> PostWithUser.from(post, user))
+	// 			.collect(Collectors.toList());
+	// }
 
 	/** ポストを返却します。（タイムライン用） */
 	public static List<Post> getPostAll(PostRepository rep, Integer userId) {

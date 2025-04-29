@@ -1,9 +1,6 @@
 import "./App.css";
-import { BookList } from "./components/BookList";
-import { UserBookShelf } from "./components/UserBookShelf";
-import { Posts } from "./components/Posts";
-import { BookSearch } from "./components/BookSearch";
-import { MyPage } from "./components/MyPage";
+import { Community } from "./components/Community";
+import { BookSearch } from "./components/book/BookSearch";
 import { PostRegister } from "./components/PostRegister";
 import { ReadingAnalytics } from "./components/ReadingAnalytics";
 import { Information } from "./components/Information";
@@ -41,11 +38,11 @@ function App() {
                 pt: "70px",
               }}
             >
-              <Box sx={{ width: "100%", maxWidth: 800 }}>
+              <Box sx={{ width: "100%", maxWidth: 600 }}>
                 <Routes>
                   <Route path="/login" element={<Login />} />
                   <Route path="/book" element={<BookSearch />} />
-                  <Route path="/posts" element={<Posts />} />
+                  <Route path="/community" element={<Community />} />
                   <Route
                     path="/analytics"
                     element={
@@ -55,14 +52,7 @@ function App() {
                     }
                   />
                   <Route path="/information" element={<Information />} />
-                  <Route
-                    path="/mypage"
-                    element={
-                      <RequireAuth>
-                        <MyPage />
-                      </RequireAuth>
-                    }
-                  />
+
                   <Route path="/postRegister" element={<PostRegister />} />
                   <Route path="/userPage/:handle" element={<UserPage />} />
                   <Route path="/handleRegister" element={<HandleRegister />} />

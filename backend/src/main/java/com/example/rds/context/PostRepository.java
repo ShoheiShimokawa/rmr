@@ -10,6 +10,9 @@ import com.example.rds.model.Post;
 
 public interface PostRepository extends JpaRepository<Post,Integer>{
 	@Query("SELECT p FROM Post p WHERE p.user.userId = :userId")
-	List<Post> findByUserId(@Param("userId")Integer userId);
+	List<Post> findByUserId(@Param("userId") Integer userId);
+	
+	@Query("SELECT p FROM Post p WHERE p.reading.book.id = :id")
+	List<Post> findById(@Param("id")String id);
 
 }

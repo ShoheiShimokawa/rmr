@@ -3,18 +3,18 @@ import { useState, useEffect } from "react";
 import React from "react";
 import { z } from "zod";
 import { useContext } from "react";
-import UserContext from "./UserProvider";
+import UserContext from "../UserProvider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { statusTypeStr, judgeIcon } from "../badge/index";
+import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { MyBookDetail } from "./MyBookDetail";
 import { BookRegister } from "./BookRegister";
-import { ReadingRegister } from "./ReadingRegister";
-import { findReadingByUser } from "../api/reading";
-import { getReading } from "../api/reading";
-import { useMessage } from "../ui/useMessage";
+import { ReadingRegister } from "../ReadingRegister";
+import { findReadingByUser } from "../../api/reading";
+import { getReading } from "../../api/reading";
+import { useMessage } from "../../ui/useMessage";
 import Avatar from "@mui/material/Avatar";
-import { BookArray } from "./book/BookArray";
+import { BookArray } from "./BookArray";
 import {
   Dialog,
   DialogActions,
@@ -31,6 +31,8 @@ export const BookShelf = ({ account }) => {
   const [readings, setReadings] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const { user } = useContext(UserContext);
+  console.log("fafa");
+  console.log(account);
   const [open, setOpen] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
   const [showReadingRegister, setShoWReadingRegister] = useState(false);
@@ -91,9 +93,7 @@ export const BookShelf = ({ account }) => {
   };
 
   const find = async () => {
-    const userId =
-      account.userId === user?.userId ? user?.userId : account.userId;
-    const result = await findReadingByUser(userId);
+    const result = await findReadingByUser(account.userId && account.userId);
     setReadings(result.data);
   };
   useEffect(() => {

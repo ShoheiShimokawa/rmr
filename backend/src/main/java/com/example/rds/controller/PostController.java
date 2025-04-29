@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rds.model.Good;
 import com.example.rds.model.Post;
-import com.example.rds.model.Post.PostWithUser;
 import com.example.rds.model.Post.YearlyPostRecord;
 import com.example.rds.service.GoodService;
 import com.example.rds.service.PostService;
@@ -31,8 +30,13 @@ public class PostController {
 		return service.getPostAll(userId);
 	}
 
+	@GetMapping("/post/book/id")
+	public List<Post> findPostByBookId(@RequestParam String id) {
+		return service.findById(id);
+	}
+
 	@GetMapping("/post/user")
-	public List<PostWithUser> getPostAllByUser(Integer userId) {
+	public List<Post> getPostAllByUser(Integer userId) {
 		return service.getPostAllByUser(userId);
 	}
 

@@ -4,10 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.rds.context.AccountRepository;
 import com.example.rds.context.PostRepository;
 import com.example.rds.model.Post;
-import com.example.rds.model.Post.PostWithUser;
 import com.example.rds.model.Post.YearlyPostRecord;
 
 import lombok.RequiredArgsConstructor;
@@ -16,11 +14,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostService {
 	private final PostRepository rep;
-	private final AccountRepository aRep;
-
+	
 	/** ユーザに紐づくポストを全て返します。 */
-	public List<PostWithUser> getPostAllByUser(Integer userId) {
-		return Post.getPostAllByUser(rep, aRep, userId);
+	public List<Post> getPostAllByUser(Integer userId) {
+		return Post.getPostAllByUser(rep, userId);
+	}
+
+	/** ID(google)に紐付くポストを全て返します。 */
+	public List<Post> findById(String id) {
+		return Post.findById(rep,id);
 	}
 
 	/** ポストを返却します。（タイムライン用） */

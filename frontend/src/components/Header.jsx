@@ -1,8 +1,11 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
+import RateReviewIcon from "@mui/icons-material/RateReview";
 import Toolbar from "@mui/material/Toolbar";
+import { FaPenNib } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import MenuIcon from "@mui/icons-material/Menu";
+import PostAddRoundedIcon from "@mui/icons-material/PostAddRounded";
 import { useContext, useState } from "react";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
@@ -74,9 +77,12 @@ export const Header = () => {
                 alignItems: "center",
               }}
             >
+              <IconButton component={Link} to="/PostRegister">
+                <FaPenNib />
+              </IconButton>
               <Avatar
                 component={Link}
-                to={"/mypage"}
+                to={`/userPage/${user && user.handle}`}
                 src={user && user.picture}
                 sx={{ width: 32, height: 32 }}
               />

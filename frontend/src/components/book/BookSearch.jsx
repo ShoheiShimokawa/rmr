@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, Tooltip, Box } from "@mui/material";
-import { statusTypeStr, judgeIcon } from "../badge/index";
+import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { useContext } from "react";
-import UserContext from "./UserProvider";
-import { findBooks } from "../api/book";
+import UserContext from "../UserProvider";
+import { findBooks } from "../../api/book";
 import { Paper, CircularProgress } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { findReadingByUser, registerReading } from "../api/reading";
-import { genreToEnum } from "../util";
-import { BookSearchDetail } from "../components/BookSearchDetail";
+import { findReadingByUser, registerReading } from "../../api/reading";
+import { genreToEnum } from "../../util";
+import { BookDetail } from "./BookDetail";
 
 import {
   Button,
@@ -129,14 +129,14 @@ export const BookSearch = ({ fromPost }) => {
         maxWidth={"md"}
         sx={{
           "& .MuiDialog-paper": {
-            width: "700px", // 自由に設定
+            width: "650px",
             maxWidth: "none",
           },
         }}
       >
         <DialogTitle>detail</DialogTitle>
         <DialogContent>
-          <BookSearchDetail reading={myReading} book={selectedBook} />
+          <BookDetail reading={myReading} book={selectedBook} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDetail}>Cancel</Button>

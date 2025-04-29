@@ -31,7 +31,7 @@ export const Sidebar = () => {
   const { user, setUser } = useContext(UserContext);
   const [anchor, setAnchor] = useState(null);
   const items = [
-    { text: "Community", path: "/posts", icon: <PeopleIcon /> },
+    { text: "Community", path: "/community", icon: <PeopleIcon /> },
     { text: "Search", path: "/book", icon: <SearchIcon /> },
     { text: "Analytics", path: "/analytics", icon: <AutoGraphIcon /> },
   ];
@@ -72,11 +72,11 @@ export const Sidebar = () => {
                 sx={{
                   textDecoration: "none",
                   "&:hover": {
-                    textDecoration: "none", // 👈 ホバー時も
+                    textDecoration: "none",
                   },
                   "& a": {
-                    textDecoration: "none", // ← これを追加する！
-                    color: "inherit", // 色も引き継ぎたいなら
+                    textDecoration: "none",
+                    color: "inherit",
                   },
                   "&:hover a": {
                     textDecoration: "none",
@@ -89,7 +89,7 @@ export const Sidebar = () => {
                   sx={{
                     textDecoration: "none",
                     "&:hover": {
-                      textDecoration: "none", // 👈 ホバー時も
+                      textDecoration: "none",
                     },
                   }}
                 />

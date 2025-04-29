@@ -6,6 +6,10 @@ export const getPostAll = (userId) => {
   return axios.get(url + "post", userId);
 };
 
+export const findPostByBookId = (id) => {
+  return axios.get(url + "post/book/id", { params: { id } });
+};
+
 export const getPostAllByUser = (userId) => {
   return axios.get(url + "post/user", { params: { userId } });
 };
