@@ -1,6 +1,7 @@
 package com.example.rds.model;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class Reading {
 	}
 	
 	/** ID(google)に紐付く読書を全て返します。 */
-	public static List<Reading> findById(ReadingRepository rep,String id) {
+	public static List<Reading> findById(ReadingRepository rep, String id) {
 		return rep.findById(id);
 	}
 
@@ -83,7 +84,7 @@ public class Reading {
 	}
 	
 	/** 読書を取得します。 */
-	public static Reading findByBookId(ReadingRepository rep,Integer bookId){
+	public static List<Reading> findByBookId(ReadingRepository rep,Integer bookId){
 		return rep.findByBookId(bookId);
 	}
 	

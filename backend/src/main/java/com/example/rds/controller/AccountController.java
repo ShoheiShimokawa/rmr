@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rds.model.Account;
+import com.example.rds.model.Account.RegisterAccount;
 import com.example.rds.model.Account.UpdateProfile;
 import com.example.rds.model.Follow;
 import com.example.rds.service.AccountService;
@@ -35,6 +36,11 @@ public class AccountController {
 	@GetMapping("/account/handle")
 	public Optional<Account> getByHandle(String handle) {
 		return service.getByHandle(handle);
+	}
+
+	@PostMapping("account/register")
+	public Account register(@RequestBody RegisterAccount params) {
+		return service.register(params);
 	}
 
 	@GetMapping("/account/follower")
@@ -62,6 +68,9 @@ public class AccountController {
 		this.foService.delete(param.id);
 		return ResponseEntity.ok().build();
 	}
+
+
+
 	public static record SpecifyFollowId(Integer id) {
     }
 	public static record SpecifyFollow(Integer userId,Integer followerId) {

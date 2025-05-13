@@ -5,9 +5,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.rds.context.AccountRepository;
+import com.example.rds.model.Account.RegisterAccount;
 import com.example.rds.model.Account;
 import com.example.rds.model.Account.UpdateProfile;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,8 +33,9 @@ public class AccountService {
 	}
 	
 	/** アカウントをアプリに登録します。 */
-	public Account register(Account account) {
-		return Account.register(rep, account);
+	public Account register(RegisterAccount account) {
+		Account param = getByHandle(account.handle()).orElseThrow(() -> new EntityNotFoundException("The handle is exist."));
+		return Account.register(rep, param);
 	}
 	
 	/** アカウント情報を更新します。 */

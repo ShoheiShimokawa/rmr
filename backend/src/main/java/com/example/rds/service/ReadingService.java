@@ -30,8 +30,8 @@ public class ReadingService {
 	}
 
 	/** ID(google)に紐付く読書を全て返します。 */
-	public  List<Reading> findById(String id) {
-		return rep.findById(id);
+	public List<Reading> findById(String id) {
+		return Reading.findById(rep,id);
 	}
 
 	/** ユーザに紐づく全ての読書を返します */
@@ -39,14 +39,15 @@ public class ReadingService {
 		return Reading.findReadingsByUserId(rep, userId);
 	}
 	
-	public Reading findByBookId(Integer bookId) {
+	public List<Reading> findByBookId(Integer bookId) {
 		return Reading.findByBookId(rep, bookId);
 	}
 
 	/** 読書を登録します。*/
 	public Reading register(RegisterReading param) {
 		var reading =Reading.register(rep, bRep,aRep, param);
-		Post.registerPost(pRep,rep,reading.getReadingId());
+		var readingId =reading.getReadingId();
+		Post.registerPost(pRep,rep,readingId);
 		return reading;
 	}
 

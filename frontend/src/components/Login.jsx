@@ -2,13 +2,30 @@ import { GoogleLogin } from "@react-oauth/google";
 import { Card, CardContent } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserContext from "./UserProvider";
-import { useContext } from "react";
+import { HandleRegister } from "./HandleRegister";
+import { useContext, useState } from "react";
+import {
+  Divider,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+} from "@mui/material";
 
-export const Login = () => {
+export const Login = ({ updated }) => {
   const navigate = useNavigate();
-  const goToBookList = () => navigate("/posts");
+  const goToCommunity = () => navigate("/");
   const goRegisterHandle = () => navigate("/handleRegister");
   const { user, setUser } = useContext(UserContext);
+  const [kari, setKari] = useState(false);
+
+  const handleKari = () => {
+    setKari(true);
+  };
+
+  const handleCloseKari = () => {
+    setKari(false);
+  };
 
   const handleLoginSuccess = async (response) => {
     const token = response.credential;
@@ -23,9 +40,11 @@ export const Login = () => {
       const userData = await result.json();
       setUser(userData.user);
       if (userData.user.handle) {
-        goToBookList();
+        updated && updated();
+        goToCommunity();
       } else {
-        goRegisterHandle();
+        handleKari();
+        // updated && updated();
       }
     } catch (error) {
       console.error("Login failed", error);
@@ -33,16 +52,20 @@ export const Login = () => {
   };
   return (
     <div>
-      <Card className="flex items-center  justify-center ">
-        <CardContent>
-          <GoogleLogin
-            className="mx-auto"
-            width="200px"
-            onSuccess={handleLoginSuccess}
-            onError={() => console.log("Login Failed")}
-          />
-        </CardContent>
-      </Card>
+      <Dialog onClose={handleCloseKari} open={kari}>
+        <DialogTitle>create Account</DialogTitle>
+        <DialogContent>
+          <HandleRegister account={user} />
+        </DialogContent>
+      </Dialog>
+      <div className="flex items-center  justify-center ">
+        <GoogleLogin
+          className="mx-auto"
+          width="200px"
+          onSuccess={handleLoginSuccess}
+          onError={() => console.log("Login Failed")}
+        />
+      </div>
     </div>
   );
 };

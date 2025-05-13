@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
+import { registerAccount } from "../api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, Rating, InputAdornment } from "@mui/material";
 import { generateHandleId } from "../util";
@@ -25,7 +26,9 @@ export const HandleRegister = ({ account }) => {
       name: account.name && account.name,
     },
   });
-  const onSubmit = async () => {};
+  const onSubmit = async () => {
+    const result = await registerAccount();
+  };
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "400px" }}>

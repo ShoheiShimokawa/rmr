@@ -5,12 +5,12 @@ export const Book = ({ book, onClick }) => {
       component="img"
       src={book.thumbnail}
       sx={{
-        width: "100px",
-        height: "150px",
+        width: "95px",
+        height: "135px",
         cursor: "pointer",
         boxShadow: 1,
-        borderRadius: 2,
-        objectFit: "cover", // はみ出したらいい感じにトリミングする
+        borderRadius: 1,
+        objectFit: "cover",
         transition: "0.3s ease",
         "&:hover": {
           filter: "brightness(0.8)",

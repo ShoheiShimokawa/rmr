@@ -85,7 +85,9 @@ export const Profile = ({ account }) => {
     setFollows(follow.data);
     const result = await getFollower(account && account.userId);
     setFollowers(result.data);
-    var isFollowed = result.data.find((v) => v.follower.userId === user.userId);
+    var isFollowed = result.data.find(
+      (v) => v.follower.userId === user && user.userId
+    );
     isFollowed && setFollowed(isFollowed);
     isFollowed && setIsFollowed(true);
   };
@@ -123,7 +125,7 @@ export const Profile = ({ account }) => {
             </Typography>
           </div>
           <div className="flex h-[50px] justify-end">
-            {account.userId === user.userId ? (
+            {user && account.userId === user.userId ? (
               <Button
                 size="small"
                 variant="contained"

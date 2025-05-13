@@ -4,7 +4,7 @@ import { BookShelf } from "./book/BookShelf";
 import { Post } from "./Post";
 import { getByHandle } from "../api/account";
 import { useState, useEffect } from "react";
-import { Divider, Tabs, Tab, Box } from "@mui/material";
+import { Divider, Tabs, Tab, Box, ListItem, List } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -18,12 +18,9 @@ export const UserPage = () => {
   const find = async () => {
     const result = await getByHandle(handle);
     setUser(result.data);
-    console.log(result.data);
     const postResult = await getPostAllByUser(
       result.data.userId && result.data.userId
     );
-    console.log("vvv");
-    console.log(postResult);
     setPosts(postResult.data);
   };
   useEffect(() => {
@@ -45,24 +42,29 @@ export const UserPage = () => {
   };
   return (
     <div>
-      <IconButton component={Link} to="/community" size="small">
+      <IconButton component={Link} to="/" size="small">
         <ArrowBackIosNewRoundedIcon />
       </IconButton>
       {user && <Profile account={user} />}
       <Divider />
-      <Tabs value={tabIndex} onChange={handleTabChange} centered>
+      <Tabs value={tabIndex} onChange={handleTabChange} className="mb-2">
         <Tab label="BookShelf" />
         <Tab label="Posts" />
       </Tabs>
       <TabPanel value={tabIndex} index={0}>
-        {user && <BookShelf account={user} />}
+        {user && <BookShelf account={user && user} />}
       </TabPanel>
       <TabPanel value={tabIndex} index={1}>
         {posts.length !== 0 && (
           <div className="space-y-1">
-            {posts.map((post) => (
-              <Post post={post} key={post.postId} visible={true} />
-            ))}
+            <>
+              {posts.map((post) => (
+                <>
+                  <Post post={post} visible={true} />
+                  {posts.length > 1 && <Divider />}
+                </>
+              ))}
+            </>
           </div>
         )}
       </TabPanel>

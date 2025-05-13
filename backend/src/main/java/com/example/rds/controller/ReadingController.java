@@ -26,10 +26,10 @@ import lombok.AllArgsConstructor;
 public class ReadingController {
 	private final ReadingService service;
 	
-	// @GetMapping("/reading/book")
-	// public Reading findByBookId(@RequestParam Integer bookId) {
-	// 	return service.findByBookId(bookId);
-	// }
+	@GetMapping("/reading/book")
+	public List<Reading> findByBookId(@RequestParam Integer id) {
+		return service.findByBookId(id);
+	}
 
 	@GetMapping("/reading/id/book")
 	public List<Reading> findById(@RequestParam String id) {

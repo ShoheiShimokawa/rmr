@@ -10,6 +10,10 @@ export const getByHandle = (handle) => {
   return axios.get(url + "account/handle", { params: { handle } });
 };
 
+export const registerAccount = (params) => {
+  return axios.post(url + "account/register", { params });
+};
+
 export const getFollower = (userId) => {
   return axios.get(url + "account/follower", { params: { userId } });
 };

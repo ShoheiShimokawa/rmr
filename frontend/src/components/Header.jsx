@@ -3,6 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import Toolbar from "@mui/material/Toolbar";
 import { FaPenNib } from "react-icons/fa";
+import { Login } from "./Login";
 import Button from "@mui/material/Button";
 import MenuIcon from "@mui/icons-material/Menu";
 import PostAddRoundedIcon from "@mui/icons-material/PostAddRounded";
@@ -28,13 +29,16 @@ import {
   IconButton,
   ListItemButton,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 
 export const Header = () => {
   const { user, setUser } = useContext(UserContext);
   const [anchor, setAnchor] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
   const navigate = useNavigate();
-  const goLogin = () => navigate("/login");
   const handleClick = (e) => {
     setAnchor(e.currentTarget);
   };
@@ -42,13 +46,27 @@ export const Header = () => {
     setAnchor(null);
   };
   const handleLogin = () => {
-    goLogin();
+    setShowLogin(true);
+  };
+  const handleLoginClose = () => {
+    setShowLogin(false);
   };
   const handleLogout = () => {
     setUser(null);
   };
   return (
     <div>
+      <Dialog
+        onClose={handleLoginClose}
+        open={showLogin}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Login</DialogTitle>
+        <DialogContent>
+          <Login updated={handleLoginClose} />
+        </DialogContent>
+      </Dialog>
       <AppBar
         position="fixed"
         elevation={0}
@@ -82,11 +100,10 @@ export const Header = () => {
               </IconButton>
               <Avatar
                 component={Link}
-                to={`/userPage/${user && user.handle}`}
+                to={`/${user && user.handle}`}
                 src={user && user.picture}
-                sx={{ width: 32, height: 32 }}
+                sx={{ width: 34, height: 34 }}
               />
-
               <IconButton
                 aria-label="more"
                 id="long-button"
@@ -104,7 +121,7 @@ export const Header = () => {
               >
                 {user ? (
                   <MenuItem>
-                    <ListItemIcon>
+                    <ListItemIcon onClick={() => handleLogout()}>
                       <LogoutRoundedIcon />
                     </ListItemIcon>
                     <ListItemText onClick={() => handleLogout()}>
@@ -127,7 +144,7 @@ export const Header = () => {
                   sx={{
                     textDecoration: "none",
                     "&:hover": {
-                      textDecoration: "none", // 👈 ホバー時も
+                      textDecoration: "none",
                     },
                   }}
                 >

@@ -45,9 +45,9 @@ public class AuthController {
     	 if(account.isPresent()) {
     		 user=account.get();
     	 }else {
-    		 var kari=Account.builder().googleSub((String)userInfo.get("sub")).email((String)userInfo.get("email"))
+    		 user=Account.builder().googleSub((String)userInfo.get("sub")).email((String)userInfo.get("email"))
     				 .name((String)userInfo.get("name")).picture((String)userInfo.get("picture")).build();
-    		user=service.register(kari);
+    		// user=service.register(kari);
     	 }
          return ResponseEntity.ok(Map.of("user",user));
      } else {

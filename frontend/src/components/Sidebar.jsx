@@ -31,7 +31,7 @@ export const Sidebar = () => {
   const { user, setUser } = useContext(UserContext);
   const [anchor, setAnchor] = useState(null);
   const items = [
-    { text: "Community", path: "/community", icon: <PeopleIcon /> },
+    { text: "Community", path: "/", icon: <PeopleIcon /> },
     { text: "Search", path: "/book", icon: <SearchIcon /> },
     { text: "Analytics", path: "/analytics", icon: <AutoGraphIcon /> },
   ];

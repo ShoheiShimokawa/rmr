@@ -21,28 +21,25 @@ function App() {
         <UserProvider>
           <Box>
             <CssBaseline />
-
             <Header />
-
             <Sidebar />
-
             <Box
               component="main"
               sx={{
                 flexGrow: 1,
                 display: "flex",
-                p: 3,
+                p: 1,
                 // justifyContent: "center",
                 // alignItems: "center",
                 ml: "360px", // Sidebar の幅を考慮
                 pt: "70px",
               }}
             >
-              <Box sx={{ width: "100%", maxWidth: 600 }}>
+              <Box sx={{ width: "100%", maxWidth: 650 }}>
                 <Routes>
                   <Route path="/login" element={<Login />} />
                   <Route path="/book" element={<BookSearch />} />
-                  <Route path="/community" element={<Community />} />
+                  <Route path="/" element={<Community />} />
                   <Route
                     path="/analytics"
                     element={
@@ -54,7 +51,7 @@ function App() {
                   <Route path="/information" element={<Information />} />
 
                   <Route path="/postRegister" element={<PostRegister />} />
-                  <Route path="/userPage/:handle" element={<UserPage />} />
+                  <Route path="/:handle" element={<UserPage />} />
                   <Route path="/handleRegister" element={<HandleRegister />} />
                 </Routes>
               </Box>

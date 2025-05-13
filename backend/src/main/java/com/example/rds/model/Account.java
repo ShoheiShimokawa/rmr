@@ -72,11 +72,18 @@ public class Account {
 	// };
 	
 	/** アカウントを登録します。 */
-	public static Account register(AccountRepository rep,Account account) {
+	public static Account register(AccountRepository rep, Account account) {
 		return rep.save(account);
 	}
 	
-	/** ログアウトします。 */
+		public static record RegisterAccount(
+			String googleSub,
+			String handle,
+			String name,
+			String picture,
+			String email) {
+    }
+	
 	
 	/** プロフィールを変更します。（初期段階は自己紹介文のみ）*/
 	public static Account update(AccountRepository rep,UpdateProfile params) {

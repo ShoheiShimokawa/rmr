@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import { getPostAll } from "../api/post";
 import { Post } from "./Post";
-import { Book } from "./book/Book";
 import { debounce } from "lodash";
 import { Link } from "react-router-dom";
 import UserContext from "./UserProvider";
@@ -9,13 +8,7 @@ import { registerReading } from "../api/reading";
 import { HandleRegister } from "./HandleRegister";
 import { good, deleteGood, getGooder, getGoodPostAll } from "../api/post";
 import {
-  Avatar,
-  Card,
-  CardContent,
-  Tooltip,
-  Box,
   Divider,
-  IconButton,
   Button,
   Dialog,
   DialogTitle,
@@ -30,7 +23,6 @@ export const Community = ({}) => {
   const { user } = useContext(UserContext);
   const [goodPosts, setGoodPosts] = useState({});
   const [selectedPost, setSelectedPost] = useState();
-  const [kari, setKari] = useState(false);
   const [showBookDetail, setShowBookDetail] = useState(false);
   const [selectedBook, setSelectedBook] = useState();
 
@@ -41,14 +33,6 @@ export const Community = ({}) => {
     const goodList = await getGoodPostAll(user && user.userId);
     var a = goodList && goodList.data.map((good) => good.post.postId);
     setGoodPosts(a);
-  };
-
-  const handleKari = () => {
-    setKari(true);
-  };
-
-  const handleCloseKari = () => {
-    setKari(false);
   };
 
   const handleGood = useCallback(
@@ -82,22 +66,6 @@ export const Community = ({}) => {
   }, []);
   return (
     <div>
-      <Button
-        size="small"
-        variant="contained"
-        onClick={() => {
-          handleKari();
-        }}
-      >
-        kari_registerHandle
-      </Button>
-      <Dialog onClose={handleCloseKari} open={kari}>
-        <DialogTitle>create Account</DialogTitle>
-        <DialogContent>
-          <HandleRegister account={user} />
-        </DialogContent>
-      </Dialog>
-
       <div className="container space-y-1 w-xl">
         {posts.length !== 0 && (
           <>

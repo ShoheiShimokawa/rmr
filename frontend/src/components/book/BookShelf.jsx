@@ -7,7 +7,7 @@ import UserContext from "../UserProvider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { statusTypeStr, judgeIcon } from "../../badge/index";
-import { MyBookDetail } from "./MyBookDetail";
+import { BookDetail } from "./BookDetail";
 import { BookRegister } from "./BookRegister";
 import { ReadingRegister } from "../ReadingRegister";
 import { findReadingByUser } from "../../api/reading";
@@ -31,12 +31,12 @@ export const BookShelf = ({ account }) => {
   const [readings, setReadings] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const { user } = useContext(UserContext);
-  console.log("fafa");
   console.log(account);
   const [open, setOpen] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
   const [showReadingRegister, setShoWReadingRegister] = useState(false);
   const [reading, setReading] = useState();
+  const [book, setBook] = useState();
   const { showMessage, AlertComponent } = useMessage();
 
   const recent = readings.filter((r) => {
@@ -76,6 +76,7 @@ export const BookShelf = ({ account }) => {
 
   const handleSelect = (selectedReading) => {
     setReading(selectedReading);
+    setBook(selectedReading.book);
     setShoWReadingRegister(false);
     setOpen(true);
   };
@@ -111,7 +112,7 @@ export const BookShelf = ({ account }) => {
           <DialogContent>
             <div>
               {!showReadingRegister ? (
-                <MyBookDetail
+                <BookDetail
                   reading={reading}
                   show={() => {
                     setShoWReadingRegister(true);
@@ -120,6 +121,7 @@ export const BookShelf = ({ account }) => {
                     find();
                     setOpen(false);
                   }}
+                  book={book}
                 />
               ) : (
                 <ReadingRegister
