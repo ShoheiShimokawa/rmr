@@ -26,8 +26,16 @@ export const HandleRegister = ({ account }) => {
       name: account.name && account.name,
     },
   });
-  const onSubmit = async () => {
-    const result = await registerAccount();
+  const onSubmit = async (values) => {
+    const params = {
+      ...values,
+      googleSub: account.googleSub,
+      picture: account.picture,
+      email: account.email,
+    };
+    console.log(params);
+    const result = await registerAccount(params);
+    console.log(result);
   };
   return (
     <div>

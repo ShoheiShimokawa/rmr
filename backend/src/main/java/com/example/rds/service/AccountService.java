@@ -1,5 +1,6 @@
 package com.example.rds.service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import com.example.rds.model.Account.RegisterAccount;
 import com.example.rds.model.Account;
 import com.example.rds.model.Account.UpdateProfile;
 
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -33,9 +34,18 @@ public class AccountService {
 	}
 	
 	/** アカウントをアプリに登録します。 */
-	public Account register(RegisterAccount account) {
-		Account param = getByHandle(account.handle()).orElseThrow(() -> new EntityNotFoundException("The handle is exist."));
-		return Account.register(rep, param);
+	public Account register(RegisterAccount params) {
+	getByHandle(params.handle()).ifPresent(account -> {
+    throw new EntityExistsException("The handle already exists.");
+});
+	Account user = Account.builder()
+			.handle(params.handle())
+			.name(params.name())
+			.picture(params.picture())
+			.googleSub(params.googleSub())
+			.RegisterDate(LocalDate.now())
+			.build();
+		return Account.register(rep, user);
 	}
 	
 	/** アカウント情報を更新します。 */

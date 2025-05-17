@@ -237,6 +237,7 @@ export const BookDetail = ({ reading, book, updated }) => {
         </div>
       </div>
       <Divider />
+
       <div className="flex mt-2 mb-4 justify-evenly">
         <div className="flex place-items-center">
           {doing.length !== 0 ? (
@@ -284,8 +285,7 @@ export const BookDetail = ({ reading, book, updated }) => {
           <div className="ml-1 text-sm">read it.</div>
         </div>
       </div>
-
-      <div className="text-lg mb-2">Readers' comments</div>
+      <div className="text-lg mb-2 mt-3">Readers' comments</div>
       {posts.length >= 1 ? (
         <>
           {posts.map((post) => (

@@ -5,6 +5,7 @@ import { useContext } from "react";
 import UserContext from "../UserProvider";
 import { findBooks } from "../../api/book";
 import { Paper, CircularProgress } from "@mui/material";
+import { Book } from "./Book";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -126,7 +127,6 @@ export const BookSearch = ({ fromPost }) => {
     <div>
       <Dialog
         open={open}
-        maxWidth={"md"}
         sx={{
           "& .MuiDialog-paper": {
             width: "650px",
@@ -149,7 +149,7 @@ export const BookSearch = ({ fromPost }) => {
             sx={{
               p: "2px 4px",
               display: "flex",
-              alignItems: "center",
+              // alignItems: "center",
               width: 400,
             }}
           >
@@ -195,20 +195,16 @@ export const BookSearch = ({ fromPost }) => {
                   >
                     <CardContent>
                       <div className="flex gap-6">
-                        <Box
-                          component="img"
-                          src={book.volumeInfo.imageLinks?.thumbnail}
-                        />
-                        <div className="space-y-2">
+                        <Book src={book.volumeInfo.imageLinks?.thumbnail} />
+
+                        <div className="ml-2 text-sm">
                           <div>{book.volumeInfo.title}</div>
-                          <div>
+                          <div className="text-zinc-500 mt-2 text-sm">
                             {book.volumeInfo.authors
                               ? book.volumeInfo.authors[0]
                               : ""}
                           </div>
-                          <div>{judgeRead(book)}</div>
-                          {/* <Divider sx={{ height: 20, m: 0.5 }} />
-                                            <p className="text-sm">{book.volumeInfo.description && shrinkDescription(book.volumeInfo.description)}</p> */}
+                          <div className="mt-3">{judgeRead(book)}</div>
                         </div>
                       </div>
                     </CardContent>

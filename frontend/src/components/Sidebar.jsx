@@ -22,6 +22,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import { FaBook } from "react-icons/fa";
 import { useContext, useState } from "react";
 import UserContext from "./UserProvider";
@@ -33,6 +34,11 @@ export const Sidebar = () => {
   const items = [
     { text: "Community", path: "/", icon: <PeopleIcon /> },
     { text: "Search", path: "/book", icon: <SearchIcon /> },
+    {
+      text: "Highlights",
+      path: "/highlights",
+      icon: <DescriptionRoundedIcon />,
+    },
     { text: "Analytics", path: "/analytics", icon: <AutoGraphIcon /> },
   ];
   const navigate = useNavigate();
@@ -53,19 +59,19 @@ export const Sidebar = () => {
     <div>
       <Box
         sx={{
-          width: "250px", // 固定幅
-          height: "100vh", // 画面いっぱいの高さ
-          position: "fixed", // スクロールしても固定
-          left: "100px", // 左に余白をとる
+          width: "250px",
+          height: "100vh",
+          position: "fixed",
+          left: "100px",
           top: 10,
           bgcolor: "background.paper",
           borderRight: "1px solid #ddd",
-          p: 1, // 内側余白（padding）
+          p: 1,
         }}
       >
         <List>
           {items.map((item) => (
-            <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
+            <ListItem key={item.text} disablePadding>
               <ListItemButton
                 component={Link}
                 to={item.path}

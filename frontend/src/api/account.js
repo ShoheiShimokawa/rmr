@@ -11,7 +11,7 @@ export const getByHandle = (handle) => {
 };
 
 export const registerAccount = (params) => {
-  return axios.post(url + "account/register", { params });
+  return axios.post(url + "account/register", params);
 };
 
 export const getFollower = (userId) => {

@@ -5,6 +5,7 @@ import { PostRegister } from "./components/PostRegister";
 import { ReadingAnalytics } from "./components/ReadingAnalytics";
 import { Information } from "./components/Information";
 import { UserPage } from "./components/UserPage";
+import { Memo } from "./components/Memo";
 import { Login } from "./components/Login";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
@@ -49,7 +50,7 @@ function App() {
                     }
                   />
                   <Route path="/information" element={<Information />} />
-
+                  <Route path="highlights" element={<Memo />} />
                   <Route path="/postRegister" element={<PostRegister />} />
                   <Route path="/:handle" element={<UserPage />} />
                   <Route path="/handleRegister" element={<HandleRegister />} />

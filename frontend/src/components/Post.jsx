@@ -163,14 +163,14 @@ export const Post = ({ post, visible, fromDetail }) => {
                       </div>
 
                       {visible && (
-                        <div className="flex mt-3">
+                        <div className="flex mt-4">
                           <Book
                             book={post.reading.book}
                             onClick={() => {
                               handleShowBookDetail(post.reading.book);
                             }}
                           />
-                          <div className="ml-2 text-sm">
+                          <div className="ml-2 text-sm text-zinc-600">
                             <div>{post.reading.book.title}</div>
                             <div className="text-zinc-500 mt-2 text-sm">
                               {post.reading.book.author}
