@@ -1,4 +1,13 @@
-import { PieChart, LineChart, ChartContainer } from "@mui/x-charts";
+import {
+  ChartContainer,
+  PieChart,
+  LineChart,
+  ChartsItemTooltipContent,
+  ChartsTooltip,
+  LinePlot,
+  ChartsXAxis,
+  ChartsYAxis,
+} from "@mui/x-charts";
 import { Card, CardContent, Typography, Grid } from "@mui/material";
 import { findReadingByUser } from "../api/reading";
 import { useContext } from "react";
@@ -11,6 +20,8 @@ export const ReadingAnalytics = () => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [monthlyData, setMonthlyData] = useState([]);
+
+  const maxValue = Math.max(...monthlyData.map((item) => item.total));
 
   const find = async () => {
     setLoading(true);
@@ -46,7 +57,9 @@ export const ReadingAnalytics = () => {
       <div>
         <Card sx={{ p: 1, borderRadius: "13px", boxShadow: 3 }}>
           <CardContent>
-            <div className="">Trends by Genre</div>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Trends by Genre
+            </Typography>
             {data.length !== 0 && loading === false && (
               <div className="flex justify-start">
                 <PieChart
@@ -76,7 +89,48 @@ export const ReadingAnalytics = () => {
             <Typography variant="h6" sx={{ mb: 2 }}>
               Monthly Reading Volume
             </Typography>
-            {monthlyData.length != 0 && (
+            {monthlyData.length != 0 ? (
+              // <ChartContainer
+              //   width={500}
+              //   height={300}
+              //   series={[
+              //     {
+              //       type: "line",
+              //       data: monthlyData.map((item) => item.total),
+              //     },
+              //   ]}
+              //   xAxis={[
+              //     {
+              //       id: "month",
+              //       data: monthlyData.map((item) => item.month),
+              //       scaleType: "band",
+              //     },
+              //   ]}
+              //   yAxis={[
+              //     {
+              //       min: 0,
+              //       max: maxValue < 5 ? 5 : undefined,
+              //       tickMinStep: 1,
+              //     },
+              //   ]}
+              //   slotProps={{
+              //     tooltip: {
+              //       content: ({ dataIndex }) => {
+              //         const pointData = monthlyData[dataIndex];
+              //         return (
+              //           <ChartsItemTooltipContent
+              //             label={`Month: ${pointData.month} | Breakdown: ${pointData.breakdown}`}
+              //             value={pointData.total}
+              //           />
+              //         );
+              //       },
+              //     },
+              //   }}
+              // >
+              //   <LinePlot />
+              //   <ChartsXAxis />
+              //   <ChartsYAxis />
+              // </ChartContainer>
               <LineChart
                 xAxis={[
                   {
@@ -86,7 +140,9 @@ export const ReadingAnalytics = () => {
                 ]}
                 yAxis={[
                   {
-                    min: 0, // Y軸の最小値
+                    min: 0,
+                    tickMinStep: 1,
+                    max: maxValue < 5 ? 5 : undefined,
                   },
                 ]}
                 series={[
@@ -94,24 +150,42 @@ export const ReadingAnalytics = () => {
                     data: monthlyData.map((item) => item.total),
                   },
                 ]}
-                width={500}
+                width={450}
                 height={300}
-                tooltip={{
-                  trigger: "item", // 各データポイントでツールチップを表示
-                  formatter: (params) => {
-                    const pointData = monthlyData[params.dataIndex];
-                    return `
-                                <div>
-                                  <b>Month:</b> ${pointData.month}<br />
-                                  <b>Total:</b> ${pointData.total}<br />
-                                  <b>Breakdown:</b><br />
-                                  - Apples: ${pointData.breakdown}<br />
-                                  - Oranges: ${pointData.breakdown}
-                                </div>
-                              `;
+                slotProps={{
+                  tooltip: {
+                    content: ({ dataIndex, series }) => {
+                      const pointData = monthlyData[dataIndex];
+                      return (
+                        <ChartsTooltip>
+                          <ChartsItemTooltipContent
+                            label={`Month: ${pointData.month}`}
+                            value={pointData.total}
+                            valueFormatter={`Breakdown: ${pointData.breakdown}`}
+                          />
+                        </ChartsTooltip>
+                      );
+                    },
                   },
                 }}
               />
+            ) : (
+              // tooltip={{
+              //   trigger: "item", // 各データポイントでツールチップを表示
+              //   formatter: (params) => {
+              //     const pointData = monthlyData[params.dataIndex];
+              //     return `
+              //                 <div>
+              //                   <b>Month:</b> ${pointData.month}<br />
+              //                   <b>Total:</b> ${pointData.total}<br />
+              //                   <b>Breakdown:</b><br />
+              //                   - Apples: ${pointData.breakdown}<br />
+              //                   - Oranges: ${pointData.breakdown}
+              //                 </div>
+              //               `;
+              //   },
+              // }}
+              <div>No data.</div>
             )}
           </Card>
         </Grid>

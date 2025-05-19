@@ -60,13 +60,15 @@ export const Sidebar = () => {
       <Box
         sx={{
           width: "250px",
-          height: "100vh",
-          position: "fixed",
-          left: "100px",
-          top: 10,
+          position: "sticky",
+          // left: "100px",
+          top: "70px",
           bgcolor: "background.paper",
-          borderRight: "1px solid #ddd",
+          // borderRight: "1px solid #ddd",
+          alignSelf: "flex-start",
+
           p: 1,
+          px: 1,
         }}
       >
         <List>
@@ -76,6 +78,11 @@ export const Sidebar = () => {
                 component={Link}
                 to={item.path}
                 sx={{
+                  borderRadius: 2,
+                  mb: 1,
+                  px: 2,
+                  py: 1.5,
+                  transition: "0.2s",
                   textDecoration: "none",
                   "&:hover": {
                     textDecoration: "none",
@@ -93,7 +100,6 @@ export const Sidebar = () => {
                 <ListItemText
                   primary={item.text}
                   sx={{
-                    textDecoration: "none",
                     "&:hover": {
                       textDecoration: "none",
                     },

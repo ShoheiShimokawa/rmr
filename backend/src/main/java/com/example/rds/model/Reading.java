@@ -1,7 +1,6 @@
 package com.example.rds.model;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +58,6 @@ public class Reading {
 	private Integer rate;
 	/** 感想 */
 	private String thoughts;
-	/** 備考 */
-	private String description;
 	/** 登録日 */
 	private LocalDate registerDate;
 	/**  更新日 */
@@ -106,7 +103,7 @@ public class Reading {
 	@Builder
 	public record RegisterReading(Integer userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts,String description) {
 		public Reading create() {
-			return Reading.builder().rate(this.rate).statusType(this.statusType).thoughts(this.thoughts).description(this.description).registerDate(LocalDate.now()).build();
+			return Reading.builder().rate(this.rate).statusType(this.statusType).thoughts(this.thoughts).registerDate(LocalDate.now()).build();
 		}
 	}
 	
@@ -116,7 +113,6 @@ public class Reading {
 		Reading reading = rep.findById(params.readingId).orElseThrow(()->new EntityNotFoundException("Reading not found"));
 		reading.setRate(params.rate);
 		reading.setThoughts(params.thoughts);
-		reading.setDescription(params.description);
 		reading.setUpdateDate(LocalDate.now());		
 		reading.setStatusType(params.statusType);
 		if(params.statusType.equals(BookStatusType.DONE)) {
@@ -124,7 +120,7 @@ public class Reading {
 		return rep.save(reading);
 	}
 	/** 変更パラメタ */
-	public record UpdateReading(Integer readingId,String userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts,String description) {
+	public record UpdateReading(Integer readingId,String userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts) {
 	}
 	
 	/** 読書を読書中にします。*/

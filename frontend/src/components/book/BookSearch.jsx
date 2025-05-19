@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, Tooltip, Box } from "@mui/material";
 import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { useContext } from "react";
 import UserContext from "../UserProvider";
@@ -7,7 +6,6 @@ import { findBooks } from "../../api/book";
 import { Paper, CircularProgress } from "@mui/material";
 import { Book } from "./Book";
 import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import { findReadingByUser, registerReading } from "../../api/reading";
@@ -22,6 +20,10 @@ import {
   DialogContentText,
   DialogTitle,
   Chip,
+  Card,
+  CardContent,
+  Tooltip,
+  Box,
 } from "@mui/material";
 
 export const BookSearch = ({ fromPost }) => {
@@ -180,11 +182,11 @@ export const BookSearch = ({ fromPost }) => {
       )}
       <>
         {!iniSearch ? (
-          <div>initial </div>
+          <div></div>
         ) : (
           <>
             {books && books.length >= 1 ? (
-              <div className="container mx-auto space-y-3">
+              <div className="container mx-auto space-y-2">
                 {books.map((book) => (
                   <Card
                     key={book.id}

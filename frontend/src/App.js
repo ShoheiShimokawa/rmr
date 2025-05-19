@@ -11,7 +11,7 @@ import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { UserProvider } from "./components/UserProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Box, CssBaseline } from "@mui/material";
+import { Box, CssBaseline, Container, Divider } from "@mui/material";
 import { HandleRegister } from "./components/HandleRegister";
 import RequireAuth from "./components/RequireAuth";
 
@@ -20,44 +20,66 @@ function App() {
     <Router>
       <div className="App">
         <UserProvider>
-          <Box>
-            <CssBaseline />
-            <Header />
-            <Sidebar />
+          <CssBaseline />
+
+          <Container maxWidth="lg" sx={{ px: 2, overflow: "visible" }}>
             <Box
-              component="main"
               sx={{
-                flexGrow: 1,
-                display: "flex",
-                p: 1,
-                // justifyContent: "center",
-                // alignItems: "center",
-                ml: "360px", // Sidebar の幅を考慮
-                pt: "70px",
+                position: "sticky",
+                top: 0,
+                zIndex: (theme) => theme.zIndex.appBar,
+                backgroundColor: "white", // 背景指定しないと後ろが透ける
               }}
             >
-              <Box sx={{ width: "100%", maxWidth: 650 }}>
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/book" element={<BookSearch />} />
-                  <Route path="/" element={<Community />} />
-                  <Route
-                    path="/analytics"
-                    element={
-                      <RequireAuth>
-                        <ReadingAnalytics />
-                      </RequireAuth>
-                    }
-                  />
-                  <Route path="/information" element={<Information />} />
-                  <Route path="highlights" element={<Memo />} />
-                  <Route path="/postRegister" element={<PostRegister />} />
-                  <Route path="/:handle" element={<UserPage />} />
-                  <Route path="/handleRegister" element={<HandleRegister />} />
-                </Routes>
+              <Header />
+            </Box>
+            <Box>
+              <Box
+                component="main"
+                sx={{
+                  flexGrow: 1,
+                  display: "flex",
+                  minHeight: "100vh",
+                  // p: 1,
+                  gap: 3,
+                  // justifyContent: "center",
+                  // alignItems: "center",
+
+                  // pt: "70px",
+                }}
+              >
+                <Sidebar />
+                <Divider
+                  orientation="vertical"
+                  flexItem
+                  sx={{ borderColor: "#ddd", alignSelf: "stretch" }}
+                />
+                <Box sx={{ width: "100%", maxWidth: 650, mt: 2 }}>
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/book" element={<BookSearch />} />
+                    <Route path="/" element={<Community />} />
+                    <Route
+                      path="/analytics"
+                      element={
+                        <RequireAuth>
+                          <ReadingAnalytics />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route path="/information" element={<Information />} />
+                    <Route path="highlights" element={<Memo />} />
+                    <Route path="/postRegister" element={<PostRegister />} />
+                    <Route path="/:handle" element={<UserPage />} />
+                    <Route
+                      path="/handleRegister"
+                      element={<HandleRegister />}
+                    />
+                  </Routes>
+                </Box>
               </Box>
             </Box>
-          </Box>
+          </Container>
         </UserProvider>
       </div>
     </Router>

@@ -68,13 +68,14 @@ export const Header = () => {
         </DialogContent>
       </Dialog>
       <AppBar
-        position="fixed"
+        position="sticky"
         elevation={0}
         sx={{
-          width: "calc(100% - 350px)",
+          // width: "calc(100% - 350px)",
           height: 54,
           backgroundColor: "white",
           color: "black",
+          alignSelf: "flex-start",
         }}
       >
         <Toolbar

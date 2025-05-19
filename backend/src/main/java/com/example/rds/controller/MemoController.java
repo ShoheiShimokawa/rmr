@@ -1,0 +1,34 @@
+package com.example.rds.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+
+import com.example.rds.model.Memo;
+import com.example.rds.model.Memo.ReadingMemoGroup;
+import com.example.rds.service.MemoService;
+
+import lombok.AllArgsConstructor;
+
+@RestController
+@AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api")
+public class MemoController {
+    private final MemoService service;
+
+    // @GetMapping("/memo")
+    // public List<Memo> get(Integer userId) {
+    //     return service.get(userId);
+    // }
+    
+    @GetMapping("/memo")
+    public List<ReadingMemoGroup> get(@RequestParam  Integer userId) {
+        return service.getGroupedMemos(userId);
+    }
+}

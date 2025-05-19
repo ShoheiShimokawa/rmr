@@ -1,20 +1,14 @@
 import { Book } from "./Book";
 import { Post } from "../Post";
 import React, { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, Tooltip } from "@mui/material";
-import { statusTypeStr, judgeIcon } from "../../badge/index";
+
 import { useContext } from "react";
 import UserContext from "../UserProvider";
 import { RiBookShelfFill } from "react-icons/ri";
 import { GiBookshelf } from "react-icons/gi";
-import {
-  findReadingByUser,
-  registerReading,
-  findReadingById,
-} from "../../api/reading";
+import { registerReading, findReadingById } from "../../api/reading";
 import { genreToEnum } from "../../util";
 import { Menu, MenuItem, MenuIcon } from "@mui/material";
-import { FaBook } from "react-icons/fa";
 import { registerBook } from "../../api/book";
 import { findPostByBookId } from "../../api/post";
 import { deleteReading, toDoing } from "../../api/reading";
