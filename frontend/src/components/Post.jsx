@@ -151,13 +151,13 @@ export const Post = ({ post, visible, fromDetail }) => {
                 {post.reading && (
                   <>
                     <div>
-                      {/* <Rating
+                      <Rating
                         className="mt-2"
                         name="read-only"
                         value={post.reading.rate}
                         size="small"
                         readOnly
-                      /> */}
+                      />
                       <div className="text-sm mt-1">
                         {post.reading.thoughts}
                       </div>

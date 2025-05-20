@@ -31,7 +31,6 @@ export const BookShelf = ({ account }) => {
   const [readings, setReadings] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const { user } = useContext(UserContext);
-  console.log(account);
   const [open, setOpen] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
   const [showReadingRegister, setShoWReadingRegister] = useState(false);

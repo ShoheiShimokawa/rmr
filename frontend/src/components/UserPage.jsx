@@ -42,9 +42,9 @@ export const UserPage = () => {
   };
   return (
     <div>
-      <IconButton component={Link} to="/" size="small">
+      {/* <IconButton component={Link} to="/" size="small">
         <ArrowBackIosNewRoundedIcon />
-      </IconButton>
+      </IconButton> */}
       {user && <Profile account={user} />}
       <Divider />
       <Tabs value={tabIndex} onChange={handleTabChange} className="mb-2">

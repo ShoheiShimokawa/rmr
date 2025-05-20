@@ -3,6 +3,7 @@ import { registerBook } from "../api/book";
 import { useContext, useEffect, useState } from "react";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import { IconButton } from "@mui/material";
+import { Book } from "./book/Book";
 import {
   Dialog,
   DialogActions,
@@ -74,7 +75,7 @@ export const PostRegister = () => {
     const book = {
       isbn: isbn.identifier ? isbn.identifier : "",
       id: selectedBook.id,
-      title: selectedBook.volumeInfo.title,
+      title: selectedBook.volumeInfo.title && selectedBook.volumeInfo.title,
       author: author,
       genre: genreToEnum(genre),
       description: selectedBook.volumeInfo.description,
@@ -101,11 +102,8 @@ export const PostRegister = () => {
           <Button onClick={handleClose}>Cancel</Button>
         </DialogActions>
       </Dialog>
-      <IconButton component={Link} to="/posts" size="small">
-        <ArrowBackIosNewRoundedIcon />
-      </IconButton>
       <div className="flex">
-        <div className="w-6/12">
+        <div className="flex-1">
           <div className="flex">
             <div>In my bookshelf...</div>
             <div>
@@ -115,16 +113,15 @@ export const PostRegister = () => {
             </div>
           </div>
           <div className="flex">
-            <BookArray books={recent && recent} handleSelect={handleSelect} />
-          </div>
-          <div className="ml-2">
-            {addedBook && (
-              <Box
-                component="img"
-                src={addedBook.thumbnail && addedBook.thumbnail}
-              />
+            {recent.length >= 1 ? (
+              <BookArray books={recent && recent} handleSelect={handleSelect} />
+            ) : (
+              <div className="text-sm text-gray-600">
+                Nothing in your reading or want-to-read bookshelf.{" "}
+              </div>
             )}
           </div>
+          <div className="ml-2">{addedBook && <Book book={addedBook} />}</div>
           <div className="mt-4">
             <ReadingRegister
               book={selectedBook && selectedBook}
@@ -136,8 +133,8 @@ export const PostRegister = () => {
             />
           </div>
         </div>
-        <div className="w-4/12">
-          <BookDetail book={selectedBook} />
+        <div className="flex-1">
+          {selectedBook && <BookDetail book={selectedBook} />}
         </div>
       </div>
     </div>

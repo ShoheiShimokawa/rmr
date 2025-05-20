@@ -143,12 +143,15 @@ export const BookDetail = ({ reading, book, updated }) => {
           <Button onClick={() => handleCloseRegister()}>Cancel</Button>
         </DialogActions>
       </Dialog>
+
       <div className="flex">
-        <Book book={book} />
-        <div className="ml-3">
-          <div className="text-lg"> {book.title && book.title}</div>
-          <div className="mt-1">{book.author}</div>
-        </div>
+        <>
+          <Book book={book} />
+          <div className="ml-3">
+            <div className="text-lg"> {book.title && book.title}</div>
+            <div className="mt-1">{book.author}</div>
+          </div>
+        </>
       </div>
       <div>
         <div className="mt-3 mb-1">

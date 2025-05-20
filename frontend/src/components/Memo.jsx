@@ -10,12 +10,22 @@ import {
   Chip,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { MemoDetail } from "./MemoDetail";
+import { MemoRegister } from "./MemoRegister";
 
 export const Memo = () => {
   const [memos, setMemos] = useState([]);
   const { user } = useContext(UserContext);
+  const [openDetail, setOpenDetail] = useState(false);
+  const [selectedMemo, setSelectedMemo] = useState(null);
+  const [openRegister, setOpenRegister] = useState(false);
 
   const formatted = useMemo(() => {
     return memos.map((item) => {
@@ -45,6 +55,23 @@ export const Memo = () => {
     });
   }, [memos]);
 
+  const handleOpenRegister = () => {
+    setOpenRegister(true);
+  };
+
+  const handleCloseRegister = () => {
+    setOpenRegister(false);
+  };
+
+  const handleOpenDetail = (index) => {
+    setSelectedMemo(memos[index]);
+    setOpenDetail(true);
+  };
+
+  const handleCloseDetail = () => {
+    setOpenDetail(false);
+  };
+
   const find = async () => {
     const result = await getMemos(user && user.userId);
     setMemos(result.data);
@@ -55,10 +82,45 @@ export const Memo = () => {
   }, []);
   return (
     <div>
+      <Dialog
+        open={openDetail}
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "650px",
+            maxWidth: "none",
+          },
+        }}
+      >
+        <DialogTitle>Highlights</DialogTitle>
+        <DialogContent>
+          <MemoDetail memo={selectedMemo && selectedMemo} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDetail}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openRegister}
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "650px",
+            maxWidth: "none",
+          },
+        }}
+      >
+        <DialogTitle>Add Highlight</DialogTitle>
+        <DialogContent>
+          <MemoRegister />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseRegister}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
       <Button
-        variant="outline"
+        variant="outlined"
+        size="small"
         startIcon={<AddIcon />}
-        // onClick={handleOpen}
+        onClick={handleOpenRegister}
         sx={{
           textTransform: "none",
           backgroundColor: "#000",
@@ -76,8 +138,20 @@ export const Memo = () => {
           <>
             {formatted.map((entry, i) => (
               <Box
+                className="cursor-pointer"
                 key={i}
-                sx={{ mb: 1, p: 2, border: "1px solid #ccc", borderRadius: 2 }}
+                sx={{
+                  mb: 1,
+                  p: 2,
+                  border: "1px solid #ccc",
+                  borderRadius: 2,
+                  "&:hover": {
+                    filter: "brightness(0.8)",
+                  },
+                }}
+                onClick={() => {
+                  handleOpenDetail(i);
+                }}
               >
                 {/* ラベル表示 */}
                 <Box sx={{ mb: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
@@ -87,6 +161,12 @@ export const Memo = () => {
                       label={label.name}
                       variant="outlined"
                       size="small"
+                      sx={{
+                        textDecoration: "none",
+                        "&:hover": {
+                          textDecoration: "none",
+                        },
+                      }}
                     />
                   ))}
                 </Box>
@@ -101,7 +181,7 @@ export const Memo = () => {
                     color="text.secondary"
                     sx={{ mb: 1 }}
                   >
-                    🧾 other {entry.otherCount} memo
+                    🗒️ other {entry.otherCount} memo
                     {entry.otherCount > 1 ? "s" : ""}
                   </Typography>
                 )}

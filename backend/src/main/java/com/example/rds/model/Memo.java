@@ -40,6 +40,8 @@ public class Memo {
     private Account user;
     /** メモ */
     private String memo;
+    /** ページ数 */
+    private Integer page;
     /** ラベルID */
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "label_id",referencedColumnName = "labelId")
@@ -67,23 +69,23 @@ public class Memo {
     return grouped.entrySet().stream().map(readingEntry -> {
         Reading reading = readingEntry.getKey();
 
-        List<LabelingMemo> memosByLabel = readingEntry.getValue().entrySet().stream()
+        List<LabelingMemo> labelingMemo = readingEntry.getValue().entrySet().stream()
             .map(labelEntry -> new LabelingMemo(
                 new LabelDto(labelEntry.getKey().getLabelId(), labelEntry.getKey().getName()),
                 labelEntry.getValue().stream()
-                    .map(memo -> new MemoDto(memo.getMemoId(), memo.getMemo(), memo.getRegisterDate()))
+                    .map(memo -> new MemoDto(memo.getMemoId(), memo.getMemo(),memo.getPage(), memo.getRegisterDate()))
                     .toList()
             ))
-            .toList();
+                .toList();
 
         return new ReadingMemoGroup(
             reading,
-            memosByLabel
+            labelingMemo
         );
     }).toList();
 }
 
-public record MemoDto(Integer memoId, String memo, LocalDate registerDate) {}
+public record MemoDto(Integer memoId, String memo,Integer page, LocalDate registerDate) {}
 
 public record LabelDto(Integer labelId, String name) {}
 

@@ -14,7 +14,6 @@ export const ReadingRegister = ({ book, reading, updated }) => {
   const formSchema = z.object({
     rate: z.number().min(1, "rate is required."),
     thoughts: z.string().min(1, "thoughts is required."),
-    description: z.string().max(200).optional(),
   });
 
   const {
@@ -80,7 +79,7 @@ export const ReadingRegister = ({ book, reading, updated }) => {
         </div>
         <TextField
           {...register("thoughts")}
-          label="thoughts"
+          placeholder="share your thoughts or feelings."
           variant="outlined"
           multiline
           fullWidth
@@ -90,16 +89,7 @@ export const ReadingRegister = ({ book, reading, updated }) => {
           helperText={errors.thoughts?.message}
           disabled={isDisabled}
         />
-        <TextField
-          {...register("memo")}
-          label="memo"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          error={!!errors.memo}
-          helperText={errors.memo?.message}
-          disabled={isDisabled}
-        />
+
         <Button
           type="submit"
           variant="contained"
