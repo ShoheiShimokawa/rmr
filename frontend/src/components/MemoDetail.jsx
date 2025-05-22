@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import { Book } from "./book/Book";
+import { BookInfo } from "./book/BookInfo";
 
 export const MemoDetail = ({ memo }) => {
   return (
@@ -27,7 +27,7 @@ export const MemoDetail = ({ memo }) => {
         <div>
           <Box sx={{ mb: 4 }}>
             <div>
-              <Book book={memo.reading.book} />
+              <BookInfo book={memo.reading.book} />
             </div>
 
             {memo.labelingMemo.map((group, j) => (

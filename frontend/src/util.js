@@ -128,3 +128,7 @@ export const mergeActivityData = (baseDates, activityData) => {
     return match ? match : d;
   });
 };
+
+export const isBlank = (str) => {
+  return /^\s*$/.test(str);
+};

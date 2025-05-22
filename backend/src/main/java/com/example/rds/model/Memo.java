@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.rds.context.LabelRepository;
 import com.example.rds.context.MemoRepository;
+import com.example.rds.context.ReadingRepository;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -55,6 +58,26 @@ public class Memo {
     public static List<Memo> get(MemoRepository rep, Integer userId) {
         return rep.findByUserId(userId);
     }
+
+    /** メモを登録します。 */
+    public static Memo register(MemoRepository rep,ReadingRepository rRep,LabelRepository lRep,RegisterMemo params) {
+        Reading reading=rRep.findById(params.readingId).orElseThrow(() -> new EntityNotFoundException("reading not found"));
+        Account user = reading.getUser();
+        Label label = lRep.findById(params.labelId).orElseThrow(() -> new EntityNotFoundException("label not found"));
+        Memo memo = Memo.builder().reading(reading).user(user).memo(params.memo).label(label)
+                .page(params.page).build();
+        return rep.save(memo);
+    }
+
+    /** 登録パラメタ */
+    @Builder
+    public static record RegisterMemo(
+        Integer readingId,
+        Integer userId,
+        String memo,
+        Integer page,
+        Integer labelId
+    ){};
 
     /** ラベリングされたメモを返します。 */
     public static List<ReadingMemoGroup> getGroupedMemos(MemoRepository rep,Integer userId) {

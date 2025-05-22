@@ -101,7 +101,15 @@ export const BookShelf = ({ account }) => {
   }, []);
   return (
     <>
-      <Dialog open={open}>
+      <Dialog
+        open={open}
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "600px",
+            maxWidth: "none",
+          },
+        }}
+      >
         <Slide in direction="left" appear={false}>
           <DialogTitle>
             {!showReadingRegister ? "Detail" : "Review"}

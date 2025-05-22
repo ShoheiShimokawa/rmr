@@ -5,6 +5,7 @@ import UserContext from "../UserProvider";
 import { findBooks } from "../../api/book";
 import { Paper, CircularProgress } from "@mui/material";
 import { Book } from "./Book";
+import { isBlank } from "../../util";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -98,7 +99,7 @@ export const BookSearch = ({ fromPost }) => {
   };
 
   const handleSearch = () => {
-    searchBooks();
+    !isBlank(query) && searchBooks();
   };
 
   const shrinkDescription = (description) => {
@@ -108,7 +109,7 @@ export const BookSearch = ({ fromPost }) => {
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
+    if (!isBlank(query) && event.key === "Enter") {
       event.preventDefault();
       handleSearch();
     }
@@ -189,8 +190,15 @@ export const BookSearch = ({ fromPost }) => {
               <div className="container mx-auto space-y-2">
                 {books.map((book) => (
                   <Card
+                    className="cursor-pointer"
                     key={book.id}
-                    sx={{ maxWidth: 800 }}
+                    sx={{
+                      maxWidth: 800,
+                      transition: "0.3s ease",
+                      "&:hover": {
+                        filter: "brightness(0.9)",
+                      },
+                    }}
                     onClick={() =>
                       !fromPost ? handleOpenDetail(book) : fromPost(book)
                     }

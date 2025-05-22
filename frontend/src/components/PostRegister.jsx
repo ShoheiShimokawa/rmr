@@ -24,7 +24,6 @@ import { genreToEnum } from "../util";
 
 export const PostRegister = () => {
   const { user } = useContext(UserContext);
-
   const [reading, setReading] = useState();
   const [readings, setReadings] = useState([]);
   const [open, setOpen] = useState(false);
@@ -56,7 +55,6 @@ export const PostRegister = () => {
   };
 
   const handleSearch = () => {
-    setIsFromPost(true);
     setOpen(true);
   };
 
@@ -83,6 +81,7 @@ export const PostRegister = () => {
       publishedDate: selectedBook.volumeInfo.publishedDate,
     };
     const result = await registerBook(book);
+    console.log("success register book!");
     setAddedBook(result && result.data);
     setSelectedBook(result.data);
     setOpen(false);
@@ -106,21 +105,19 @@ export const PostRegister = () => {
         <div className="flex-1">
           <div className="flex">
             <div>In my bookshelf...</div>
-            <div>
-              <IconButton>
-                <SearchIcon onClick={handleSearch} />
-              </IconButton>
-            </div>
           </div>
           <div className="flex">
             {recent.length >= 1 ? (
               <BookArray books={recent && recent} handleSelect={handleSelect} />
             ) : (
               <div className="text-sm text-gray-600">
-                Nothing in your reading or want-to-read bookshelf.{" "}
+                Nothing in your reading or want-to-read bookshelf.
               </div>
             )}
           </div>
+          <IconButton>
+            <SearchIcon onClick={handleSearch} />
+          </IconButton>
           <div className="ml-2">{addedBook && <Book book={addedBook} />}</div>
           <div className="mt-4">
             <ReadingRegister
@@ -133,6 +130,7 @@ export const PostRegister = () => {
             />
           </div>
         </div>
+
         <div className="flex-1">
           {selectedBook && <BookDetail book={selectedBook} />}
         </div>

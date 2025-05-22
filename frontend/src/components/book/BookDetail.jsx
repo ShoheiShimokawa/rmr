@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from "react";
 
 import { useContext } from "react";
 import UserContext from "../UserProvider";
-import { RiBookShelfFill } from "react-icons/ri";
 import { GiBookshelf } from "react-icons/gi";
 import { registerReading, findReadingById } from "../../api/reading";
 import { genreToEnum } from "../../util";
@@ -39,6 +38,7 @@ export const BookDetail = ({ reading, book, updated }) => {
   const { user } = useContext(UserContext);
   const [bookForReading, setBookForReading] = useState();
   const [posts, setPosts] = useState([]);
+  const [myReading, setMyReading] = useState();
   const [doing, setDoing] = useState([]);
   const [done, setDone] = useState([]);
 
@@ -120,6 +120,8 @@ export const BookDetail = ({ reading, book, updated }) => {
     setPosts(result.data);
     var iniReadings = await findReadingById(book.id && book.id);
     iniReadings &&
+      setMyReading(iniReadings.data.find((r) => r.user.userId === user.userId));
+    iniReadings &&
       setDoing(iniReadings.data.filter((r) => r.statusType === "DOING"));
     iniReadings &&
       setDone(iniReadings.data.filter((r) => r.statusType === "DONE"));
@@ -155,22 +157,28 @@ export const BookDetail = ({ reading, book, updated }) => {
       </div>
       <div>
         <div className="mt-3 mb-1">
-          <Button
-            variant="contained"
-            endIcon={<GiBookshelf />}
-            onClick={handleOpen}
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#000",
-              color: "#fff",
-              fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "#333",
-              },
-            }}
-          >
-            add bookshelf
-          </Button>
+          {myReading ? (
+            <div className="text-xs">
+              My Status:{<Chip label={myReading.statusType} size="small" />}
+            </div>
+          ) : (
+            <Button
+              variant="contained"
+              endIcon={<GiBookshelf />}
+              onClick={handleOpen}
+              sx={{
+                textTransform: "none",
+                backgroundColor: "#000",
+                color: "#fff",
+                fontWeight: "bold",
+                "&:hover": {
+                  backgroundColor: "#333",
+                },
+              }}
+            >
+              add bookshelf
+            </Button>
+          )}
         </div>
         <Menu
           className="absolute bottom-0"
@@ -217,7 +225,7 @@ export const BookDetail = ({ reading, book, updated }) => {
           </div>
         </Menu>
       </div>
-      <div className="text-sm font-sans mt-4 ml-1">{book.description}</div>
+      <div className="text-sm font-sans mt-3 ml-1">{book.description}</div>
       <div className="flex place-items-center  mt-2 ml-1 mb-1">
         <div className="text-xs mr-1 text-stone-600">Genre: </div>
         <Chip

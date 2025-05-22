@@ -13,7 +13,7 @@ export const Book = ({ book, onClick, src }) => {
         objectFit: "cover",
         transition: "0.3s ease",
         "&:hover": {
-          filter: "brightness(0.8)",
+          filter: "brightness(0.9)",
         },
       }}
       onClick={onClick}

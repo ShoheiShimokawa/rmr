@@ -13,7 +13,12 @@ export const ReadingRegister = ({ book, reading, updated }) => {
 
   const formSchema = z.object({
     rate: z.number().min(1, "rate is required."),
-    thoughts: z.string().min(1, "thoughts is required."),
+    thoughts: z
+      .string()
+      .min(1, "thoughts is required.")
+      .refine((val) => val.trim().length > 0, {
+        message: "thoughts is required",
+      }),
   });
 
   const {
@@ -27,7 +32,6 @@ export const ReadingRegister = ({ book, reading, updated }) => {
     defaultValues: {
       rate: reading ? reading.rate : null,
       thoughts: reading ? reading.thoughts : "",
-      memo: reading ? reading.desriotion : "",
     },
   });
   const onSubmit = async (values) => {
@@ -57,7 +61,7 @@ export const ReadingRegister = ({ book, reading, updated }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "400px" }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div style={{ display: "flex", marginBottom: "16px" }}>
           <Controller
             name="rate"

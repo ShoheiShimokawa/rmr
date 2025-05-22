@@ -1,6 +1,9 @@
 package com.example.rds.model;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import com.example.rds.context.LabelRepository;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -35,4 +38,11 @@ public class Label {
     private LocalDate registerDate;
     /** 更新日 */
     private LocalDate updateDate;
+
+    //userIdとラベルをwhereでSQL組む
+
+    /** ラベルを返します。 */
+    public static List<Label> get(LabelRepository rep,Integer userId){
+        return rep.findByUserId(userId);
+    }
 }

@@ -5,7 +5,6 @@ import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { useContext, useEffect, useState } from "react";
 
 export const BookArray = ({ books, handleSelect }) => {
-  const [selectedBook, setSelectedBook] = useState(null);
   return (
     <div>
       {books.length !== 0 && (
@@ -26,7 +25,6 @@ export const BookArray = ({ books, handleSelect }) => {
                       book={reading.book}
                       onClick={() => {
                         handleSelect && handleSelect(reading);
-                        setSelectedBook(reading.book);
                       }}
                       key={reading.readingId}
                     />
