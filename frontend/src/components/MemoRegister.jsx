@@ -18,6 +18,7 @@ import {
   Box,
   TextField,
   Autocomplete,
+  InputAdornment,
 } from "@mui/material";
 
 import { BookShelf } from "./book/BookShelf";
@@ -146,13 +147,20 @@ export const MemoRegister = (updated) => {
                 max: 9999,
               },
             }}
-            sx={{ width: "100px", ml: 1 }}
+            sx={{ width: "110px", ml: 1 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <div className="text-xs">page:</div>
+                </InputAdornment>
+              ),
+            }}
           />
         </div>
 
-        <div className="mt-3 mb-2">Label 🏷️</div>
+        <div className="mt-4 mb-2">Label 🏷️</div>
         <AutoComplete options={optionsLabel && optionsLabel} />
-        <div className="text-sm mb-3 ml-1 italic">
+        <div className="text-sm mb-3 ml-1 italic text-zinc-500">
           E.g. For work, Investment tips, Inspiring quotes
         </div>
         <div className="mt-1">

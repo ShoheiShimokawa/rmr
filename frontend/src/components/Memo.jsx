@@ -1,6 +1,7 @@
 import { getMemos } from "../api/memo";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
+import { CustomDialog } from "../ui/CustomDialog";
 import { useState, useEffect, useMemo } from "react";
 import {
   Card,
@@ -10,10 +11,6 @@ import {
   Chip,
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -82,40 +79,20 @@ export const Memo = () => {
   }, []);
   return (
     <div>
-      <Dialog
+      <CustomDialog
         open={openDetail}
-        sx={{
-          "& .MuiDialog-paper": {
-            width: "650px",
-            maxWidth: "none",
-          },
-        }}
+        title="Highlight"
+        onClose={handleCloseDetail}
       >
-        <DialogTitle>Highlights</DialogTitle>
-        <DialogContent>
-          <MemoDetail memo={selectedMemo && selectedMemo} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDetail}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
+        <MemoDetail memo={selectedMemo && selectedMemo} />
+      </CustomDialog>
+      <CustomDialog
         open={openRegister}
-        sx={{
-          "& .MuiDialog-paper": {
-            width: "650px",
-            maxWidth: "none",
-          },
-        }}
+        title="Add Highlight"
+        onClose={handleCloseRegister}
       >
-        <DialogTitle>Add Highlight</DialogTitle>
-        <DialogContent>
-          <MemoRegister />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseRegister}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+        <MemoRegister />
+      </CustomDialog>
       <Button
         variant="outlined"
         size="small"
@@ -188,7 +165,10 @@ export const Memo = () => {
 
                 {/* 本の情報 */}
                 <Typography variant="body2" color="text.secondary">
-                  📚 {entry.reading.book.title}（{entry.reading.book.author}）
+                  📚{" "}
+                  <div className="text-sm">
+                    {entry.reading.book.title}（{entry.reading.book.author}）
+                  </div>
                 </Typography>
               </Box>
             ))}

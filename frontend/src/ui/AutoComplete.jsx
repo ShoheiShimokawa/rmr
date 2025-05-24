@@ -1,4 +1,4 @@
-import { TextField, Autocomplete } from "@mui/material";
+import { TextField, Autocomplete, InputAdornment } from "@mui/material";
 import React, { useState } from "react";
 
 export const AutoComplete = ({ options }) => {
@@ -31,9 +31,7 @@ export const AutoComplete = ({ options }) => {
       clearOnBlur
       handleHomeEndKeys
       options={options}
-      renderInput={(params) => (
-        <TextField {...params} label="Fruits" variant="outlined" />
-      )}
+      renderInput={(params) => <TextField {...params} variant="outlined" />}
     />
   );
 };

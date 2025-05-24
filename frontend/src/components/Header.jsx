@@ -39,6 +39,8 @@ export const Header = () => {
   const [anchor, setAnchor] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const navigate = useNavigate();
+  const goToCommunity = () => navigate("/");
+
   const handleClick = (e) => {
     setAnchor(e.currentTarget);
   };
@@ -53,6 +55,7 @@ export const Header = () => {
   };
   const handleLogout = () => {
     setUser(null);
+    goToCommunity();
   };
   return (
     <div>
@@ -71,7 +74,6 @@ export const Header = () => {
         position="sticky"
         elevation={0}
         sx={{
-          // width: "calc(100% - 350px)",
           height: 54,
           backgroundColor: "white",
           color: "black",
