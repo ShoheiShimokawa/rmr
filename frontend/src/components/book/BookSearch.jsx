@@ -12,6 +12,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { findReadingByUser, registerReading } from "../../api/reading";
 import { genreToEnum } from "../../util";
 import { BookDetail } from "./BookDetail";
+import { CustomDialog } from "../../ui/CustomDialog";
 
 import {
   Button,
@@ -128,23 +129,9 @@ export const BookSearch = ({ fromPost }) => {
 
   return (
     <div>
-      <Dialog
-        open={open}
-        sx={{
-          "& .MuiDialog-paper": {
-            width: "650px",
-            maxWidth: "none",
-          },
-        }}
-      >
-        <DialogTitle>detail</DialogTitle>
-        <DialogContent>
-          <BookDetail reading={myReading} book={selectedBook} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDetail}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+      <CustomDialog open={open} title="detail" onClose={handleCloseDetail}>
+        <BookDetail reading={myReading} book={selectedBook} />
+      </CustomDialog>
       <div className="my-1">
         <form style={{ maxWidth: "400px", margin: "0 auto" }}>
           <Paper

@@ -1,11 +1,13 @@
 package com.example.rds.context;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.example.rds.model.Label;
 import com.example.rds.model.Reading;
 
 public interface ReadingRepository extends JpaRepository<Reading, Integer> {
@@ -29,5 +31,7 @@ public interface ReadingRepository extends JpaRepository<Reading, Integer> {
                 ORDER BY TO_CHAR(DATE_TRUNC('month', r.readDate), 'YYYY-MM')
             """)
     List<Object[]> findMonthlyReadingDataByUser(@Param("userId") Integer userId);
+
+    Optional<Reading> findByUserUserIdAndBookBookId(Integer userId, Integer bookId);
 
 }

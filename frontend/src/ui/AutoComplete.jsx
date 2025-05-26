@@ -1,7 +1,7 @@
 import { TextField, Autocomplete, InputAdornment } from "@mui/material";
 import React, { useState } from "react";
 
-export const AutoComplete = ({ options }) => {
+export const AutoComplete = ({ options, disabled }) => {
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
 
@@ -10,6 +10,7 @@ export const AutoComplete = ({ options }) => {
       freeSolo
       value={value}
       inputValue={inputValue}
+      disabled={disabled}
       onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
       onChange={(event, newValue) => setValue(newValue)}
       filterOptions={(options, params) => {

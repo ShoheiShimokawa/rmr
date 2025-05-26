@@ -1,16 +1,8 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import {
-  Card,
-  CardContent,
   Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Rating,
-  Divider,
-  ListItemAvatar,
   List,
-  ListItemText,
   Menu,
   MenuItem,
   IconButton,
@@ -21,6 +13,8 @@ import { BookDetail } from "./book/BookDetail";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useMessage } from "../ui/useMessage";
 import UserContext from "./UserProvider";
+import { BookInfo } from "../components/book/BookInfo";
+import { CustomDialog } from "../ui/CustomDialog";
 
 export const Post = ({ post, visible, fromDetail }) => {
   const { user } = useContext(UserContext);
@@ -53,7 +47,6 @@ export const Post = ({ post, visible, fromDetail }) => {
 
   const handleClose = () => {
     setOpen(false);
-    showMessage("test");
   };
 
   const handleOpenUpdate = () => {
@@ -63,17 +56,13 @@ export const Post = ({ post, visible, fromDetail }) => {
 
   return (
     <>
-      <Dialog
-        onClose={handleCloseBookDetail}
+      <CustomDialog
         open={showBookDetail}
-        maxWidth="sm"
-        fullWidth
+        title="Detail"
+        onClose={handleCloseBookDetail}
       >
-        <DialogTitle>Detail</DialogTitle>
-        <DialogContent>
-          <BookDetail book={selectedBook} />
-        </DialogContent>
-      </Dialog>
+        <BookDetail book={selectedBook} />
+      </CustomDialog>
       {post && (
         <List>
           <div key={post.postId} className="w-xl flex ">
@@ -163,20 +152,15 @@ export const Post = ({ post, visible, fromDetail }) => {
                       </div>
 
                       {visible && (
-                        <div className="flex mt-4">
-                          <Book
+                        <>
+                          <div className="mt-3"></div>
+                          <BookInfo
                             book={post.reading.book}
                             onClick={() => {
                               handleShowBookDetail(post.reading.book);
                             }}
                           />
-                          <div className="ml-2 text-sm text-zinc-600">
-                            <div>{post.reading.book.title}</div>
-                            <div className="text-zinc-500 mt-2 text-sm">
-                              {post.reading.book.author}
-                            </div>
-                          </div>
-                        </div>
+                        </>
                       )}
                       {/* {goodPosts.length > 0 &&
                           !goodPosts.includes(post.postId) ? (

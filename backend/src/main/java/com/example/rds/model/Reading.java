@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.example.rds.context.AccountRepository;
@@ -42,12 +43,12 @@ public class Reading {
 	@Id
 	private Integer readingId;
 	/** 本ID */
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name = "book_id")
 	private Book book;
 	/** ユーザID */
 	@NotNull
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
 	private Account user;
 	/** 進捗状態 */
@@ -64,6 +65,21 @@ public class Reading {
 	private LocalDate updateDate;
 	/** 読了日 */
 	private LocalDate readDate;
+
+	/** ユーザIDと本IDで、そのユーザに紐づく読書があれば返します。 */
+	public static Optional<Reading> getByUserIdAndBookId(ReadingRepository rep, Integer userId,Integer bookId) {
+		return rep.findByUserUserIdAndBookBookId(userId, bookId);
+	}
+
+	/** 検索パラメタ */
+	@Builder
+	public record SearchReading(Integer userId, Integer bookId) {
+	}
+
+	/** 読書IDで読書を取得します。 */
+	public static Reading get(ReadingRepository rep,Integer readingId) {
+		return rep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Reading not found"));
+	}
 	
 	/** 全ての読書を返します。 */
 	public static List<Reading> findAll(ReadingRepository rep) {

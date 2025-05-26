@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { GiBookshelf } from "react-icons/gi";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AutoComplete } from "../ui/AutoComplete";
-
+import { useNotify } from "../hooks/NotifyProvider";
 import { getLabels } from "../api/label";
-
+import { BookInfo } from "../components/book/BookInfo";
 import { registerMemo } from "../api/memo";
 
 import {
@@ -26,17 +26,16 @@ import { Book } from "./book/Book";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 
-export const MemoRegister = (updated) => {
+export const MemoRegister = ({ updated, book }) => {
   const [openBookShelf, setOpenBookShelf] = useState(false);
   const { user } = useContext(UserContext);
   const [labels, setLabels] = useState([]);
-
-  const [selectedBook, setSelectedBook] = useState();
+  const { notify } = useNotify();
 
   const formSchema = z.object({
     memo: z.string().min(1, "highlight is required."),
     page: z.number().max(5).optional(),
-    // label: z.enum(),
+    label: z.enum(),
   });
 
   const {
@@ -51,23 +50,19 @@ export const MemoRegister = (updated) => {
   });
 
   const onSubmit = async (values) => {
-    const param = {
-      ...values,
-      //   readingId: selectedReading.readingId,
-      userId: user.userId,
-      // labelId:
-    };
-    await registerMemo(param);
-    console.log("success register highlight.");
-    updated && updated();
-  };
-
-  const handleOpenBookShelf = () => {
-    setOpenBookShelf(true);
-  };
-
-  const handleCloseBookShelf = () => {
-    setOpenBookShelf(false);
+    try {
+      const param = {
+        ...values,
+        // readingId: selectedReading.readingId,
+        userId: user.userId,
+        // labelId:
+      };
+      await registerMemo(param);
+      notify("success create a highlight!", "success");
+      updated && updated();
+    } catch (error) {
+      notify("Failed to create highlight.", "error");
+    }
   };
 
   const find = async () => {
@@ -85,62 +80,30 @@ export const MemoRegister = (updated) => {
 
   return (
     <div>
-      <Dialog
-        open={openBookShelf}
-        sx={{
-          "& .MuiDialog-paper": {
-            width: "600px",
-          },
-        }}
-      >
-        <DialogTitle>My Bookshelf</DialogTitle>
-        <DialogContent>
-          <BookShelf account={user} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseBookShelf}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
-      <Button
-        variant="contained"
-        endIcon={<GiBookshelf />}
-        onClick={handleOpenBookShelf}
-        sx={{
-          textTransform: "none",
-          backgroundColor: "#000",
-          color: "#fff",
-          fontWeight: "bold",
-          "&:hover": {
-            backgroundColor: "#333",
-          },
-        }}
-      >
-        see my bookshelf
-      </Button>
-      {/* <Book book={selectedReading.book} /> */}
-
+      {book && <BookInfo book={book} />}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mt-5">Highlight Impression Words 📝</div>
+        <div className="font-bold">*Highlight Impression Words 📝</div>
         <TextField
           {...register("memo")}
           placeholder="memo impression words."
           variant="outlined"
           multiline
           fullWidth
-          rows={6}
+          rows={4}
           margin="normal"
           error={!!errors.memo}
           helperText={errors.memo?.message}
-          //   disabled={!selectedReading}
+          //   disabled={!selectedBook}
         />
 
-        <div className="mt-3">Note the page number 🔖</div>
+        <div className="mt-3 mb-2 font-bold">Note the page number 🔖</div>
         <div className="">
           <TextField
             // label="page:"
             type="number"
             size="small"
             variant="standard"
+            // disabled={!selectedBook}
             slotProps={{
               inputProps: {
                 min: 1,
@@ -158,18 +121,21 @@ export const MemoRegister = (updated) => {
           />
         </div>
 
-        <div className="mt-4 mb-2">Label 🏷️</div>
-        <AutoComplete options={optionsLabel && optionsLabel} />
-        <div className="text-sm mb-3 ml-1 italic text-zinc-500">
+        <div className="mt-5 mb-1 font-bold">Label 🏷️</div>
+        <AutoComplete
+          options={optionsLabel && optionsLabel}
+          //   disabled={!selectedBook}
+        />
+        <div className="text-sm mb-4 ml-1 italic text-zinc-500">
           E.g. For work, Investment tips, Inspiring quotes
         </div>
-        <div className="mt-1">
+        <div className="">
           <Button
             type="submit"
             variant="contained"
             color="primary"
             fullWidth
-            //   disabled={!selectedReading}
+            // disabled={!selectedBook}
             sx={{ textTransform: "none" }}
             // endIcon={<SendIcon />}
           >

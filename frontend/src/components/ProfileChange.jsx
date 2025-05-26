@@ -38,14 +38,13 @@ export const ProfileChange = ({ account, update }) => {
   };
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "400px" }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
           {...register("name")}
           label="name"
           variant="standard"
           multiline
           fullWidth
-          margin="normal"
           error={!!errors.name}
           helperText={errors.name?.message}
           slotProps={{

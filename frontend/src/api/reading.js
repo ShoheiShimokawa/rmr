@@ -2,9 +2,9 @@ import axios from "axios";
 
 const url = "http://localhost:8080/api/";
 
-// export const findReadings = () => {
-//     return axios.get(url + "reading/book");
-// }
+export const getByUserIdAndBookId = (userId, bookId) => {
+  return axios.get(url + "reading/book/user", { params: { userId, bookId } });
+};
 export const findReadingById = (id) => {
   return axios.get(url + "reading/id/book", { params: { id } });
 };

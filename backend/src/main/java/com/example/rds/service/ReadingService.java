@@ -12,6 +12,7 @@ import com.example.rds.model.Post;
 import com.example.rds.model.Reading;
 import com.example.rds.model.Reading.MonthlyReading;
 import com.example.rds.model.Reading.RegisterReading;
+import com.example.rds.model.Reading.SearchReading;
 import com.example.rds.model.Reading.UpdateReading;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,10 @@ public class ReadingService {
 	private final BookRepository bRep;
 	private final PostRepository pRep;
 	private final AccountRepository aRep;
+
+	public Reading getByUserIdAndBookId(Integer userId,Integer bookId){
+		return Reading.getByUserIdAndBookId(rep, userId,bookId).orElse(null); 
+	}
 
 	/** 全ての読書を返します。 */
 	public List<Reading> findAll() {

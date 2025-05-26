@@ -2,6 +2,8 @@ import { useContext, useEffect, useState, useCallback } from "react";
 import { getPostAll } from "../api/post";
 import { Post } from "./Post";
 import { debounce } from "lodash";
+import { useNotify } from "../hooks/NotifyProvider";
+
 import { Link } from "react-router-dom";
 import UserContext from "./UserProvider";
 import { registerReading } from "../api/reading";
@@ -25,7 +27,7 @@ export const Community = ({}) => {
   const [selectedPost, setSelectedPost] = useState();
   const [showBookDetail, setShowBookDetail] = useState(false);
   const [selectedBook, setSelectedBook] = useState();
-
+  const { notify } = useNotify();
   const find = async () => {
     const result = await getPostAll();
     setPosts(result.data);

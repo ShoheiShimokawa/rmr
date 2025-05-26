@@ -4,7 +4,7 @@ import { Button, Chip, Slide, Paper, Rating } from "@mui/material";
 import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { useContext, useEffect, useState } from "react";
 
-export const BookArray = ({ books, handleSelect }) => {
+export const BookArray = ({ books, handleSelect, onClick }) => {
   return (
     <div>
       {books.length !== 0 && (
@@ -25,6 +25,7 @@ export const BookArray = ({ books, handleSelect }) => {
                       book={reading.book}
                       onClick={() => {
                         handleSelect && handleSelect(reading);
+                        onClick && onClick(reading.book);
                       }}
                       key={reading.readingId}
                     />

@@ -60,11 +60,11 @@ public class Memo {
     }
 
     /** メモを登録します。 */
-    public static Memo register(MemoRepository rep,ReadingRepository rRep,LabelRepository lRep,RegisterMemo params) {
-        Reading reading=rRep.findById(params.readingId).orElseThrow(() -> new EntityNotFoundException("reading not found"));
-        Account user = reading.getUser();
-        Label label = lRep.findById(params.labelId).orElseThrow(() -> new EntityNotFoundException("label not found"));
-        Memo memo = Memo.builder().reading(reading).user(user).memo(params.memo).label(label)
+    public static Memo register(MemoRepository rep, ReadingRepository rRep,RegisterMemo params, Label label) {
+        var reading=Reading.get(rRep,params.readingId);
+        var user = reading.getUser();
+        Memo memo = Memo.builder().reading(reading).user(user)
+                .memo(params.memo).label(label)
                 .page(params.page).build();
         return rep.save(memo);
     }
@@ -76,7 +76,7 @@ public class Memo {
         Integer userId,
         String memo,
         Integer page,
-        Integer labelId
+        String label
     ){};
 
     /** ラベリングされたメモを返します。 */
@@ -94,7 +94,7 @@ public class Memo {
 
         List<LabelingMemo> labelingMemo = readingEntry.getValue().entrySet().stream()
             .map(labelEntry -> new LabelingMemo(
-                new LabelDto(labelEntry.getKey().getLabelId(), labelEntry.getKey().getName()),
+                new LabelDto(labelEntry.getKey().getLabelId(), labelEntry.getKey().getLabel()),
                 labelEntry.getValue().stream()
                     .map(memo -> new MemoDto(memo.getMemoId(), memo.getMemo(),memo.getPage(), memo.getRegisterDate()))
                     .toList()
@@ -110,7 +110,7 @@ public class Memo {
 
 public record MemoDto(Integer memoId, String memo,Integer page, LocalDate registerDate) {}
 
-public record LabelDto(Integer labelId, String name) {}
+public record LabelDto(Integer labelId, String label) {}
 
 public record LabelingMemo(LabelDto label, List<MemoDto> memos) {}
 

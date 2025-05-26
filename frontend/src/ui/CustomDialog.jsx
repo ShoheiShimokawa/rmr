@@ -24,7 +24,7 @@ export const CustomDialog = ({ open, onClose, title, children, actions }) => {
       }}
     >
       <DialogTitle sx={{}}>
-        <div className="text-xl"> {title}</div>
+        <div className="text-lg font-bold"> {title}</div>
 
         <IconButton
           onClick={onClose}

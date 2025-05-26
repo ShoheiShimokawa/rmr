@@ -27,7 +27,7 @@ import {
   Paper,
 } from "@mui/material";
 
-export const BookShelf = ({ account }) => {
+export const BookShelf = ({ account, onClick }) => {
   const [readings, setReadings] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const { user } = useContext(UserContext);
@@ -101,7 +101,7 @@ export const BookShelf = ({ account }) => {
   }, []);
   return (
     <>
-      <Dialog
+      {/* <Dialog
         open={open}
         sx={{
           "& .MuiDialog-paper": {
@@ -117,8 +117,8 @@ export const BookShelf = ({ account }) => {
         </Slide>
         <Slide in direction="left" appear={false}>
           <DialogContent>
-            <div>
-              {!showReadingRegister ? (
+            <div> */}
+      {/* {!showReadingRegister ? (
                 <BookDetail
                   reading={reading}
                   show={() => {
@@ -136,14 +136,14 @@ export const BookShelf = ({ account }) => {
                   reading={reading}
                   updated={() => setShoWReadingRegister(false)}
                 />
-              )}
-            </div>
+              )} */}
+      {/* </div>
           </DialogContent>
         </Slide>
         <DialogActions>
           <Button onClick={() => handleClose()}>Cancel</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
       <Dialog open={openRegister}>
         <DialogTitle>Register books!</DialogTitle>
         <DialogContent>
@@ -165,7 +165,11 @@ export const BookShelf = ({ account }) => {
       <div className="text-lgfont-medium">Recently</div>
 
       {recent.length !== 0 ? (
-        <BookArray books={recent} handleSelect={handleSelect} />
+        <BookArray
+          books={recent}
+          handleSelect={handleSelect}
+          onClick={onClick}
+        />
       ) : (
         <Box sx={{ height: "155px", width: "100%" }} />
       )}
@@ -176,55 +180,91 @@ export const BookShelf = ({ account }) => {
       {fiction.length !== 0 && (
         <>
           <div className="text-lg  font-medium"> Fiction</div>
-          <BookArray books={fiction} handleSelect={handleSelect} />
+          <BookArray
+            books={fiction}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {nonFiction.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Non Fiction</div>
-          <BookArray books={nonFiction} handleSelect={handleSelect} />
+          <BookArray
+            books={nonFiction}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {tech.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Professional & Technical</div>
-          <BookArray books={tech} handleSelect={handleSelect} />
+          <BookArray
+            books={tech}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {art.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Arts & Culture</div>
-          <BookArray books={art} handleSelect={handleSelect} />
+          <BookArray
+            books={art}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {study.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Education & Study-aids</div>
-          <BookArray books={study} handleSelect={handleSelect} />
+          <BookArray
+            books={study}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {entertainment.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Entertainment</div>
-          <BookArray books={entertainment} handleSelect={handleSelect} />
+          <BookArray
+            books={entertainment}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {academic.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Academics & Research</div>
-          <BookArray books={academic} handleSelect={handleSelect} />
+          <BookArray
+            books={academic}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {practical.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Practical & Hobbies</div>
-          <BookArray books={practical} handleSelect={handleSelect} />
+          <BookArray
+            books={practical}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
       {other.length !== 0 && (
         <>
           <div className="text-lg font-sans"> Other</div>
-          <BookArray books={other} handleSelect={handleSelect} />
+          <BookArray
+            books={other}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
         </>
       )}
     </>

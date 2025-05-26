@@ -3,6 +3,8 @@ import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { CustomDialog } from "../ui/CustomDialog";
 import { useState, useEffect, useMemo } from "react";
+import { useNotify } from "../hooks/NotifyProvider";
+import { StepMemoRegister } from "./StepMemoRegister";
 import {
   Card,
   CardContent,
@@ -11,11 +13,13 @@ import {
   Chip,
   Box,
   Button,
-  DialogTitle,
+  Slide,
+  Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { MemoDetail } from "./MemoDetail";
 import { MemoRegister } from "./MemoRegister";
+import { SelectBook } from "./SelectBook";
 
 export const Memo = () => {
   const [memos, setMemos] = useState([]);
@@ -23,6 +27,7 @@ export const Memo = () => {
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
   const [openRegister, setOpenRegister] = useState(false);
+  const { notify } = useNotify();
 
   const formatted = useMemo(() => {
     return memos.map((item) => {
@@ -72,7 +77,6 @@ export const Memo = () => {
   const find = async () => {
     const result = await getMemos(user && user.userId);
     setMemos(result.data);
-    console.log(result.data);
   };
   useEffect(() => {
     find();
@@ -91,7 +95,7 @@ export const Memo = () => {
         title="Add Highlight"
         onClose={handleCloseRegister}
       >
-        <MemoRegister />
+        <StepMemoRegister />
       </CustomDialog>
       <Button
         variant="outlined"
@@ -135,7 +139,7 @@ export const Memo = () => {
                   {entry.labels.map((label) => (
                     <Chip
                       key={label.labelId}
-                      label={label.name}
+                      label={label.label}
                       variant="outlined"
                       size="small"
                       sx={{

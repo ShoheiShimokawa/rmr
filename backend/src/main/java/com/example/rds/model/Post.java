@@ -63,44 +63,11 @@ public class Post {
 		return rep.findByUserId(userId);
 	}
 
-	/** ユーザに紐づくポストを全て返します。 */
-	// public static List<PostWithUser> getPostAllByUser(PostRepository rep,AccountRepository aRep, Integer userId) {
-	// 	Optional<Account> opUser = aRep.findByUserId(userId);
-	// 	if (opUser.isEmpty()) {
-    //     return Collections.emptyList(); 
-    // }	
-	// 	Account user = opUser.get();
-	// 	return rep.findByUserId(userId).stream()
-	// 			.map(post -> PostWithUser.from(post, user))
-	// 			.collect(Collectors.toList());
-	// }
-
 	/** ポストを返却します。（タイムライン用） */
 	public static List<Post> getPostAll(PostRepository rep, Integer userId) {
 		return rep.findAll();
 	}
 
-	@Builder
-	public record PostWithUser(
-			Integer postId,
-			Integer userId,
-			Reading reading,
-			LocalDate registerDate,
-			LocalDate updateDate,
-			String name,
-			String handle) {
-		public static PostWithUser from(Post post, Account account) {
-			return PostWithUser.builder()
-					.postId(post.getPostId())
-					.userId(post.user.getUserId())
-					.reading(post.reading)
-					.registerDate(post.registerDate)
-					.updateDate(post.updateDate)
-					.name(account.getName())
-					.handle(account.getHandle())
-					.build();
-		}
-	}
 	
 	/** 年間ポスト数を返します。 */
 	public static List<YearlyPostRecord> getPostRecord(PostRepository rep, Integer userId) {

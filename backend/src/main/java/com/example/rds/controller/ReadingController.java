@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.rds.model.Reading;
 import com.example.rds.model.Reading.MonthlyReading;
 import com.example.rds.model.Reading.RegisterReading;
+import com.example.rds.model.Reading.SearchReading;
 import com.example.rds.model.Reading.UpdateReading;
 import com.example.rds.service.ReadingService;
 
@@ -31,6 +32,12 @@ public class ReadingController {
 		return service.findByBookId(id);
 	}
 
+	
+@GetMapping("/reading/book/user")
+	public Reading getByUserIdAndBookId(@RequestParam Integer userId,
+    @RequestParam Integer bookId) {
+		return service.getByUserIdAndBookId(userId,bookId);
+	}
 	@GetMapping("/reading/id/book")
 	public List<Reading> findById(@RequestParam String id) {
 		return service.findById(id);

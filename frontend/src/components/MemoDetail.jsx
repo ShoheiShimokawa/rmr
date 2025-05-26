@@ -25,25 +25,21 @@ export const MemoDetail = ({ memo }) => {
     <div>
       {memo && (
         <div>
-          <Box sx={{ mb: 4 }}>
-            <div>
-              <BookInfo book={memo.reading.book} />
-            </div>
+          {memo.labelingMemo.map((group, j) => (
+            <Box key={j} sx={{ mb: 2, pl: 1 }}>
+              <Chip label={group.label.label} size="small" className="mb-1" />
 
-            {memo.labelingMemo.map((group, j) => (
-              <Box key={j} sx={{ mt: 2, pl: 1 }}>
-                <Chip label={group.label.name} size="small" className="mb-1" />
-
-                {group.memos.map((memo) => (
-                  <div key={memo.memoId}>
-                    <div className="text-sm "> 📝{memo.memo}</div>
-                    <div className="text-sm text-gray-500 italic mb-2">
-                      (page {memo.page})
-                    </div>
+              {group.memos.map((memo) => (
+                <div key={memo.memoId}>
+                  <div className="text-sm "> 📝{memo.memo}</div>
+                  <div className="text-sm text-gray-500 italic mb-2">
+                    (page {memo.page})
                   </div>
-                ))}
-              </Box>
-            ))}
+                </div>
+              ))}
+            </Box>
+          ))}
+          <div className="mb-3">
             <Button
               variant="outlined"
               size="small"
@@ -62,7 +58,10 @@ export const MemoDetail = ({ memo }) => {
             >
               add
             </Button>
-          </Box>
+          </div>
+          <div>
+            <BookInfo book={memo.reading.book} />
+          </div>
         </div>
       )}
       <div></div>

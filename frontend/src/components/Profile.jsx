@@ -5,6 +5,7 @@ import {
   follow,
   deleteFollow,
 } from "../api/account";
+import { CustomDialog } from "../ui/CustomDialog";
 import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
 import { ProfileChange } from "./ProfileChange";
@@ -97,24 +98,27 @@ export const Profile = ({ account }) => {
 
   return (
     <div>
-      <Dialog onClose={handleChangeClose} open={open}>
-        <DialogTitle>profile setting</DialogTitle>
-        <DialogContent>
-          <ProfileChange account={user} update={handleGetProfile} />
-        </DialogContent>
-      </Dialog>
-      <Dialog onClose={handleCloseFollow} open={showFollow}>
-        <DialogTitle>Follows</DialogTitle>
-        <DialogContent>
-          <Follow followerId={account && account.userId} />
-        </DialogContent>
-      </Dialog>
-      <Dialog onClose={handleCloseFollower} open={showFollower}>
-        <DialogTitle>Followers</DialogTitle>
-        <DialogContent>
-          <Follower userId={account.userId && account.userId} />
-        </DialogContent>
-      </Dialog>
+      <CustomDialog
+        open={open}
+        title="profile setting"
+        onClose={handleChangeClose}
+      >
+        <ProfileChange account={user} update={handleGetProfile} />
+      </CustomDialog>
+      <CustomDialog
+        open={showFollow}
+        title="Follows"
+        onClose={handleCloseFollow}
+      >
+        <Follow followerId={account && account.userId} />
+      </CustomDialog>
+      <CustomDialog
+        open={showFollower}
+        title="Followers"
+        onClose={handleCloseFollower}
+      >
+        <Follower userId={account.userId && account.userId} />
+      </CustomDialog>
       <div className="flex w-[300px]">
         <div className="flex w-full justify-between ">
           <div className="flex mr-4">
