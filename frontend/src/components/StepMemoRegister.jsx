@@ -21,7 +21,7 @@ import { MemoRegister } from "./MemoRegister";
 
 import { useState, useEffect, useMemo } from "react";
 
-export const StepMemoRegister = () => {
+export const StepMemoRegister = ({ updated }) => {
   const [step, setStep] = useState(0);
   const [prevStep, setPrevStep] = useState(0);
   const [selectedReading, setSelectedReading] = useState();
@@ -60,7 +60,10 @@ export const StepMemoRegister = () => {
               pr: 1, // スクロールバー分の余白（好み）
             }}
           >
-            <SelectBook onClick={() => goToStep(1)} />
+            <SelectBook
+              onClick={() => goToStep(1)}
+              onNext={(reading) => setSelectedReading(reading)}
+            />
           </Box>
         </Slide>
         <Slide
@@ -79,10 +82,11 @@ export const StepMemoRegister = () => {
               pr: 1, // スクロールバー分の余白（好み）
             }}
           >
-            <MemoRegister />
-            <Button onClick={() => goToStep(0)} sx={{ mt: 2 }}>
-              Back
-            </Button>
+            <MemoRegister
+              reading={selectedReading && selectedReading}
+              updated={updated}
+            />
+            <Button onClick={() => goToStep(0)}>Back</Button>
           </Box>
         </Slide>
       </Box>

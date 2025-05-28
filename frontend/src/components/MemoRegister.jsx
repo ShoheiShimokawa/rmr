@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AutoComplete } from "../ui/AutoComplete";
 import { useNotify } from "../hooks/NotifyProvider";
@@ -26,7 +25,7 @@ import { Book } from "./book/Book";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 
-export const MemoRegister = ({ updated, book }) => {
+export const MemoRegister = ({ updated, book, reading }) => {
   const [openBookShelf, setOpenBookShelf] = useState(false);
   const { user } = useContext(UserContext);
   const [labels, setLabels] = useState([]);
@@ -34,8 +33,12 @@ export const MemoRegister = ({ updated, book }) => {
 
   const formSchema = z.object({
     memo: z.string().min(1, "highlight is required."),
-    page: z.number().max(5).optional(),
-    label: z.enum(),
+    page: z.preprocess(
+      (val) =>
+        val === "" || val === null || Number.isNaN(val) ? undefined : val,
+      z.number().max(99999).optional()
+    ),
+    label: z.string().optional(),
   });
 
   const {
@@ -50,12 +53,12 @@ export const MemoRegister = ({ updated, book }) => {
   });
 
   const onSubmit = async (values) => {
+    console.log("OOKKKKK");
     try {
       const param = {
         ...values,
-        // readingId: selectedReading.readingId,
+        readingId: reading && reading.readingId,
         userId: user.userId,
-        // labelId:
       };
       await registerMemo(param);
       notify("success create a highlight!", "success");
@@ -80,9 +83,9 @@ export const MemoRegister = ({ updated, book }) => {
 
   return (
     <div>
-      {book && <BookInfo book={book} />}
+      {reading && <BookInfo book={reading.book} />}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="font-bold">*Highlight Impression Words 📝</div>
+        <div className="font-bold mt-2">*Highlight Impression Words 📝</div>
         <TextField
           {...register("memo")}
           placeholder="memo impression words."
@@ -99,7 +102,7 @@ export const MemoRegister = ({ updated, book }) => {
         <div className="mt-3 mb-2 font-bold">Note the page number 🔖</div>
         <div className="">
           <TextField
-            // label="page:"
+            {...register("page", { valueAsNumber: true })}
             type="number"
             size="small"
             variant="standard"
@@ -122,9 +125,12 @@ export const MemoRegister = ({ updated, book }) => {
         </div>
 
         <div className="mt-5 mb-1 font-bold">Label 🏷️</div>
-        <AutoComplete
-          options={optionsLabel && optionsLabel}
-          //   disabled={!selectedBook}
+        <Controller
+          name="label"
+          control={control}
+          render={({ field }) => (
+            <AutoComplete options={optionsLabel && optionsLabel} />
+          )}
         />
         <div className="text-sm mb-4 ml-1 italic text-zinc-500">
           E.g. For work, Investment tips, Inspiring quotes

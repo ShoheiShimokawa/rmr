@@ -5,6 +5,8 @@ import {
   follow,
   deleteFollow,
 } from "../api/account";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import ReviewsRoundedIcon from "@mui/icons-material/ReviewsRounded";
 import { CustomDialog } from "../ui/CustomDialog";
 import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
@@ -120,14 +122,21 @@ export const Profile = ({ account }) => {
         <Follower userId={account.userId && account.userId} />
       </CustomDialog>
       <div className="flex w-[300px]">
-        <div className="flex w-full justify-between ">
+        <div className="flex  justify-between ">
           <div className="flex mr-4">
-            <Avatar src={account.picture} className="mr-2" />
-            <Typography component="h2">
-              {account.name}
-              <div className="text-zinc-500">{account.handle}</div>
-            </Typography>
+            <Avatar
+              src={account.picture}
+              className="mr-2"
+              sx={{ width: 90, height: 90 }}
+            />
           </div>
+          <div>
+            <MenuBookRoundedIcon />1
+            <br />
+            <ReviewsRoundedIcon />
+            41
+          </div>
+
           <div className="flex h-[50px] justify-end">
             {user && account.userId === user.userId ? (
               <Button
@@ -168,6 +177,10 @@ export const Profile = ({ account }) => {
           </div>
         </div>
       </div>
+      <Typography component="h2">
+        {account.name}
+        <div className="text-zinc-500">{account.handle}</div>
+      </Typography>
       <div className="mb-2 mt-2"> {account.description}</div>
       <div className="flex">
         <div className="flex hover:underline cursor-pointer">

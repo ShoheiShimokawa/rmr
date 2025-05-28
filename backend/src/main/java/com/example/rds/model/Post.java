@@ -11,6 +11,7 @@ import com.example.rds.context.ReadingRepository;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +37,7 @@ public class Post {
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
 	private Account user;
 	/** 読書ID */
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "reading_id")
 	private Reading reading;
 	/** いいね数 */
@@ -53,7 +54,7 @@ public class Post {
 
 	/** 感想をポストします。 */
 	public static Post registerPost(PostRepository rep, ReadingRepository rRep, Integer readingId) {
-		var reading = rRep.findById(readingId).orElseThrow(() -> new RuntimeException("Post not found"));
+		var reading = rRep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
 		var post = Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDate.now()).build();
 		return rep.save(post);
 	}

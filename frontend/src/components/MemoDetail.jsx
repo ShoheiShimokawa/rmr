@@ -27,13 +27,14 @@ export const MemoDetail = ({ memo }) => {
         <div>
           {memo.labelingMemo.map((group, j) => (
             <Box key={j} sx={{ mb: 2, pl: 1 }}>
-              <Chip label={group.label.label} size="small" className="mb-1" />
-
+              {group.label?.label && (
+                <Chip label={group.label.label} size="small" className="mb-1" />
+              )}
               {group.memos.map((memo) => (
                 <div key={memo.memoId}>
-                  <div className="text-sm "> 📝{memo.memo}</div>
+                  <div className="text-sm "> {memo.memo}</div>
                   <div className="text-sm text-gray-500 italic mb-2">
-                    (page {memo.page})
+                    (page {memo.page ? memo.page : "-"})
                   </div>
                 </div>
               ))}
@@ -59,9 +60,12 @@ export const MemoDetail = ({ memo }) => {
               add
             </Button>
           </div>
-          <div>
-            <BookInfo book={memo.reading.book} />
-          </div>
+
+          <Typography variant="body2" color="text.secondary">
+            <div className="text-xs">
+              📚 {memo.reading.book.title}（{memo.reading.book.author}）
+            </div>
+          </Typography>
         </div>
       )}
       <div></div>

@@ -3,6 +3,7 @@ import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { CustomDialog } from "../ui/CustomDialog";
 import { useState, useEffect, useMemo } from "react";
+import { Book } from "./book/Book";
 import { useNotify } from "../hooks/NotifyProvider";
 import { StepMemoRegister } from "./StepMemoRegister";
 import {
@@ -95,7 +96,7 @@ export const Memo = () => {
         title="Add Highlight"
         onClose={handleCloseRegister}
       >
-        <StepMemoRegister />
+        <StepMemoRegister updated={find} />
       </CustomDialog>
       <Button
         variant="outlined"
@@ -118,63 +119,80 @@ export const Memo = () => {
         {memos.length >= 1 && (
           <>
             {formatted.map((entry, i) => (
-              <Box
-                className="cursor-pointer"
-                key={i}
-                sx={{
-                  mb: 1,
-                  p: 2,
-                  border: "1px solid #ccc",
-                  borderRadius: 2,
-                  "&:hover": {
-                    filter: "brightness(0.8)",
-                  },
-                }}
-                onClick={() => {
-                  handleOpenDetail(i);
-                }}
-              >
-                {/* ラベル表示 */}
-                <Box sx={{ mb: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-                  {entry.labels.map((label) => (
-                    <Chip
-                      key={label.labelId}
-                      label={label.label}
-                      variant="outlined"
-                      size="small"
+              <Card sx={{ mb: 1 }}>
+                <CardContent
+                  className="cursor-pointer"
+                  key={i}
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start", // 上揃え
+                    "&:hover": {
+                      backgroundColor: "#f5f5f5",
+                      boxShadow: 3,
+                    },
+                  }}
+                  onClick={() => {
+                    handleOpenDetail(i);
+                  }}
+                >
+                  <Box sx={{ flex: 1, pr: 2 }}>
+                    <Box
                       sx={{
-                        textDecoration: "none",
-                        "&:hover": {
-                          textDecoration: "none",
-                        },
+                        mb: 1,
+                        display: "flex",
+                        gap: 1,
+                        flexWrap: "wrap",
                       }}
-                    />
-                  ))}
-                </Box>
+                    >
+                      {entry.labels
+                        .filter((label) => label?.label)
+                        .map((label) => (
+                          <Chip
+                            key={label.labelId}
+                            label={label.label}
+                            size="small"
+                            sx={{
+                              textDecoration: "none",
+                              "&:hover": {
+                                textDecoration: "none",
+                              },
+                            }}
+                          />
+                        ))}
+                    </Box>
 
-                {/* メインメモ */}
-                <div className="text-sm">📝 {entry.primaryMemo.memo}</div>
+                    <div className="font-bold text-sm">
+                      📝{entry.primaryMemo.memo}
+                    </div>
 
-                {/* その他メモ数 */}
-                {entry.otherCount > 0 && (
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ mb: 1 }}
-                  >
-                    🗒️ other {entry.otherCount} memo
-                    {entry.otherCount > 1 ? "s" : ""}
-                  </Typography>
-                )}
+                    {entry.otherCount > 0 && (
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ mb: 1 }}
+                      >
+                        other {entry.otherCount} memo
+                        {entry.otherCount > 1 ? "s" : ""}
+                      </Typography>
+                    )}
 
-                {/* 本の情報 */}
-                <Typography variant="body2" color="text.secondary">
-                  📚{" "}
-                  <div className="text-sm">
-                    {entry.reading.book.title}（{entry.reading.book.author}）
-                  </div>
-                </Typography>
-              </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      <div className="text-xs">
+                        📚 {entry.reading.book.title}（
+                        {entry.reading.book.author}）
+                      </div>
+                    </Typography>
+                  </Box>
+
+                  {/* 右カラム */}
+                  <Box sx={{ minWidth: 100, maxWidth: 120 }}>
+                    <Book book={entry.reading.book} />
+                  </Box>
+                </CardContent>
+              </Card>
             ))}
           </>
         )}

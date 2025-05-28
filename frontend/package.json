@@ -8,6 +8,7 @@
     "@fontsource/nunito-sans": "^5.1.0",
     "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^7.1.0",
+    "@mui/joy": "^5.0.0-beta.52",
     "@mui/material": "^7.1.0",
     "@mui/system": "^7.1.0",
     "@mui/x-charts": "^8.3.1",

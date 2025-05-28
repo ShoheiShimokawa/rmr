@@ -119,7 +119,12 @@ public class Reading {
 	@Builder
 	public record RegisterReading(Integer userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts,String description) {
 		public Reading create() {
-			return Reading.builder().rate(this.rate).statusType(this.statusType).thoughts(this.thoughts).registerDate(LocalDate.now()).build();
+			return Reading.builder()
+					.rate(this.rate)
+					.statusType(this.statusType)
+					.thoughts(this.thoughts)
+					.registerDate(LocalDate.now())
+					.build();
 		}
 	}
 	
