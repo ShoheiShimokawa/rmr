@@ -6,6 +6,7 @@ public enum BookStatusType {
 	/**  読書中 */
 	DOING,
 	/** 読書済 */
-	DONE;
-	
+	DONE,
+	/** 削除済 */
+	INVALID;
 }

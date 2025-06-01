@@ -22,9 +22,9 @@ export const Community = ({}) => {
       return new Date(b.registerDate) - new Date(a.registerDate);
     });
     setPosts(sortedPosts);
-
     const goodList = await getGoodPostAll(user && user.userId);
     const likedIds = goodList.data.map((g) => g.post.postId);
+    console.log(goodList.data);
     setGoodPostIds(likedIds);
     setLoading(false);
   };

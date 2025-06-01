@@ -5,20 +5,19 @@ import {
   follow,
   deleteFollow,
 } from "../api/account";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useNotify } from "../hooks/NotifyProvider";
-import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
-import ReviewsRoundedIcon from "@mui/icons-material/ReviewsRounded";
 import { CustomDialog } from "../ui/CustomDialog";
 import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
 import { ProfileChange } from "./ProfileChange";
 import { ContributionMap } from "./ContributionMap";
-import { Header } from "./Header";
 import { getPostAllByUser } from "../api/post";
 import { findReadingByUser } from "../api/reading";
 import { Avatar, Button, Typography, CircularProgress } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserProvider";
+import { useRequireLogin } from "../hooks/useRequireLogin";
 
 export const Profile = ({ account }) => {
   const { user, setUser } = useContext(UserContext);
@@ -33,8 +32,10 @@ export const Profile = ({ account }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { notify } = useNotify();
+  const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
   const handleFollow = async (selectedUserId) => {
+    if (!isLoggedIn()) return;
     setIsFollowed(true);
     const param = {
       userId: selectedUserId,
@@ -45,13 +46,12 @@ export const Profile = ({ account }) => {
     console.log("success follow.");
   };
   const handleCancelFollow = async (selectedFollowId) => {
+    if (!isLoggedIn()) return;
     await deleteFollow(selectedFollowId);
     console.log("success delete follow.");
     setFollowed({});
     setIsFollowed(false);
   };
-
-  const handleDeleteFollow = () => {};
 
   const handleChangeOpen = () => {
     setOpen(true);
@@ -76,7 +76,6 @@ export const Profile = ({ account }) => {
   const handleGetProfile = async () => {
     const result = await getProfile(user && user.userId);
     result.data && setUser(result.data);
-    find();
     handleChangeClose();
   };
 
@@ -108,17 +107,25 @@ export const Profile = ({ account }) => {
 
   return (
     <div>
+      {showLoginDialog && <LoginDialog />}
       <CustomDialog
         open={open}
         title="profile setting"
         onClose={handleChangeClose}
       >
-        <ProfileChange account={user} update={handleGetProfile} />
+        <ProfileChange
+          account={user}
+          update={() => {
+            handleGetProfile();
+            find();
+          }}
+        />
       </CustomDialog>
       <CustomDialog
         open={showFollow}
         title="Follows"
         onClose={handleCloseFollow}
+        width="500px"
       >
         <Follow followerId={account && account.userId} />
       </CustomDialog>
@@ -129,14 +136,10 @@ export const Profile = ({ account }) => {
       >
         <Follower userId={account.userId && account.userId} />
       </CustomDialog>
-      <div className="relative w-full flex items-start ml-4">
-        <Avatar
-          src={account.picture}
-          className="mr-2"
-          sx={{ width: 90, height: 90 }}
-        />
+      <div className="relative w-full flex items-start ml-2">
+        <Avatar src={account.picture} sx={{ width: 90, height: 90 }} />
 
-        <div className="ml-2">
+        {/* <div className="ml-2">
           <MenuBookRoundedIcon />
           {loading ? (
             <CircularProgress size="10px" />
@@ -154,23 +157,43 @@ export const Profile = ({ account }) => {
           ) : (
             0
           )}
-        </div>
+        </div> */}
 
-        <div className="absolute right-0 top-0">
+        <div className="absolute right-10 top-10">
           {user && account.userId === user.userId ? (
             <Button
               size="small"
-              variant="contained"
+              variant="outlined"
+              color="primary"
+              startIcon={<SettingsIcon />}
               onClick={handleChangeOpen}
-              sx={{ textTransform: "none" }}
+              sx={{
+                textTransform: "none",
+                color: "#444", // テキスト色
+                borderColor: "#444", // 枠線の色
+                "&:hover": {
+                  backgroundColor: "#eee", // ホバー時の背景
+                  borderColor: "#444",
+                },
+              }}
             >
-              edit
+              Edit
             </Button>
           ) : !isFollowed ? (
             <Button
               size="small"
               variant="contained"
-              sx={{ textTransform: "none" }}
+              sx={{
+                textTransform: "none",
+                color: "#fff",
+                backgroundColor: "#000",
+                borderColor: "#444",
+                fontWeight: "bold",
+                "&:hover": {
+                  backgroundColor: "#333",
+                  borderColor: "#444",
+                },
+              }}
               onClick={() => handleFollow(account.userId)}
             >
               follow
@@ -178,8 +201,18 @@ export const Profile = ({ account }) => {
           ) : (
             <Button
               size="small"
-              variant="contained"
-              sx={{ textTransform: "none" }}
+              variant="outlined"
+              color="primary"
+              sx={{
+                textTransform: "none",
+                borderColor: "#444",
+                fontWeight: "bold",
+                color: "#444",
+                "&:hover": {
+                  backgroundColor: "#eee", // ホバー時の背景
+                  borderColor: "#444",
+                },
+              }}
               onClick={() => handleCancelFollow(followed && followed.id)}
             >
               followed
@@ -187,7 +220,7 @@ export const Profile = ({ account }) => {
           )}
         </div>
       </div>
-      <div className="text-lg ml-1 font-bold">
+      <div className="text-lg ml-3 mt-2 font-bold">
         {account.name}
         <div className="text-zinc-500">{account.handle}</div>
       </div>

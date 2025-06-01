@@ -35,9 +35,9 @@ public class AccountService {
 	
 	/** アカウントをアプリに登録します。 */
 	public Account register(RegisterAccount params) {
-	getByHandle(params.handle()).ifPresent(account -> {
-    throw new EntityExistsException("The handle already exists.");
-});
+		getByHandle(params.handle()).ifPresent(account -> {
+    	throw new EntityExistsException("The handle already exists.");
+		});
 	Account user = Account.builder()
 			.handle(params.handle())
 			.name(params.name())

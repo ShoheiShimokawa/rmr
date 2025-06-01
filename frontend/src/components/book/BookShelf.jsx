@@ -11,14 +11,11 @@ import { BookArray } from "./BookArray";
 
 export const BookShelf = ({ account, onClick }) => {
   const [readings, setReadings] = useState([]);
-  const [selectedBook, setSelectedBook] = useState();
   const { user } = useContext(UserContext);
   const [open, setOpen] = useState(false);
-  const [openRegister, setOpenRegister] = useState(false);
   const [showReadingRegister, setShoWReadingRegister] = useState(false);
   const [reading, setReading] = useState();
   const [book, setBook] = useState();
-  const { showMessage, AlertComponent } = useMessage();
 
   const toRead = readings.filter((r) => {
     return r.statusType === "NONE";
@@ -70,14 +67,6 @@ export const BookShelf = ({ account, onClick }) => {
     setOpen(false);
   };
 
-  const handleCloseRegister = () => {
-    setOpenRegister(false);
-  };
-
-  const handleRegister = () => {
-    setOpenRegister(true);
-  };
-
   const find = async () => {
     const result = await findReadingByUser(account.userId && account.userId);
     setReadings(result.data);
@@ -89,7 +78,14 @@ export const BookShelf = ({ account, onClick }) => {
     <>
       {!onClick && (
         <CustomDialog open={open} title="Detail" onClose={handleClose}>
-          <BookDetail book={book} reading={reading} />
+          <BookDetail
+            book={book}
+            reading={reading}
+            updated={() => {
+              find();
+              handleClose();
+            }}
+          />
         </CustomDialog>
       )}
       <div className="text-lg font-medium">Want To Read</div>
@@ -193,7 +189,7 @@ export const BookShelf = ({ account, onClick }) => {
           </>
         )}
       </div>
-      <div className="w-[700px] overflow-x-auto px-2  ">
+      <div className="w-[700px] overflow-x-auto px-2">
         {academic.length !== 0 && (
           <>
             <div className="text-lg font-sans"> Academics & Research</div>

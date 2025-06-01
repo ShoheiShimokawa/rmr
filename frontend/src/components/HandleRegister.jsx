@@ -6,10 +6,14 @@ import { registerAccount } from "../api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, Rating, InputAdornment } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
-export const HandleRegister = ({ account }) => {
+export const HandleRegister = ({ account, updated }) => {
   const { notify } = useNotify();
+  const { user, setUser } = useContext(UserContext);
+  const allowedChars = /^[a-zA-Z0-9\-._~]+$/;
   const formSchema = z.object({
-    handle: z.string().min(1, "ID is required.").max(12),
+    handle: z.string().min(1, "ID is required.").max(12).regex(allowedChars, {
+      message: "Only letters, numbers, and -._~ are allowed.",
+    }),
     name: z.string().min(1, "name is required.").max(30),
   });
   const {
@@ -28,16 +32,19 @@ export const HandleRegister = ({ account }) => {
   const onSubmit = async (values) => {
     const params = {
       ...values,
+      handle: `@${values.handle}`,
       googleSub: account.googleSub,
       picture: account.picture,
       email: account.email,
     };
     const result = await registerAccount(params);
+    setUser(result.data);
     notify("You've successfully created your account!", "success");
+    updated && updated();
   };
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "400px" }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
           {...register("handle")}
           label="your ID"

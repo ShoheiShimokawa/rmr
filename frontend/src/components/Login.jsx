@@ -10,6 +10,7 @@ export const Login = ({ updated }) => {
   const goToCommunity = () => navigate("/");
   const { user, setUser } = useContext(UserContext);
   const [kari, setKari] = useState(false);
+  const [account, setAccount] = useState({});
   const { notify } = useNotify();
 
   const handleKari = () => {
@@ -31,13 +32,21 @@ export const Login = ({ updated }) => {
         body: JSON.stringify({ token }),
       });
       const userData = await result.json();
-      setUser(userData.user);
-      if (userData.user.handle) {
+      if (result.status === 200 && userData.registered === false) {
+        const account = {
+          name: userData.name,
+          email: userData.email,
+          picture: userData.picture,
+          googleSub: userData.googleSub,
+        };
+        setAccount(account);
+        handleKari();
+      }
+      if (userData.user && userData.user.handle) {
+        setUser(userData.user);
         updated && updated();
         goToCommunity();
         notify("You've successfully logged in", "success");
-      } else {
-        handleKari();
       }
     } catch (error) {
       console.error("Login failed", error);
@@ -50,7 +59,13 @@ export const Login = ({ updated }) => {
         title="create Account"
         onClose={handleCloseKari}
       >
-        <HandleRegister account={user} />
+        <HandleRegister
+          account={account}
+          updated={() => {
+            handleCloseKari();
+            updated && updated();
+          }}
+        />
       </CustomDialog>
       <div className="flex items-center  justify-center ">
         <GoogleLogin

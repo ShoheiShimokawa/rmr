@@ -1,4 +1,3 @@
-import { registerReading, updateReading } from "../api/reading";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { useContext } from "react";
@@ -6,8 +5,10 @@ import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, Rating } from "@mui/material";
 import { updateProfile } from "../api/account";
+import { useNotify } from "../hooks/NotifyProvider";
 
 export const ProfileChange = ({ account, update }) => {
+  const { notify } = useNotify();
   const formSchema = z.object({
     name: z.string().min(1, "name is required."),
     description: z.string().max(200).optional(),
@@ -26,15 +27,20 @@ export const ProfileChange = ({ account, update }) => {
     },
   });
   const onSubmit = async (values) => {
-    if (account) {
-      var params = {
-        ...values,
-        userId: account.userId,
-      };
+    try {
+      if (account) {
+        var params = {
+          ...values,
+          userId: account.userId,
+        };
+      }
+      const result = await updateProfile(params);
+
+      notify("Success to change profile.", "success");
+      update && update();
+    } catch (error) {
+      notify("Failed to change profile.", "error");
     }
-    const result = await updateProfile(params);
-    console.log("success!!");
-    update && update();
   };
   return (
     <div>

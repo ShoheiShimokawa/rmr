@@ -14,6 +14,7 @@ import com.example.rds.model.Reading.MonthlyReading;
 import com.example.rds.model.Reading.RegisterReading;
 import com.example.rds.model.Reading.SearchReading;
 import com.example.rds.model.Reading.UpdateReading;
+import com.example.rds.type.BookStatusType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,15 +52,20 @@ public class ReadingService {
 	/** 読書を登録します。*/
 	public Reading register(RegisterReading param) {
 		var reading =Reading.register(rep, bRep,aRep, param);
-		var readingId =reading.getReadingId();
+		var readingId = reading.getReadingId();
+		if(reading.getStatusType()==BookStatusType.DONE){
 		Post.registerPost(pRep,rep,readingId);
+		}
 		return reading;
 	}
 
 	/** 読書を更新します。 */
 	public Reading update(UpdateReading params) {
-		//TODO:POST分も書く
-		return Reading.update(rep, params);
+		Reading reading = Reading.update(rep, params);
+		if (reading.getStatusType().equals(BookStatusType.DONE)) {
+			Post.registerPost(pRep, rep, reading.getReadingId());
+		}
+		return reading;
 	}
 
 	/** 未読の読書を読書中にします。 */

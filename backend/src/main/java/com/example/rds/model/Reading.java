@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.example.rds.context.AccountRepository;
 import com.example.rds.context.BookRepository;
 import com.example.rds.context.ReadingRepository;
@@ -70,7 +73,7 @@ public class Reading {
 
 	/** ユーザIDと本IDで、そのユーザに紐づく読書があれば返します。 */
 	public static Optional<Reading> getByUserIdAndBookId(ReadingRepository rep, Integer userId,Integer bookId) {
-		return rep.findByUserUserIdAndBookBookId(userId, bookId);
+		return rep.findByUserUserIdAndBookBookId(userId, bookId).filter(r -> r.getStatusType() != BookStatusType.INVALID);
 	}
 
 	/** 検索パラメタ */
@@ -90,17 +93,23 @@ public class Reading {
 	
 	/** ID(google)に紐付く読書を全て返します。 */
 	public static List<Reading> findById(ReadingRepository rep, String id) {
-		return rep.findById(id);
+		return rep.findById(id).stream()
+              .filter(r -> r.getStatusType() != BookStatusType.INVALID)
+              .collect(Collectors.toList());
 	}
 
 	/** ユーザに紐づく読書を全て返します*/
 	public static List<Reading> findReadingsByUserId(ReadingRepository rep,Integer userId) {
-		return rep.findReadingsByUserId(userId);
+		return rep.findReadingsByUserId(userId).stream()
+              .filter(r -> r.getStatusType() != BookStatusType.INVALID)
+              .collect(Collectors.toList());
 	}
 	
 	/** 読書を取得します。 */
 	public static List<Reading> findByBookId(ReadingRepository rep,Integer bookId){
-		return rep.findByBookId(bookId);
+		return rep.findByBookId(bookId).stream()
+              .filter(r -> r.getStatusType() != BookStatusType.INVALID)
+              .collect(Collectors.toList());
 	}
 	
 	/** 読書を登録します。 */
@@ -108,7 +117,11 @@ public class Reading {
 	public static Reading register(ReadingRepository rep,BookRepository bRep,AccountRepository aRep,RegisterReading param) {
 		Book book= Book.get(bRep,param.bookId).orElseThrow(() -> new EntityNotFoundException("Book not found"));
 		Account user = Account.get(aRep,param.userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
-		//TODO:ユーザIDで検索して、読書を全件取得。その後bookIDで検索して存在するんだったら返却する。
+		
+		Optional<Reading>existReading=Reading.getByUserIdAndBookId(rep, param.userId, param.bookId);
+		if (existReading.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Reading already exists.");
+		}
 		Reading reading=RegisterReading.builder().userId(param.userId).rate(param.rate).thoughts(param.thoughts).statusType(param.statusType).description(param.description).build().create();
 		reading.setBook(book);
 		reading.setUser(user);
@@ -144,8 +157,9 @@ public class Reading {
 		reading.setThoughts(params.thoughts);
 		reading.setUpdateDate(LocalDate.now());		
 		reading.setStatusType(params.statusType);
-		if(params.statusType.equals(BookStatusType.DONE)) {
-			reading.setReadDate(LocalDate.now());		}
+		if (params.statusType.equals(BookStatusType.DONE)) {
+			reading.setReadDate(LocalDate.now());
+		}
 		return rep.save(reading);
 	}
 	/** 変更パラメタ */
@@ -171,7 +185,8 @@ public class Reading {
 	@Transactional
 	public static void delete(ReadingRepository rep, Integer readingId) {
 		Reading reading = rep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Reading not found"));
-		rep.deleteById(reading.readingId);
+		reading.setStatusType(BookStatusType.INVALID);
+		rep.save(reading);
 	}
 	
 	/** 月間読書記録を返します。*/

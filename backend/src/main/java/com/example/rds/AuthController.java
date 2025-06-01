@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-//AuthController.java
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,33 +24,33 @@ import lombok.AllArgsConstructor;
 public class AuthController {
 	private AccountService service;
 	private AccountRepository rep;
-	
-	  private static final String GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=";
- @PostMapping("/google")
+
+	private static final String GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=";
+
+	@PostMapping("/google")
  public ResponseEntity<Map<String, Object>> googleLogin(@RequestBody Map<String, String> requestBody) {
      String token = requestBody.get("token");
      RestTemplate restTemplate = new RestTemplate();
      
-     // Validate the token by calling Google's TokenInfo API
      String url = GOOGLE_TOKEN_INFO_URL + token;
      Map<String, Object> userInfo = restTemplate.getForObject(url, Map.class);
+if (userInfo != null && userInfo.containsKey("sub")) {
+        Optional<Account> account = service.get((String) userInfo.get("sub"));
 
-     if (userInfo != null && userInfo.containsKey("sub")) {
-         // Here, 'sub' is a unique identifier for the Google account
-    	 //もし存在するならそのマスタのuserIdを返す
-    	 //存在しないならマスタに登録する
-    	 Optional<Account>account=service.get((String)userInfo.get("sub"));
-    	 Account user;
-    	 if(account.isPresent()) {
-    		 user=account.get();
-    	 }else {
-    		 user=Account.builder().googleSub((String)userInfo.get("sub")).email((String)userInfo.get("email"))
-    				 .name((String)userInfo.get("name")).picture((String)userInfo.get("picture")).build();
-    		// user=service.register(kari);
-    	 }
-         return ResponseEntity.ok(Map.of("user",user));
-     } else {
-         return ResponseEntity.status(401).body(Map.of("error", "Invalid token"));
-     }
- }
+        if (account.isPresent()) {
+            return ResponseEntity.ok(Map.of("user", account.get()));
+        } else {
+            // 未登録 → 200で必要な情報だけ返す（e.g., name）
+            return ResponseEntity.ok(Map.of(
+                "registered", false,
+                "name", userInfo.get("name"),
+                "email", userInfo.get("email"),
+                "picture", userInfo.get("picture"),
+                "googleSub", userInfo.get("sub")
+            ));
+        }
+    } else {
+        return ResponseEntity.status(401).body(Map.of("error", "Invalid token"));
+    }
+}
 }

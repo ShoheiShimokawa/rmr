@@ -1,12 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import {
-  Avatar,
-  Rating,
-  List,
-  Menu,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
+import { useContext, useState } from "react";
+import { Avatar, Rating, List, IconButton } from "@mui/material";
 import { formatDateTime } from "../util";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { Link } from "react-router-dom";
@@ -18,6 +11,8 @@ import { BookInfo } from "../components/book/BookInfo";
 import { CustomDialog } from "../ui/CustomDialog";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { useNotify } from "../hooks/NotifyProvider";
+import { useLocation } from "react-router-dom";
 
 export const Post = ({
   post,
@@ -34,23 +29,31 @@ export const Post = ({
   const [isGooded, setIsGooded] = useState(isInitiallyGooded);
   const [localGoodCount, setLocalGoodCount] = useState(post.goodCount || 0);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
+  const { notify } = useNotify();
+  const location = useLocation();
 
   const handleClick = (selectedHandle) => {
-    const currentUrl = window.location.href;
-    const newUrl = currentUrl + selectedHandle;
-    window.open(newUrl, "_blank", "noopener,noreferrer");
+    const origin = window.location.origin;
+    const newUrl = `${origin}/${selectedHandle}`;
+    window.open(newUrl, "_blank");
   };
 
   const handleGood = async () => {
     if (isLoggedIn()) {
-      setIsGooded(true);
-      setLocalGoodCount((prev) => prev + 1);
-      if (user) {
-        const param = {
-          postId: post.postId,
-          userId: user.userId,
-        };
-        const result = await good(param);
+      try {
+        setIsGooded(true);
+        setLocalGoodCount((prev) => prev + 1);
+        if (user) {
+          const param = {
+            postId: post.postId,
+            userId: user.userId,
+          };
+          const result = await good(param);
+        }
+      } catch (error) {
+        notify("You already good for this post.", "error");
+        setIsGooded(false);
+        setLocalGoodCount((prev) => prev - 1);
       }
     }
   };
@@ -129,9 +132,9 @@ export const Post = ({
                   </div>
                 </div>
 
-                {user && user.userId === post.user.userId && (
-                  <>
-                    <IconButton
+                {/* {user && user.userId === post.user.userId && (
+                  <> */}
+                {/* <IconButton
                       aria-label="more"
                       size="small"
                       onClick={handleOpen}
@@ -156,9 +159,9 @@ export const Post = ({
                           </div>
                         </MenuItem>
                       </div>
-                    </Menu>
-                  </>
-                )}
+                    </Menu> */}
+                {/* </>
+                )} */}
               </div>
               <div className="flex gap-6">
                 {post.reading && (

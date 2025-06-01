@@ -5,13 +5,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.example.rds.context.GoodRepository;
 import com.example.rds.context.PostRepository;
 import com.example.rds.context.ReadingRepository;
+import com.example.rds.type.BookStatusType;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.GeneratedValue;
@@ -30,15 +31,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Post {
+	/** ポストID */
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Integer postId;
 	/** ユーザID */
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
 	private Account user;
 	/** 読書ID */
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "reading_id")
 	private Reading reading;
 	/** ポスト日 */
@@ -51,9 +53,17 @@ public class Post {
 		return rep.findById(id);
 	}
 
-	/** 感想をポストします。 */
+	/** 感想をポストします。すでに同じ状態のreadingに紐づくポストが存在していたら更新します。 */
 	public static Post registerPost(PostRepository rep, ReadingRepository rRep, Integer readingId) {
-		var reading = rRep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+		var reading = rRep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Reading not found"));
+		Optional<Post> existPost=rep.findByReadingId(readingId).stream()
+				.findFirst();
+		if (existPost.isPresent() && existPost.get().getReading().getStatusType().equals(BookStatusType.DONE)) {
+			var updatedPost = existPost.get();
+			updatedPost.setReading(reading);
+			updatedPost.setUpdateDate(LocalDateTime.now());
+			return rep.save(updatedPost);
+		}
 		var post = Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDateTime.now()).build();
 		return rep.save(post);
 	}
@@ -62,6 +72,12 @@ public class Post {
 	public static List<Post> getPostAllByUser(PostRepository rep, Integer userId) {
 		return rep.findByUserId(userId);
 	}
+
+	/** ポストを変更します。 */
+	// public static Post update(PostRepository rep,ReadingRepository rRep,Integer readingId) {
+	// 	Reading reading = rRep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Reading not found"));
+		
+	// }
 	
 	/** いいね数を含めたユーザに紐づくポストを全て返します。 */
 	public static List<PostWithGoodCount> getPostWithGoodCount(PostRepository rep, GoodRepository gRep, Integer userId) {
@@ -121,7 +137,7 @@ public class Post {
 	@Builder
 	public record YearlyPostRecord(LocalDate date, Integer posts) {
 	}
-@Builder
-public record PostWithGoodCount(Integer postId, Account user, Reading reading,
+	@Builder
+	public record PostWithGoodCount(Integer postId, Account user, Reading reading,
 		 LocalDateTime registerDate,LocalDateTime updateDate,long goodCount) {}
 }

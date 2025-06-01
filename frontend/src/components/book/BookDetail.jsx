@@ -1,5 +1,6 @@
 import { Book } from "./Book";
 import { Post } from "../Post";
+import { getGoodPostAll } from "../../api/post";
 import { CustomDialog } from "../../ui/CustomDialog";
 import { useNotify } from "../../hooks/NotifyProvider";
 import React, { useState, useEffect, useCallback } from "react";
@@ -16,6 +17,7 @@ import { deleteReading, toDoing } from "../../api/reading";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { enumToGenre } from "../../util";
 import { useRequireLogin } from "../../hooks/useRequireLogin";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -27,13 +29,14 @@ import {
   AvatarGroup,
   IconButton,
   ListItemIcon,
+  CircularProgress,
 } from "@mui/material";
 import { ReadingRegister } from "../ReadingRegister";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 
 export const BookDetail = ({ book, updated }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorAddEl, setAnchorAddEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -46,15 +49,17 @@ export const BookDetail = ({ book, updated }) => {
   const { notify } = useNotify();
   const [openAdd, setOpenAdd] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
+  const [goodPostIds, setGoodPostIds] = useState([]);
 
   const handleOpenAdd = (event) => {
     if (!isLoggedIn()) return;
-    setAnchorEl(event.currentTarget);
+    setAnchorAddEl(event.currentTarget);
     setOpenAdd(true);
   };
 
   const handleCloseAdd = () => {
     setOpenAdd(false);
+    setAnchorAddEl(null);
   };
 
   const handleStartReading = async () => {
@@ -65,6 +70,17 @@ export const BookDetail = ({ book, updated }) => {
         updated && updated();
         notify("Start reading!", "success");
         find();
+      }
+    } catch (error) {
+      notify("Failure add this book to your bookshelf.", "error");
+    }
+  };
+  const handleDoneReading = async () => {
+    if (!isLoggedIn()) return;
+    try {
+      if (myReading) {
+        handleRegister();
+        updated && updated();
       }
     } catch (error) {
       notify("Failure add this book to your bookshelf.", "error");
@@ -81,6 +97,7 @@ export const BookDetail = ({ book, updated }) => {
         }
         notify("Success delete this from your bookshelf. ", "success");
         find();
+        updated && updated();
       } catch (error) {
         notify("Failed to delete this book.", "error");
       }
@@ -150,6 +167,12 @@ export const BookDetail = ({ book, updated }) => {
 
   const handleCloseRegister = () => {
     setOpenRegister(false);
+    if (anchorEl != null) {
+      handleClose();
+    } else if (anchorAddEl != null) {
+      handleCloseAdd();
+    }
+    find();
   };
 
   const handleOpen = (event) => {
@@ -162,16 +185,29 @@ export const BookDetail = ({ book, updated }) => {
   };
 
   const find = async () => {
-    var result = await findPostByBookId(book.id && book.id);
-    setPosts(result.data);
-    var iniReadings = await findReadingById(book.id && book.id);
-    iniReadings &&
-      user &&
-      setMyReading(iniReadings.data.find((r) => r.user.userId === user.userId));
-    iniReadings &&
-      setDoing(iniReadings.data.filter((r) => r.statusType === "DOING"));
-    iniReadings &&
-      setDone(iniReadings.data.filter((r) => r.statusType === "DONE"));
+    setLoading(true);
+    try {
+      var result = await findPostByBookId(book.id && book.id);
+      setPosts(result.data);
+      var iniReadings = await findReadingById(book.id && book.id);
+      iniReadings &&
+        user &&
+        setMyReading(
+          iniReadings.data.find((r) => r.user.userId === user.userId)
+        );
+      iniReadings &&
+        setDoing(iniReadings.data.filter((r) => r.statusType === "DOING"));
+      iniReadings &&
+        setDone(iniReadings.data.filter((r) => r.statusType === "DONE"));
+      const goodList = await getGoodPostAll(user && user.userId);
+      console.log("goods:", goodList.data);
+      const likedIds = goodList.data.map((g) => g.post.postId);
+      setGoodPostIds(likedIds);
+    } catch (error) {
+      notify("Failed to loading. Please try again.", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -181,12 +217,21 @@ export const BookDetail = ({ book, updated }) => {
   return (
     <div>
       {showLoginDialog && <LoginDialog />}
+      {loading && (
+        <div className="flex justify-center items-center min-h-[300px]">
+          <CircularProgress />
+        </div>
+      )}
       <CustomDialog
         open={openRegister}
         title="Review"
         onClose={handleCloseRegister}
       >
-        <ReadingRegister book={bookForReading} updated={handleCloseRegister} />
+        <ReadingRegister
+          book={bookForReading}
+          updated={handleCloseRegister}
+          reading={myReading && myReading}
+        />
       </CustomDialog>
       <div className="flex">
         <Book book={book} />
@@ -201,7 +246,7 @@ export const BookDetail = ({ book, updated }) => {
       <div className="flex place-items-center  mt-2 ml-1 mb-1">
         <div className="text-xs mr-1 text-stone-600">Genre: </div>
         <Chip
-          label={book.genre}
+          label={enumToGenre(book.genre)}
           size="small"
           variant="outlined"
           sx={{
@@ -291,7 +336,6 @@ export const BookDetail = ({ book, updated }) => {
                 <MenuItem
                   onClick={() => {
                     handleRegisterWithDone();
-                    handleClose();
                   }}
                 >
                   <ListItemIcon>
@@ -316,8 +360,7 @@ export const BookDetail = ({ book, updated }) => {
               <>
                 <MenuItem
                   onClick={() => {
-                    handleRegisterWithDone();
-                    handleClose();
+                    handleDoneReading();
                   }}
                 >
                   <ListItemIcon>
@@ -353,8 +396,7 @@ export const BookDetail = ({ book, updated }) => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    handleRegisterWithDone();
-                    handleClose();
+                    handleDoneReading();
                   }}
                 >
                   <ListItemIcon>
@@ -380,7 +422,7 @@ export const BookDetail = ({ book, updated }) => {
         </Menu>
         <Menu
           className="absolute bottom-0"
-          anchorEl={anchorEl}
+          anchorEl={anchorAddEl}
           open={openAdd}
           onClose={handleCloseAdd}
         >
@@ -390,7 +432,7 @@ export const BookDetail = ({ book, updated }) => {
                 <MenuItem
                   onClick={() => {
                     handleRegisterWithNone();
-                    handleClose();
+                    handleCloseAdd();
                   }}
                 >
                   <ListItemIcon>
@@ -401,7 +443,7 @@ export const BookDetail = ({ book, updated }) => {
                 <MenuItem
                   onClick={() => {
                     handleRegisterWithDoing();
-                    handleClose();
+                    handleCloseAdd();
                   }}
                 >
                   <ListItemIcon>
@@ -412,7 +454,6 @@ export const BookDetail = ({ book, updated }) => {
                 <MenuItem
                   onClick={() => {
                     handleRegisterWithDone();
-                    handleClose();
                   }}
                 >
                   <ListItemIcon>
@@ -429,20 +470,24 @@ export const BookDetail = ({ book, updated }) => {
       <div className="flex mt-2 mb-4 justify-evenly">
         <div className="flex place-items-center">
           {doing.length !== 0 ? (
-            doing.map((reading) => (
-              <AvatarGroup
-                max={4}
-                sx={{
-                  "& .MuiAvatar-root": {
-                    width: 34,
-                    height: 34,
-                    fontSize: 16,
-                  },
-                }}
-              >
-                <Avatar alt={reading.user.name} src={reading.user.picture} />
-              </AvatarGroup>
-            ))
+            <AvatarGroup
+              max={3}
+              sx={{
+                "& .MuiAvatar-root": {
+                  width: 34,
+                  height: 34,
+                  fontSize: 16,
+                },
+              }}
+            >
+              {doing.map((reading) => (
+                <Avatar
+                  key={reading.readingId}
+                  alt={reading.user.name}
+                  src={reading.user.picture}
+                />
+              ))}
+            </AvatarGroup>
           ) : (
             <div className="text-sm">no one</div>
           )}
@@ -452,20 +497,20 @@ export const BookDetail = ({ book, updated }) => {
         <div className="flex place-items-center">
           <div>
             {done.length !== 0 ? (
-              done.map((reading) => (
-                <AvatarGroup
-                  max={4}
-                  sx={{
-                    "& .MuiAvatar-root": {
-                      width: 34,
-                      height: 34,
-                      fontSize: 16,
-                    },
-                  }}
-                >
+              <AvatarGroup
+                max={3}
+                sx={{
+                  "& .MuiAvatar-root": {
+                    width: 34,
+                    height: 34,
+                    fontSize: 16,
+                  },
+                }}
+              >
+                {done.map((reading) => (
                   <Avatar alt={reading.user.name} src={reading.user.picture} />
-                </AvatarGroup>
-              ))
+                ))}
+              </AvatarGroup>
             ) : (
               <div className="text-sm">no one</div>
             )}
@@ -478,7 +523,13 @@ export const BookDetail = ({ book, updated }) => {
         <>
           {posts.map((post) => (
             <>
-              <Post post={post} fromDetail={true} />
+              <div key={post.postId}>
+                <Post
+                  post={post}
+                  fromDetail={true}
+                  isInitiallyGooded={goodPostIds.includes(post.postId)}
+                />
+              </div>
 
               {posts.length >= 2 && <Divider />}
             </>

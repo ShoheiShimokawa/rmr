@@ -3,6 +3,9 @@ package com.example.rds.model;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.example.rds.context.GoodRepository;
 import com.example.rds.context.PostRepository;
 
@@ -41,13 +44,19 @@ public class Good {
 	/** ポストにいいねします。 */
 	public static Good good(GoodRepository rep, PostRepository pRep,Integer postId, Integer userId) {
 		var post = pRep.findById(postId).get();
+		Optional<Good> good = rep.findByPostPostIdAndUserId(postId, userId);
+		if(good.isPresent()){
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Good already exists.");
+		}
 		return rep.save(Good.builder().post(post).userId(userId).build());
 	}
 
 	/** いいねを取り消します。 */
 	public static void delete(GoodRepository rep, Integer postId,Integer userId) {
-		Optional<Good> good=rep.findByPostPostIdAndUserId(postId,userId);
+		Optional<Good> good = rep.findByPostPostIdAndUserId(postId, userId);
+		if(good.isPresent()){
 		rep.delete(good.get());
+		}
 	}
 	
 	/** ポストにいいねした人を返します。 */

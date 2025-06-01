@@ -1,24 +1,20 @@
 import { registerReading, updateReading } from "../api/reading";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNotify } from "../hooks/NotifyProvider";
 import { TextField, Button, Rating } from "@mui/material";
 
 export const ReadingRegister = ({ book, reading, updated }) => {
   const { user } = useContext(UserContext);
-
-  const isDisabled = book ? false : true;
+  const { notify } = useNotify();
+  const isDisabled = book || reading ? false : true;
 
   const formSchema = z.object({
-    rate: z.number().min(1, "rate is required."),
-    thoughts: z
-      .string()
-      .min(1, "thoughts is required.")
-      .refine((val) => val.trim().length > 0, {
-        message: "thoughts is required",
-      }),
+    rate: z.number().optional(),
+    thoughts: z.string().max(500),
   });
 
   const {
@@ -34,28 +30,39 @@ export const ReadingRegister = ({ book, reading, updated }) => {
       thoughts: reading ? reading.thoughts : "",
     },
   });
+  const watchedRate = useWatch({ control, name: "rate" });
+  const watchedThoughts = useWatch({ control, name: "thoughts" });
+
+  const isSkipped =
+    !watchedRate && (!watchedThoughts || watchedThoughts.trim() === "");
   const onSubmit = async (values) => {
-    if (reading) {
-      const updateParam = {
-        ...values,
-        bookId: reading.book.bookId,
-        userId: user.userId,
-        statusType: "DONE",
-        readingId: reading.readingId,
-      };
-      await updateReading(updateParam);
-      console.log("success change reading.");
-      updated && updated();
-    } else {
-      const param = {
-        ...values,
-        bookId: book ? book.bookId : reading.book.bookId,
-        userId: user.userId,
-        statusType: "DONE",
-      };
-      const result = await registerReading(param);
-      console.log("success register reading.");
-      updated && updated();
+    try {
+      if (reading) {
+        const updateParam = {
+          ...values,
+          bookId: reading.book.bookId,
+          userId: user.userId,
+          statusType: "DONE",
+          readingId: reading.readingId,
+        };
+        await updateReading(updateParam);
+        updated && updated();
+        notify("Congrats!", "success");
+      } else {
+        const param = {
+          ...values,
+          bookId: book ? book.bookId : reading.book.bookId,
+          userId: user.userId,
+          statusType: "DONE",
+        };
+        const result = await registerReading(param);
+        console.log("success register reading.");
+        updated && updated();
+        notify("Congrats!", "success");
+      }
+    } catch (error) {
+      notify("Something went wrong.", "error");
+    } finally {
     }
   };
 
@@ -101,9 +108,8 @@ export const ReadingRegister = ({ book, reading, updated }) => {
           fullWidth
           disabled={isDisabled}
           sx={{ textTransform: "none" }}
-          // endIcon={<SendIcon />}
         >
-          Post
+          {isSkipped ? "Skip Review" : "Post"}
         </Button>
       </form>
     </div>

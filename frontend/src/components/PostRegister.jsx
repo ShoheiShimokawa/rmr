@@ -1,44 +1,33 @@
 import { registerReading, findReadingByUser } from "../api/reading";
 import { registerBook } from "../api/book";
+import { Box, Divider } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import { IconButton } from "@mui/material";
 import { Book } from "./book/Book";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  Box,
-} from "@mui/material";
+import { CustomDialog } from "../ui/CustomDialog";
 import { BookArray } from "./book/BookArray";
-import { Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { ReadingRegister } from "./ReadingRegister";
 import { BookSearch } from "./book/BookSearch";
 import { BookDetail } from "./book/BookDetail";
-import { statusTypeStr, judgeIcon } from "../badge/index";
 import UserContext from "./UserProvider";
 import { genreToEnum } from "../util";
 
 export const PostRegister = () => {
   const { user } = useContext(UserContext);
-  const [reading, setReading] = useState();
   const [readings, setReadings] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedReading, setSelectedReading] = useState(null);
   const [selectedBook, setSelectedBook] = useState(null);
-  const [isFromPost, setIsFromPost] = useState(false);
   const [addedBook, setAddedBook] = useState();
 
-  const recent = readings.filter((r) => {
-    return r.statusType === "NONE" || r.statusType === "DOING";
+  const none = readings.filter((r) => {
+    return r.statusType === "NONE";
   });
 
-  const onSubmit = async () => {
-    const result = await registerReading(reading);
-  };
+  const doing = readings.filter((r) => {
+    return r.statusType === "DOING";
+  });
 
   const find = async () => {
     const result = await findReadingByUser(user.userId);
@@ -92,27 +81,30 @@ export const PostRegister = () => {
   }, []);
   return (
     <div>
-      <Dialog open={open} maxWidth={"md"}>
-        <DialogTitle>search</DialogTitle>
-        <DialogContent>
-          <BookSearch fromPost={fromPost} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+      <CustomDialog open={open} title="search" onClose={handleClose}>
+        <BookSearch fromPost={fromPost} />
+      </CustomDialog>
       <div className="flex">
-        <div className="flex-1">
-          <div className="flex">
-            <div>In my bookshelf...</div>
-          </div>
-          <div className="flex">
-            {recent.length >= 1 ? (
-              <BookArray books={recent && recent} handleSelect={handleSelect} />
-            ) : (
-              <div className="text-sm text-gray-600">
-                Nothing in your reading or want-to-read bookshelf.
-              </div>
+        <div className="flex-[2]">
+          <div className="w-[400px]">
+            {none.length >= 1 && (
+              <>
+                <div className="mb-2">To Read</div>
+                <div className="w-[400px] overflow-x-auto">
+                  <BookArray books={none && none} handleSelect={handleSelect} />
+                </div>
+              </>
+            )}
+            {doing.length >= 1 && (
+              <>
+                <div className="mt-3 mb-2">Reading Now</div>
+                <div className="w-[400px] overflow-x-auto space-y-2">
+                  <BookArray
+                    books={doing && doing}
+                    handleSelect={handleSelect}
+                  />
+                </div>
+              </>
             )}
           </div>
           <IconButton>
@@ -131,7 +123,7 @@ export const PostRegister = () => {
           </div>
         </div>
 
-        <div className="flex-1">
+        <div className="ml-6 mt-5 min-w-[400px]">
           {selectedBook && <BookDetail book={selectedBook} />}
         </div>
       </div>

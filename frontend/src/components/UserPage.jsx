@@ -6,9 +6,6 @@ import { getByHandle } from "../api/account";
 import { useState, useEffect } from "react";
 import { Divider, Tabs, Tab, Box, ListItem, List } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { IconButton } from "@mui/material";
-import { Link } from "react-router-dom";
-import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 
 export const UserPage = () => {
   const { handle } = useParams();
@@ -28,7 +25,7 @@ export const UserPage = () => {
   };
   useEffect(() => {
     find();
-  }, []);
+  }, [handle]);
 
   const TabPanel = ({ children, value, index }) => {
     return (
@@ -45,9 +42,6 @@ export const UserPage = () => {
   };
   return (
     <div>
-      {/* <IconButton component={Link} to="/" size="small">
-        <ArrowBackIosNewRoundedIcon />
-      </IconButton> */}
       {user && <Profile account={user} />}
       <Divider />
       <Tabs value={tabIndex} onChange={handleTabChange} className="mb-2">
