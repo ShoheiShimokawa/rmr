@@ -24,6 +24,11 @@ import lombok.AllArgsConstructor;
 public class MemoController {
     private final MemoService service;
 
+ @GetMapping("/memo/id")
+    public Memo getById(@RequestParam Integer memoId) {
+        return service.getById(memoId);
+    }
+
     // @GetMapping("/memo")
     // public List<Memo> get(Integer userId) {
     //     return service.get(userId);

@@ -86,7 +86,6 @@ export const StepMemoRegister = ({ updated }) => {
               reading={selectedReading && selectedReading}
               updated={updated}
             />
-            <Button onClick={() => goToStep(0)}>Back</Button>
           </Box>
         </Slide>
       </Box>

@@ -9,10 +9,7 @@ export const BookInfo = ({ book, onClick }) => {
           <Book book={book} onClick={onClick} />
           <div className="ml-2 text-sm text-zinc-800">
             <div>{book.title}</div>
-            <div className="text-zinc-500 mt-2 text-sm">
-              <PersonIcon fontSize="small" />
-              {book.author}
-            </div>
+            <div className="text-zinc-500 mt-2 text-sm">{book.author}</div>
           </div>
         </div>
       )}

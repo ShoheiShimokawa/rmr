@@ -21,7 +21,10 @@ export const UserPage = () => {
     const postResult = await getPostAllByUser(
       result.data.userId && result.data.userId
     );
-    setPosts(postResult.data);
+    const sortedPosts = postResult.data.slice().sort((a, b) => {
+      return new Date(b.registerDate) - new Date(a.registerDate);
+    });
+    setPosts(sortedPosts);
   };
   useEffect(() => {
     find();

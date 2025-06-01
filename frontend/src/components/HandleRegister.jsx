@@ -1,4 +1,3 @@
-import { registerReading, updateReading } from "../api/reading";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { useContext } from "react";
@@ -6,9 +5,9 @@ import UserContext from "./UserProvider";
 import { registerAccount } from "../api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, Rating, InputAdornment } from "@mui/material";
-import { generateHandleId } from "../util";
-
+import { useNotify } from "../hooks/NotifyProvider";
 export const HandleRegister = ({ account }) => {
+  const { notify } = useNotify();
   const formSchema = z.object({
     handle: z.string().min(1, "ID is required.").max(12),
     name: z.string().min(1, "name is required.").max(30),
@@ -33,9 +32,8 @@ export const HandleRegister = ({ account }) => {
       picture: account.picture,
       email: account.email,
     };
-    console.log(params);
     const result = await registerAccount(params);
-    console.log(result);
+    notify("You've successfully created your account!", "success");
   };
   return (
     <div>

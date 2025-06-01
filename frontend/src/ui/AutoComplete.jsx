@@ -1,37 +1,52 @@
 import { TextField, Autocomplete, InputAdornment } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
-export const AutoComplete = ({ options, disabled }) => {
-  const [value, setValue] = useState(null);
+export const AutoComplete = ({ options, value, onChange, disabled }) => {
   const [inputValue, setInputValue] = useState("");
+
+  const filteredOptions = useMemo(() => {
+    const lowerInput = inputValue.toLowerCase();
+    const matches = options.filter((option) =>
+      option.toLowerCase().includes(lowerInput)
+    );
+    const isExisting = options.some(
+      (option) => option.toLowerCase() === lowerInput
+    );
+
+    if (inputValue !== "" && !isExisting) {
+      return [...matches, { inputValue, title: `Add "${inputValue}"` }];
+    }
+
+    return matches;
+  }, [options, inputValue]);
 
   return (
     <Autocomplete
       freeSolo
       value={value}
-      inputValue={inputValue}
       disabled={disabled}
-      onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
-      onChange={(event, newValue) => setValue(newValue)}
-      filterOptions={(options, params) => {
-        const filtered = options.filter((option) =>
-          option.toLowerCase().includes(params.inputValue.toLowerCase())
-        );
-
-        const isExisting = options.some(
-          (option) => option.toLowerCase() === params.inputValue.toLowerCase()
-        );
-
-        if (params.inputValue !== "" && !isExisting) {
-          filtered.push(`Add "${params.inputValue}"`);
-        }
-
-        return filtered;
+      options={filteredOptions}
+      getOptionLabel={(option) =>
+        typeof option === "string" ? option : option.title
+      }
+      isOptionEqualToValue={(option, value) =>
+        typeof option === "string"
+          ? option === value
+          : option.inputValue === value
+      }
+      onInputChange={(event, newInputValue) => {
+        setInputValue(newInputValue);
       }}
-      selectOnFocus
-      clearOnBlur
-      handleHomeEndKeys
-      options={options}
+      onChange={(event, newValue) => {
+        if (typeof newValue === "string") {
+          onChange(newValue);
+        } else if (newValue?.inputValue) {
+          // Add "〇〇" を選択したとき
+          onChange(newValue.inputValue);
+        } else {
+          onChange(newValue);
+        }
+      }}
       renderInput={(params) => <TextField {...params} variant="outlined" />}
     />
   );

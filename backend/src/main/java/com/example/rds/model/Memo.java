@@ -3,6 +3,7 @@ package com.example.rds.model;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.example.rds.context.LabelRepository;
@@ -54,6 +55,11 @@ public class Memo {
     /** 更新日 */
     private LocalDate updateDate;
 
+    /** メモを返します。 */
+    public static Optional<Memo> getById(MemoRepository rep, Integer memoId) {
+        return rep.findById(memoId);
+    }
+
     /** ユーザに紐づくメモを返します。 */
     public static List<Memo> get(MemoRepository rep, Integer userId) {
         return rep.findByUserId(userId);
@@ -79,6 +85,7 @@ public class Memo {
         String label
     ){};
 
+ 
     /** ラベリングされたメモを返します。 */
     public static List<ReadingMemoGroup> getGroupedMemos(MemoRepository rep,Integer userId) {
     List<Memo> memos = rep.findByUserId(userId);

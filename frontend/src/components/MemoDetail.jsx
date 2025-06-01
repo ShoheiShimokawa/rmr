@@ -1,7 +1,10 @@
 import { useContext } from "react";
 import UserContext from "./UserProvider";
+import { CustomDialog } from "../ui/CustomDialog";
 import { useState, useEffect, useMemo } from "react";
+import { MemoRegister } from "./MemoRegister";
 import AddIcon from "@mui/icons-material/Add";
+import { getById } from "../api/memo";
 
 import {
   Card,
@@ -11,18 +14,34 @@ import {
   Chip,
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@mui/material";
 
-import { BookInfo } from "./book/BookInfo";
+export const MemoDetail = ({ memo, updated }) => {
+  const [openRegister, setOpenRegister] = useState(false);
+  const [selectedReading, setSelectedReading] = useState();
+  const handleOpenRegister = () => {
+    setOpenRegister(true);
+  };
 
-export const MemoDetail = ({ memo }) => {
+  const handleCloseRegister = () => {
+    setOpenRegister(false);
+  };
+
+  // const find = async () => {};
+
+  // useEffect(() => {
+  //   find();
+  // }, []);
+
   return (
     <div>
+      <CustomDialog
+        open={openRegister}
+        title="Add Highlight"
+        onClose={handleCloseRegister}
+      >
+        <MemoRegister reading={memo.reading} updated={() => updated()} />
+      </CustomDialog>
       {memo && (
         <div>
           {memo.labelingMemo.map((group, j) => (
@@ -45,7 +64,7 @@ export const MemoDetail = ({ memo }) => {
               variant="outlined"
               size="small"
               startIcon={<AddIcon />}
-              // onClick={handleOpen}
+              onClick={handleOpenRegister}
               sx={{
                 textTransform: "none",
                 backgroundColor: "#000",

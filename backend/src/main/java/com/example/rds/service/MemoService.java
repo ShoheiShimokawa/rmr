@@ -13,6 +13,7 @@ import com.example.rds.model.Memo;
 import com.example.rds.model.Memo.ReadingMemoGroup;
 import com.example.rds.model.Memo.RegisterMemo;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,6 +23,10 @@ public class MemoService {
     private final AccountRepository aRep;
     private final ReadingRepository rRep;
     private final LabelRepository lRep;
+
+    public Memo getById(Integer memoId) {
+        return Memo.getById(rep, memoId).orElseThrow(() -> new EntityNotFoundException("Memo not found"));
+    }
 
     /** ユーザに紐づくメモを返します。 */
     public List<Memo> get(Integer userId) {

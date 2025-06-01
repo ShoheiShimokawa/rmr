@@ -2,8 +2,8 @@ import axios from "axios";
 
 const url = "http://localhost:8080/api/";
 
-export const getPostAll = (userId) => {
-  return axios.get(url + "post", userId);
+export const getPostAll = () => {
+  return axios.get(url + "post");
 };
 
 export const findPostByBookId = (id) => {

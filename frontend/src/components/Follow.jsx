@@ -18,6 +18,7 @@ export const Follow = ({ followerId }) => {
 
   const handleSelectUser = (selectedUser) => {
     setSelectedUser(selectedUser);
+    console.log(selectedUser);
     handleOpenProfile();
   };
 

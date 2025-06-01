@@ -5,7 +5,7 @@ export const Book = ({ book, onClick, src }) => {
       component="img"
       src={!src ? book.thumbnail : src}
       sx={{
-        width: "95px",
+        width: "90px",
         height: "130px",
         cursor: "pointer",
         boxShadow: 1,

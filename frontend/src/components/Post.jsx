@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Avatar,
   Rating,
@@ -7,30 +7,66 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
-import { Book } from "./book/Book";
+import { formatDateTime } from "../util";
+import { useRequireLogin } from "../hooks/useRequireLogin";
 import { Link } from "react-router-dom";
 import { BookDetail } from "./book/BookDetail";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useMessage } from "../ui/useMessage";
+import { good, deleteGood } from "../api/post";
 import UserContext from "./UserProvider";
 import { BookInfo } from "../components/book/BookInfo";
 import { CustomDialog } from "../ui/CustomDialog";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
-export const Post = ({ post, visible, fromDetail }) => {
+export const Post = ({
+  post,
+  visible,
+  fromDetail,
+  isInitiallyGooded = false,
+}) => {
   const { user } = useContext(UserContext);
-  const [selectedPost, setSelectedPost] = useState();
   const [openUpdate, setOpenUpdate] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedBook, setSelectedBook] = useState();
   const [showBookDetail, setShowBookDetail] = useState(false);
   const [open, setOpen] = useState(false);
-  const { showMessage, AlertComponent } = useMessage();
+  const [isGooded, setIsGooded] = useState(isInitiallyGooded);
+  const [localGoodCount, setLocalGoodCount] = useState(post.goodCount || 0);
+  const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
+
   const handleClick = (selectedHandle) => {
     const currentUrl = window.location.href;
     const newUrl = currentUrl + selectedHandle;
     window.open(newUrl, "_blank", "noopener,noreferrer");
   };
 
+  const handleGood = async () => {
+    if (isLoggedIn()) {
+      setIsGooded(true);
+      setLocalGoodCount((prev) => prev + 1);
+      if (user) {
+        const param = {
+          postId: post.postId,
+          userId: user.userId,
+        };
+        const result = await good(param);
+      }
+    }
+  };
+  const handleDelete = async () => {
+    if (isLoggedIn()) {
+      setIsGooded(false);
+      setLocalGoodCount((prev) => prev - 1);
+      if (user) {
+        const param = {
+          postId: post.postId,
+          userId: user.userId,
+        };
+        const result = await deleteGood(param);
+      }
+    }
+  };
   const handleShowBookDetail = (selectedBook) => {
     setSelectedBook(selectedBook);
     setShowBookDetail(true);
@@ -56,6 +92,7 @@ export const Post = ({ post, visible, fromDetail }) => {
 
   return (
     <>
+      {showLoginDialog && <LoginDialog />}
       <CustomDialog
         open={showBookDetail}
         title="Detail"
@@ -63,7 +100,7 @@ export const Post = ({ post, visible, fromDetail }) => {
       >
         <BookDetail book={selectedBook} />
       </CustomDialog>
-      {post && (
+      {post && post.user && (
         <List>
           <div key={post.postId} className="w-xl flex ">
             <div className="mr-2">
@@ -72,19 +109,19 @@ export const Post = ({ post, visible, fromDetail }) => {
                   to={`/${post.user.handle}`}
                   style={{ textDecoration: "none" }}
                 >
-                  <Avatar src={post.user.picture && post.user.picture} />
+                  <Avatar src={post.user.picture} />
                 </Link>
               ) : (
                 <Avatar
-                  src={post.user.picture && post.user.picture}
+                  src={post.user && post.user.picture}
                   onClick={() => {
                     handleClick(post.user.handle && post.user.handle);
                   }}
                 />
               )}
             </div>
-            <div>
-              <div className="flex relative">
+            <div className="w-full">
+              <div className="flex justify-between items-start w-full">
                 <div>
                   <div className="text-sm">{post.user.name}</div>
                   <div className="text-sm text-zinc-500 ">
@@ -93,13 +130,10 @@ export const Post = ({ post, visible, fromDetail }) => {
                 </div>
 
                 {user && user.userId === post.user.userId && (
-                  <div className="absolute top-0 right-0">
+                  <>
                     <IconButton
                       aria-label="more"
-                      id="long-button"
-                      aria-controls={open ? "long-menu" : undefined}
-                      aria-expanded={open ? "true" : undefined}
-                      // aria-haspopup="true"
+                      size="small"
                       onClick={handleOpen}
                     >
                       <MoreVertIcon />
@@ -107,19 +141,9 @@ export const Post = ({ post, visible, fromDetail }) => {
                     <Menu
                       className="absolute bottom-0"
                       id="long-menu"
-                      MenuListProps={{
-                        "aria-labelledby": "long-button",
-                      }}
                       anchorEl={anchorEl}
                       open={open}
                       onClose={handleClose}
-                      slotProps={{
-                        paper: {
-                          style: {
-                            width: "auto",
-                          },
-                        },
-                      }}
                     >
                       <div>
                         <MenuItem>
@@ -133,7 +157,7 @@ export const Post = ({ post, visible, fromDetail }) => {
                         </MenuItem>
                       </div>
                     </Menu>
-                  </div>
+                  </>
                 )}
               </div>
               <div className="flex gap-6">
@@ -146,11 +170,15 @@ export const Post = ({ post, visible, fromDetail }) => {
                         value={post.reading.rate}
                         size="small"
                         readOnly
+                        sx={{
+                          "& .MuiRating-icon": {
+                            fontSize: "15px",
+                          },
+                        }}
                       />
                       <div className="text-sm mt-1">
                         {post.reading.thoughts}
                       </div>
-
                       {visible && (
                         <>
                           <div className="mt-3"></div>
@@ -162,24 +190,35 @@ export const Post = ({ post, visible, fromDetail }) => {
                           />
                         </>
                       )}
-                      {/* {goodPosts.length > 0 &&
-                          !goodPosts.includes(post.postId) ? (
-                            <IconButton
-                              onClick={() => {
-                                handleGood(post.postId);
-                              }}
-                            >
-                              <FavoriteBorderRoundedIcon color="error" />
-                            </IconButton>
+                      <div className="flex items-center">
+                        <IconButton
+                          onClick={() => {
+                            if (isGooded) {
+                              handleDelete();
+                            } else {
+                              handleGood();
+                            }
+                          }}
+                        >
+                          {!isGooded ? (
+                            <FavoriteBorderIcon
+                              color="error"
+                              fontSize="small"
+                            />
                           ) : (
-                            <IconButton
-                              onClick={() => {
-                                handleCancel(post.postId);
-                              }}
-                            >
-                              <FavoriteRoundedIcon color="error" />
-                            </IconButton>
-                          )} */}
+                            <FavoriteIcon color="error" fontSize="small" />
+                          )}
+                        </IconButton>
+
+                        <div className="text-sm">{localGoodCount}</div>
+                      </div>
+                      <div className="flex text-xs text-zinc-500  ">
+                        <div>(last updated: </div>
+                        {formatDateTime(
+                          post.updateDate ? post.updateDate : post.registerDate
+                        )}
+                        )
+                      </div>
                     </div>
                   </>
                 )}

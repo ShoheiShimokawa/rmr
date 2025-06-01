@@ -5,6 +5,7 @@ import {
   follow,
   deleteFollow,
 } from "../api/account";
+import { useNotify } from "../hooks/NotifyProvider";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import ReviewsRoundedIcon from "@mui/icons-material/ReviewsRounded";
 import { CustomDialog } from "../ui/CustomDialog";
@@ -13,17 +14,9 @@ import { Follow } from "../components/Follow";
 import { ProfileChange } from "./ProfileChange";
 import { ContributionMap } from "./ContributionMap";
 import { Header } from "./Header";
-import {
-  Avatar,
-  Dialog,
-  TypographyDialog,
-  Button,
-  Typography,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { getPostAllByUser } from "../api/post";
+import { findReadingByUser } from "../api/reading";
+import { Avatar, Button, Typography, CircularProgress } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserProvider";
 
@@ -36,6 +29,10 @@ export const Profile = ({ account }) => {
   const [showFollower, setShowFollower] = useState(false);
   const [followed, setFollowed] = useState({});
   const [isFollowed, setIsFollowed] = useState(false);
+  const [readings, setReadings] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { notify } = useNotify();
 
   const handleFollow = async (selectedUserId) => {
     setIsFollowed(true);
@@ -84,15 +81,26 @@ export const Profile = ({ account }) => {
   };
 
   const find = async () => {
-    const follow = await getFollow(account && account.userId);
-    setFollows(follow.data);
-    const result = await getFollower(account && account.userId);
-    setFollowers(result.data);
-    var isFollowed = result.data.find(
-      (v) => v.follower.userId === user && user.userId
-    );
-    isFollowed && setFollowed(isFollowed);
-    isFollowed && setIsFollowed(true);
+    setLoading(true);
+    try {
+      const follow = await getFollow(account && account.userId);
+      setFollows(follow.data);
+      const result = await getFollower(account && account.userId);
+      setFollowers(result.data);
+      var isFollowed = result.data.find(
+        (v) => v.follower.userId === user && user.userId
+      );
+      isFollowed && setFollowed(isFollowed);
+      isFollowed && setIsFollowed(true);
+      const readingResult = await findReadingByUser(account && account.userId);
+      setReadings(readingResult.data);
+      const postResult = await getPostAllByUser(account && account.userId);
+      setPosts(postResult.data);
+    } catch (error) {
+      notify("Failed to load. Please try later.", "error");
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     find();
@@ -121,69 +129,71 @@ export const Profile = ({ account }) => {
       >
         <Follower userId={account.userId && account.userId} />
       </CustomDialog>
-      <div className="flex w-[300px]">
-        <div className="flex  justify-between ">
-          <div className="flex mr-4">
-            <Avatar
-              src={account.picture}
-              className="mr-2"
-              sx={{ width: 90, height: 90 }}
-            />
-          </div>
-          <div>
-            <MenuBookRoundedIcon />1
-            <br />
-            <ReviewsRoundedIcon />
-            41
-          </div>
+      <div className="relative w-full flex items-start ml-4">
+        <Avatar
+          src={account.picture}
+          className="mr-2"
+          sx={{ width: 90, height: 90 }}
+        />
 
-          <div className="flex h-[50px] justify-end">
-            {user && account.userId === user.userId ? (
-              <Button
-                size="small"
-                variant="contained"
-                onClick={handleChangeOpen}
-                sx={{ textTransform: "none" }}
-              >
-                edit
-              </Button>
-            ) : !isFollowed ? (
-              <div>
-                <Button
-                  size="small"
-                  variant="contained"
-                  sx={{ textTransform: "none" }}
-                  onClick={() => {
-                    handleFollow(account.userId);
-                  }}
-                >
-                  follow
-                </Button>
-              </div>
-            ) : (
-              <div>
-                <Button
-                  size="small"
-                  variant="contained"
-                  sx={{ textTransform: "none" }}
-                  onClick={() => {
-                    handleCancelFollow(followed && followed.id);
-                  }}
-                >
-                  followed
-                </Button>
-              </div>
-            )}
-          </div>
+        <div className="ml-2">
+          <MenuBookRoundedIcon />
+          {loading ? (
+            <CircularProgress size="10px" />
+          ) : readings.length !== 0 ? (
+            readings.length
+          ) : (
+            0
+          )}
+          <br />
+          🖋️
+          {loading ? (
+            <CircularProgress size="10px" />
+          ) : posts.length !== 0 ? (
+            posts.length
+          ) : (
+            0
+          )}
+        </div>
+
+        <div className="absolute right-0 top-0">
+          {user && account.userId === user.userId ? (
+            <Button
+              size="small"
+              variant="contained"
+              onClick={handleChangeOpen}
+              sx={{ textTransform: "none" }}
+            >
+              edit
+            </Button>
+          ) : !isFollowed ? (
+            <Button
+              size="small"
+              variant="contained"
+              sx={{ textTransform: "none" }}
+              onClick={() => handleFollow(account.userId)}
+            >
+              follow
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              variant="contained"
+              sx={{ textTransform: "none" }}
+              onClick={() => handleCancelFollow(followed && followed.id)}
+            >
+              followed
+            </Button>
+          )}
         </div>
       </div>
-      <Typography component="h2">
+      <div className="text-lg ml-1 font-bold">
         {account.name}
         <div className="text-zinc-500">{account.handle}</div>
-      </Typography>
-      <div className="mb-2 mt-2"> {account.description}</div>
+      </div>
+      <div className="mb-2 mt-2 ml-2"> {account.description}</div>
       <div className="flex">
-        <div className="flex hover:underline cursor-pointer">
+        <div className="flex hover:underline cursor-pointer ml-2">
           <div className="mr-1 " onClick={handleSelectFollow}>
             {follows.length != 0 ? follows.length : 0} follows
           </div>

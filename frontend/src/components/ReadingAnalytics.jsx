@@ -1,12 +1,8 @@
 import {
-  ChartContainer,
   PieChart,
   LineChart,
   ChartsItemTooltipContent,
   ChartsTooltip,
-  LinePlot,
-  ChartsXAxis,
-  ChartsYAxis,
 } from "@mui/x-charts";
 import { Card, CardContent, Typography, Grid } from "@mui/material";
 import { findReadingByUser } from "../api/reading";
@@ -25,26 +21,28 @@ export const ReadingAnalytics = () => {
 
   const find = async () => {
     setLoading(true);
-    const monthly = await getMonthlyData(user?.userId);
-    setMonthlyData(monthly.data);
+    if (user) {
+      const monthly = await getMonthlyData(user?.userId);
+      setMonthlyData(monthly.data);
 
-    const result = await findReadingByUser(user?.userId);
+      const result = await findReadingByUser(user?.userId);
 
-    const resulta = Object.entries(
-      result.data.reduce((counts, reading) => {
-        counts[reading.book.largeGenre] =
-          (counts[reading.book.largeGenre] || 0) + 1; // カウント処理
-        return counts;
-      }, {})
-    )
-      .sort((a, b) => b[1] - a[1])
-      .map(([largeGenre, count]) => ({ largeGenre, count }));
-    const formattedData = resulta.map((l, index) => ({
-      id: index + 1,
-      value: l.count,
-      label: l.largeGenre,
-    }));
-    setData(formattedData);
+      const resulta = Object.entries(
+        result.data.reduce((counts, reading) => {
+          counts[reading.book.largeGenre] =
+            (counts[reading.book.largeGenre] || 0) + 1; // カウント処理
+          return counts;
+        }, {})
+      )
+        .sort((a, b) => b[1] - a[1])
+        .map(([largeGenre, count]) => ({ largeGenre, count }));
+      const formattedData = resulta.map((l, index) => ({
+        id: index + 1,
+        value: l.count,
+        label: l.largeGenre,
+      }));
+      setData(formattedData);
+    }
     setLoading(false);
   };
 
@@ -55,12 +53,20 @@ export const ReadingAnalytics = () => {
   return (
     <div>
       <div>
-        <Card sx={{ p: 1, borderRadius: "13px", boxShadow: 3 }}>
+        <Card
+          sx={{
+            p: 1,
+            borderRadius: "13px",
+            boxShadow: 3,
+            height: 350,
+            width: 500,
+          }}
+        >
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Trends by Genre
             </Typography>
-            {data.length !== 0 && loading === false && (
+            {data.length !== 0 && loading === false ? (
               <div className="flex justify-start">
                 <PieChart
                   series={[
@@ -71,6 +77,10 @@ export const ReadingAnalytics = () => {
                   width={200}
                   height={250}
                 />
+              </div>
+            ) : (
+              <div className="flex justify-center items-center min-h-[200px] text-zinc-500">
+                No data.
               </div>
             )}
           </CardContent>
@@ -84,53 +94,14 @@ export const ReadingAnalytics = () => {
               borderRadius: "13px",
               boxShadow: 3,
               backgroundColor: "white",
+              height: 350,
+              width: 500,
             }}
           >
             <Typography variant="h6" sx={{ mb: 2 }}>
               Monthly Reading Volume
             </Typography>
             {monthlyData.length != 0 ? (
-              // <ChartContainer
-              //   width={500}
-              //   height={300}
-              //   series={[
-              //     {
-              //       type: "line",
-              //       data: monthlyData.map((item) => item.total),
-              //     },
-              //   ]}
-              //   xAxis={[
-              //     {
-              //       id: "month",
-              //       data: monthlyData.map((item) => item.month),
-              //       scaleType: "band",
-              //     },
-              //   ]}
-              //   yAxis={[
-              //     {
-              //       min: 0,
-              //       max: maxValue < 5 ? 5 : undefined,
-              //       tickMinStep: 1,
-              //     },
-              //   ]}
-              //   slotProps={{
-              //     tooltip: {
-              //       content: ({ dataIndex }) => {
-              //         const pointData = monthlyData[dataIndex];
-              //         return (
-              //           <ChartsItemTooltipContent
-              //             label={`Month: ${pointData.month} | Breakdown: ${pointData.breakdown}`}
-              //             value={pointData.total}
-              //           />
-              //         );
-              //       },
-              //     },
-              //   }}
-              // >
-              //   <LinePlot />
-              //   <ChartsXAxis />
-              //   <ChartsYAxis />
-              // </ChartContainer>
               <LineChart
                 xAxis={[
                   {
@@ -185,7 +156,9 @@ export const ReadingAnalytics = () => {
               //               `;
               //   },
               // }}
-              <div>No data.</div>
+              <div className="flex justify-center items-center min-h-[200px] text-zinc-500">
+                No data.
+              </div>
             )}
           </Card>
         </Grid>

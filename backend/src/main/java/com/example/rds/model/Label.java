@@ -2,7 +2,6 @@ package com.example.rds.model;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import com.example.rds.context.AccountRepository;
 import com.example.rds.context.LabelRepository;
@@ -63,7 +62,8 @@ public class Label {
                         .label(label)
                 .statusType(LabelStatusType.VALID)
                 .registerDate(LocalDate.now())
-                .build();
+                        .build();
+              
             return rep.save(registeredLabel);
         });
 }

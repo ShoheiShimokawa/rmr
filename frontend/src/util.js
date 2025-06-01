@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const genreToEnum = (genre) => {
   switch (genre) {
     case "Architecture":
@@ -131,4 +133,8 @@ export const mergeActivityData = (baseDates, activityData) => {
 
 export const isBlank = (str) => {
   return /^\s*$/.test(str);
+};
+
+export const formatDateTime = (isoString) => {
+  return dayjs(isoString).format("YYYY/MM/DD HH:mm");
 };

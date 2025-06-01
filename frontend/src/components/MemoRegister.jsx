@@ -7,26 +7,11 @@ import { useNotify } from "../hooks/NotifyProvider";
 import { getLabels } from "../api/label";
 import { BookInfo } from "../components/book/BookInfo";
 import { registerMemo } from "../api/memo";
-
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  Box,
-  TextField,
-  Autocomplete,
-  InputAdornment,
-} from "@mui/material";
-
-import { BookShelf } from "./book/BookShelf";
-import { Book } from "./book/Book";
+import { Button, Box, TextField, InputAdornment } from "@mui/material";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 
 export const MemoRegister = ({ updated, book, reading }) => {
-  const [openBookShelf, setOpenBookShelf] = useState(false);
   const { user } = useContext(UserContext);
   const [labels, setLabels] = useState([]);
   const { notify } = useNotify();
@@ -53,7 +38,6 @@ export const MemoRegister = ({ updated, book, reading }) => {
   });
 
   const onSubmit = async (values) => {
-    console.log("OOKKKKK");
     try {
       const param = {
         ...values,
@@ -74,8 +58,8 @@ export const MemoRegister = ({ updated, book, reading }) => {
   };
 
   const optionsLabel = labels
-    .filter((label) => label.name)
-    .map((label) => label.name);
+    .filter((label) => label.label)
+    .map((label) => label.label);
 
   useEffect(() => {
     find();
@@ -129,7 +113,11 @@ export const MemoRegister = ({ updated, book, reading }) => {
           name="label"
           control={control}
           render={({ field }) => (
-            <AutoComplete options={optionsLabel && optionsLabel} />
+            <AutoComplete
+              options={optionsLabel}
+              value={field.value || ""}
+              onChange={field.onChange}
+            />
           )}
         />
         <div className="text-sm mb-4 ml-1 italic text-zinc-500">

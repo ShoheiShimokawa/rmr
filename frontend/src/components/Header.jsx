@@ -1,34 +1,28 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
-import RateReviewIcon from "@mui/icons-material/RateReview";
 import Toolbar from "@mui/material/Toolbar";
 import { FaPenNib } from "react-icons/fa";
+import { useNotify } from "../hooks/NotifyProvider";
 import { Login } from "./Login";
-import Button from "@mui/material/Button";
-import MenuIcon from "@mui/icons-material/Menu";
-import PostAddRoundedIcon from "@mui/icons-material/PostAddRounded";
 import { useContext, useState } from "react";
+import { CustomDialog } from "../ui/CustomDialog";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import UserContext from "./UserProvider";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
-
+import { useRequireLogin } from "../hooks/useRequireLogin";
 import {
   ListItemText,
   ListItemIcon,
-  Box,
   Avatar,
   Divider,
-  Drawer,
   Stack,
   Menu,
   MenuItem,
   IconButton,
-  ListItemButton,
-  Typography,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -37,15 +31,28 @@ import {
 export const Header = () => {
   const { user, setUser } = useContext(UserContext);
   const [anchor, setAnchor] = useState(null);
+  const [open, setOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const navigate = useNavigate();
   const goToCommunity = () => navigate("/");
+  const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
+  const { notify } = useNotify();
 
   const handleClick = (e) => {
     setAnchor(e.currentTarget);
+    setOpen(true);
   };
   const handleClose = () => {
-    setAnchor(null);
+    setOpen(false);
+  };
+  const handleInfo = () => {
+    navigate("/information");
+    handleClose();
+  };
+  const handleUserPage = () => {
+    if (isLoggedIn()) {
+      navigate(`/${user && user.handle}`);
+    }
   };
   const handleLogin = () => {
     setShowLogin(true);
@@ -56,25 +63,31 @@ export const Header = () => {
   const handleLogout = () => {
     setUser(null);
     goToCommunity();
+    handleClose();
+    notify("Logged out successfully.", "success");
+  };
+  const handlePostClick = () => {
+    if (isLoggedIn()) {
+      navigate("/PostRegister");
+      handleClose();
+    }
   };
   return (
     <div>
-      <Dialog
-        onClose={handleLoginClose}
+      <CustomDialog
         open={showLogin}
-        maxWidth="sm"
-        fullWidth
+        title="Login"
+        onClose={handleLoginClose}
+        width="400px"
       >
-        <DialogTitle>Login</DialogTitle>
-        <DialogContent>
-          <Login updated={handleLoginClose} />
-        </DialogContent>
-      </Dialog>
+        <Login updated={handleLoginClose} />
+      </CustomDialog>
+      {showLoginDialog && <LoginDialog />}
       <AppBar
         position="sticky"
         elevation={0}
         sx={{
-          height: 54,
+          height: 80,
           backgroundColor: "white",
           color: "black",
           alignSelf: "flex-start",
@@ -89,6 +102,19 @@ export const Header = () => {
             minHeight: "48px",
           }}
         >
+          <div className="ml-8">
+            <Link to="/">
+              <img
+                src="/signreadMore.png"
+                alt="readMore Logo"
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  objectFit: "contain",
+                }}
+              />
+            </Link>
+          </div>
           <div className="ml-auto mr-12">
             <Stack
               direction="row"
@@ -98,52 +124,40 @@ export const Header = () => {
                 alignItems: "center",
               }}
             >
-              <IconButton component={Link} to="/PostRegister">
+              <IconButton onClick={handlePostClick}>
                 <FaPenNib />
               </IconButton>
               <Avatar
-                component={Link}
-                to={`/${user && user.handle}`}
+                onClick={handleUserPage}
                 src={user && user.picture}
                 sx={{ width: 34, height: 34 }}
               />
               <IconButton
                 aria-label="more"
                 id="long-button"
-                //   aria-controls={open ? "long-menu" : undefined}
-                //   aria-expanded={open ? "true" : undefined}
                 aria-haspopup="true"
                 onClick={handleClick}
               >
                 <MoreVertIcon />
               </IconButton>
-              <Menu
-                anchorEl={anchor}
-                open={Boolean(anchor)}
-                onClose={handleClose}
-              >
+              <Menu anchorEl={anchor} open={open} onClose={handleClose}>
                 {user ? (
-                  <MenuItem>
-                    <ListItemIcon onClick={() => handleLogout()}>
+                  <MenuItem onClick={() => handleLogout()}>
+                    <ListItemIcon>
                       <LogoutRoundedIcon />
                     </ListItemIcon>
-                    <ListItemText onClick={() => handleLogout()}>
-                      Log out
-                    </ListItemText>
+                    <ListItemText>Log out</ListItemText>
                   </MenuItem>
                 ) : (
-                  <MenuItem>
+                  <MenuItem onClick={() => handleLogin()}>
                     <ListItemIcon>
                       <LoginRoundedIcon />
                     </ListItemIcon>
-                    <ListItemText onClick={() => handleLogin()}>
-                      Log in
-                    </ListItemText>
+                    <ListItemText>Log in</ListItemText>
                   </MenuItem>
                 )}
                 <MenuItem
-                  component={Link}
-                  to={"/information"}
+                  onClick={handleInfo}
                   sx={{
                     textDecoration: "none",
                     "&:hover": {

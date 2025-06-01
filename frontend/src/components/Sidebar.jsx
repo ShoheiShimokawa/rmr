@@ -62,7 +62,7 @@ export const Sidebar = () => {
           width: "250px",
           position: "sticky",
           // left: "100px",
-          top: "70px",
+          top: "80px",
           bgcolor: "background.paper",
           // borderRight: "1px solid #ddd",
           alignSelf: "flex-start",
@@ -94,6 +94,12 @@ export const Sidebar = () => {
                   "&:hover a": {
                     textDecoration: "none",
                   },
+                  "& .MuiTypography-root": {
+                    textDecoration: "none",
+                  },
+                  "&:hover .MuiTypography-root": {
+                    textDecoration: "none",
+                  },
                 }}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
@@ -104,58 +110,16 @@ export const Sidebar = () => {
                       textDecoration: "none",
                     },
                   }}
+                  primaryTypographyProps={{
+                    sx: {
+                      textDecoration: "none",
+                    },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
-        {/* <Stack
-            direction="row"
-            sx={{
-              p: 2,
-              gap: 1,
-              alignItems: "center",
-              borderTop: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <Avatar
-              component={Link}
-              to={"/mypage"}
-              src={user && user.picture}
-              sx={{ width: 32, height: 32 }}
-            />
-
-            <IconButton
-              aria-label="more"
-              id="long-button"
-              //   aria-controls={open ? "long-menu" : undefined}
-              //   aria-expanded={open ? "true" : undefined}
-              aria-haspopup="true"
-              onClick={handleClick}
-            >
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              anchorEl={anchor}
-              open={Boolean(anchor)}
-              onClose={handleClose}
-            >
-              {user ? (
-                <MenuItem>
-                  <ListItemText onClick={() => handleLogout()}>
-                    Log out
-                  </ListItemText>
-                </MenuItem>
-              ) : (
-                <MenuItem>
-                  <ListItemText onClick={() => handleLogin()}>
-                    Log in
-                  </ListItemText>
-                </MenuItem>
-              )}
-            </Menu>
-          </Stack> */}
       </Box>
     </div>
   );

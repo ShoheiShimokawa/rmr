@@ -1,23 +1,16 @@
 import { GoogleLogin } from "@react-oauth/google";
-import { Card, CardContent } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserContext from "./UserProvider";
 import { HandleRegister } from "./HandleRegister";
 import { useContext, useState } from "react";
-import {
-  Divider,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-} from "@mui/material";
-
+import { useNotify } from "../hooks/NotifyProvider";
+import { CustomDialog } from "../ui/CustomDialog";
 export const Login = ({ updated }) => {
   const navigate = useNavigate();
   const goToCommunity = () => navigate("/");
-  const goRegisterHandle = () => navigate("/handleRegister");
   const { user, setUser } = useContext(UserContext);
   const [kari, setKari] = useState(false);
+  const { notify } = useNotify();
 
   const handleKari = () => {
     setKari(true);
@@ -42,9 +35,9 @@ export const Login = ({ updated }) => {
       if (userData.user.handle) {
         updated && updated();
         goToCommunity();
+        notify("You've successfully logged in", "success");
       } else {
         handleKari();
-        // updated && updated();
       }
     } catch (error) {
       console.error("Login failed", error);
@@ -52,12 +45,13 @@ export const Login = ({ updated }) => {
   };
   return (
     <div>
-      <Dialog onClose={handleCloseKari} open={kari}>
-        <DialogTitle>create Account</DialogTitle>
-        <DialogContent>
-          <HandleRegister account={user} />
-        </DialogContent>
-      </Dialog>
+      <CustomDialog
+        open={kari}
+        title="create Account"
+        onClose={handleCloseKari}
+      >
+        <HandleRegister account={user} />
+      </CustomDialog>
       <div className="flex items-center  justify-center ">
         <GoogleLogin
           className="mx-auto"

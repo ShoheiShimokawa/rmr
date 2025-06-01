@@ -13,7 +13,6 @@ import com.example.rds.context.ReadingRepository;
 import com.example.rds.type.BookStatusType;
 import com.example.rds.type.GenreType;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Enumerated;
@@ -22,7 +21,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.transaction.Transactional;
@@ -63,6 +61,10 @@ public class Reading {
 	private LocalDate registerDate;
 	/**  更新日 */
 	private LocalDate updateDate;
+	/** 読む予定登録日 */
+	private LocalDate toReadDate;
+	/** 読書開始日 */
+	private LocalDate readingDate;
 	/** 読了日 */
 	private LocalDate readDate;
 
@@ -110,7 +112,13 @@ public class Reading {
 		Reading reading=RegisterReading.builder().userId(param.userId).rate(param.rate).thoughts(param.thoughts).statusType(param.statusType).description(param.description).build().create();
 		reading.setBook(book);
 		reading.setUser(user);
-		if(reading.getStatusType().equals(BookStatusType.DONE)) {
+		if (reading.getStatusType().equals(BookStatusType.NONE)) {
+			reading.setToReadDate(LocalDate.now());
+		}
+		else if(reading.getStatusType().equals(BookStatusType.DOING)) {
+			reading.setReadingDate(LocalDate.now());
+		}
+		else if(reading.getStatusType().equals(BookStatusType.DONE)) {
 			reading.setReadDate(LocalDate.now());
 		}
 		return rep.save(reading);
@@ -148,6 +156,7 @@ public class Reading {
 	public static Reading toDoing(ReadingRepository rep,Integer readingId) {
 		Reading reading = rep.findById(readingId).orElseThrow(()->new EntityNotFoundException("Reading not found"));
 		reading.setStatusType(BookStatusType.DOING);
+		reading.setReadingDate(LocalDate.now());
 		return rep.save(reading);
 	}
 	

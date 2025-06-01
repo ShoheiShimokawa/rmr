@@ -22,8 +22,8 @@ public class GoodService {
     }
 
     /** いいねを取り消します */
-    public void delete(Integer goodId) {
-        Good.delete(rep, goodId);
+    public void delete(Integer postId, Integer userId) {
+        Good.delete(rep, postId, userId);
     }
 
     /** ポストにいいねした人を返します。 */

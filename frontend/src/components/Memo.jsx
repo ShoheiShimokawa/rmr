@@ -5,6 +5,7 @@ import { CustomDialog } from "../ui/CustomDialog";
 import { useState, useEffect, useMemo } from "react";
 import { Book } from "./book/Book";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useRequireLogin } from "../hooks/useRequireLogin";
 import { StepMemoRegister } from "./StepMemoRegister";
 import {
   Card,
@@ -29,6 +30,7 @@ export const Memo = () => {
   const [selectedMemo, setSelectedMemo] = useState(null);
   const [openRegister, setOpenRegister] = useState(false);
   const { notify } = useNotify();
+  const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
   const formatted = useMemo(() => {
     return memos.map((item) => {
@@ -59,6 +61,7 @@ export const Memo = () => {
   }, [memos]);
 
   const handleOpenRegister = () => {
+    if (!isLoggedIn()) return;
     setOpenRegister(true);
   };
 
@@ -67,6 +70,7 @@ export const Memo = () => {
   };
 
   const handleOpenDetail = (index) => {
+    if (!isLoggedIn()) return;
     setSelectedMemo(memos[index]);
     setOpenDetail(true);
   };
@@ -76,20 +80,37 @@ export const Memo = () => {
   };
 
   const find = async () => {
-    const result = await getMemos(user && user.userId);
-    setMemos(result.data);
+    if (!user) {
+      return;
+    }
+    try {
+      const result = await getMemos(user && user.userId);
+      setMemos(result.data);
+      return result.data;
+    } catch (error) {}
   };
   useEffect(() => {
     find();
   }, []);
   return (
     <div>
+      {showLoginDialog && <LoginDialog />}
       <CustomDialog
         open={openDetail}
         title="Highlight"
         onClose={handleCloseDetail}
       >
-        <MemoDetail memo={selectedMemo && selectedMemo} />
+        <MemoDetail
+          memo={selectedMemo && selectedMemo}
+          updated={async () => {
+            const updatedMemos = await find();
+            const updatedGroup = updatedMemos.find(
+              (group) =>
+                group.reading.readingId === selectedMemo.reading.readingId
+            );
+            if (updatedGroup) setSelectedMemo(updatedGroup);
+          }}
+        />
       </CustomDialog>
       <CustomDialog
         open={openRegister}
@@ -98,23 +119,25 @@ export const Memo = () => {
       >
         <StepMemoRegister updated={find} />
       </CustomDialog>
-      <Button
-        variant="outlined"
-        size="small"
-        startIcon={<AddIcon />}
-        onClick={handleOpenRegister}
-        sx={{
-          textTransform: "none",
-          backgroundColor: "#000",
-          color: "#fff",
-          fontWeight: "bold",
-          "&:hover": {
-            backgroundColor: "#333",
-          },
-        }}
-      >
-        add Highlight
-      </Button>
+      <div className="mb-2 flex justify-end">
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<AddIcon />}
+          onClick={handleOpenRegister}
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#000",
+            color: "#fff",
+            fontWeight: "bold",
+            "&:hover": {
+              backgroundColor: "#333",
+            },
+          }}
+        >
+          add Highlight
+        </Button>
+      </div>
       <div>
         {memos.length >= 1 && (
           <>
@@ -164,9 +187,7 @@ export const Memo = () => {
                         ))}
                     </Box>
 
-                    <div className="font-bold text-sm">
-                      📝{entry.primaryMemo.memo}
-                    </div>
+                    <div className=" text-sm">📝{entry.primaryMemo.memo}</div>
 
                     {entry.otherCount > 0 && (
                       <Typography

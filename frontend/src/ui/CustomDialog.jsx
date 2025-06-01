@@ -10,16 +10,22 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-export const CustomDialog = ({ open, onClose, title, children, actions }) => {
+export const CustomDialog = ({
+  open,
+  onClose,
+  title,
+  children,
+  actions,
+  width,
+}) => {
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
       sx={{
         "& .MuiDialog-paper": {
           borderRadius: 1,
-          width: "600px",
+          width: width ? width : "640px",
         },
       }}
     >

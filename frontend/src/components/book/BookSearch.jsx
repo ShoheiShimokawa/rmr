@@ -139,7 +139,7 @@ export const BookSearch = ({ fromPost }) => {
             sx={{
               p: "2px 4px",
               display: "flex",
-              // alignItems: "center",
+
               width: 400,
             }}
           >
@@ -164,7 +164,7 @@ export const BookSearch = ({ fromPost }) => {
         </form>
       </div>
       {loading && (
-        <div className="absolute-center">
+        <div className="flex justify-center items-center min-h-[300px]">
           <CircularProgress />
         </div>
       )}

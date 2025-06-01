@@ -62,7 +62,7 @@ export const ReadingRegister = ({ book, reading, updated }) => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div style={{ display: "flex", marginBottom: "16px" }}>
+        <div>
           <Controller
             name="rate"
             control={control}

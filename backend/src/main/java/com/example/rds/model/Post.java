@@ -1,11 +1,13 @@
 package com.example.rds.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.rds.context.GoodRepository;
 import com.example.rds.context.PostRepository;
 import com.example.rds.context.ReadingRepository;
 
@@ -17,7 +19,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,12 +41,10 @@ public class Post {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "reading_id")
 	private Reading reading;
-	/** いいね数 */
-	private Integer goodCount;
 	/** ポスト日 */
-	private LocalDate registerDate;
+	private LocalDateTime registerDate;
 	/** 更新日 */
-	private LocalDate updateDate;
+	private LocalDateTime updateDate;
 
 	/** ID(google)に紐付く投稿を全て返します。 */
 	public static List<Post> findById(PostRepository rep,String id) {
@@ -55,25 +54,56 @@ public class Post {
 	/** 感想をポストします。 */
 	public static Post registerPost(PostRepository rep, ReadingRepository rRep, Integer readingId) {
 		var reading = rRep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
-		var post = Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDate.now()).build();
+		var post = Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDateTime.now()).build();
 		return rep.save(post);
 	}
 	
 	/** ユーザに紐づくポストを全て返します。 */
-	public static List<Post> getPostAllByUser(PostRepository rep,Integer userId) {
+	public static List<Post> getPostAllByUser(PostRepository rep, Integer userId) {
 		return rep.findByUserId(userId);
 	}
+	
+	/** いいね数を含めたユーザに紐づくポストを全て返します。 */
+	public static List<PostWithGoodCount> getPostWithGoodCount(PostRepository rep, GoodRepository gRep, Integer userId) {
+	List<Post> posts = Post.getPostAllByUser(rep, userId);
+	Map<Integer, Long> goodCounts = gRep.countGroupByPostId(); // Map<postId, count>
+
+	return posts.stream().map(post -> {
+		long goodCount = goodCounts.getOrDefault(post.getPostId(), 0L);
+		return PostWithGoodCount.builder()
+			.postId(post.getPostId())
+			.user(post.getUser())
+			.reading(post.getReading())
+			.registerDate(post.getRegisterDate())
+			.updateDate(post.getUpdateDate())
+			.goodCount(goodCount)
+			.build();
+	}).toList();
+}
 
 	/** ポストを返却します。（タイムライン用） */
-	public static List<Post> getPostAll(PostRepository rep, Integer userId) {
-		return rep.findAll();
-	}
+	public static List<PostWithGoodCount> getPostAll(PostRepository rep, GoodRepository gRep) {
+	List<Post> posts = rep.findAll();
+	Map<Integer, Long> goodCounts = gRep.countGroupByPostId();
+
+	return posts.stream().map(post -> {
+		long goodCount = goodCounts.getOrDefault(post.getPostId(), 0L);
+		return PostWithGoodCount.builder()
+			.postId(post.getPostId())
+			.user(post.getUser())
+			.reading(post.getReading())
+			.registerDate(post.getRegisterDate())
+			.updateDate(post.getUpdateDate())
+			.goodCount(goodCount)
+			.build();
+	}).toList();
+}
 
 	
 	/** 年間ポスト数を返します。 */
 	public static List<YearlyPostRecord> getPostRecord(PostRepository rep, Integer userId) {
 		List<Post> posts = rep.findByUserId(userId);
-		var a = posts.stream().collect(Collectors.groupingBy((Post post) -> post.getRegisterDate()));
+		var a = posts.stream().collect(Collectors.groupingBy((Post post) -> post.getRegisterDate().toLocalDate()));
 		Map<LocalDate, Integer> map = new HashMap<>();
 		for (var b : a.entrySet()) {
 			map.putIfAbsent(b.getKey(), b.getValue().toArray().length);
@@ -89,5 +119,9 @@ public class Post {
 
 	/** 年間ポスト数 */
 	@Builder
-	public record YearlyPostRecord(LocalDate date,Integer posts){}
+	public record YearlyPostRecord(LocalDate date, Integer posts) {
+	}
+@Builder
+public record PostWithGoodCount(Integer postId, Account user, Reading reading,
+		 LocalDateTime registerDate,LocalDateTime updateDate,long goodCount) {}
 }

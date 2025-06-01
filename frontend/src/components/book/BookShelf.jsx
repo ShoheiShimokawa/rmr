@@ -1,31 +1,13 @@
 import { Box, Divider } from "@mui/material";
 import { useState, useEffect } from "react";
+import { CustomDialog } from "../../ui/CustomDialog";
 import React from "react";
-import { z } from "zod";
 import { useContext } from "react";
 import UserContext from "../UserProvider";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { BookDetail } from "./BookDetail";
-import { BookRegister } from "./BookRegister";
-import { ReadingRegister } from "../ReadingRegister";
 import { findReadingByUser } from "../../api/reading";
-import { getReading } from "../../api/reading";
 import { useMessage } from "../../ui/useMessage";
-import Avatar from "@mui/material/Avatar";
 import { BookArray } from "./BookArray";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
-  Chip,
-  Slide,
-  Paper,
-} from "@mui/material";
 
 export const BookShelf = ({ account, onClick }) => {
   const [readings, setReadings] = useState([]);
@@ -38,8 +20,12 @@ export const BookShelf = ({ account, onClick }) => {
   const [book, setBook] = useState();
   const { showMessage, AlertComponent } = useMessage();
 
-  const recent = readings.filter((r) => {
-    return r.statusType === "NONE" || r.statusType === "DOING";
+  const toRead = readings.filter((r) => {
+    return r.statusType === "NONE";
+  });
+
+  const readingNow = readings.filter((r) => {
+    return r.statusType === "DOING";
   });
 
   const done = readings.filter((d) => {
@@ -101,172 +87,148 @@ export const BookShelf = ({ account, onClick }) => {
   }, []);
   return (
     <>
-      {/* <Dialog
-        open={open}
-        sx={{
-          "& .MuiDialog-paper": {
-            width: "600px",
-            maxWidth: "none",
-          },
-        }}
-      >
-        <Slide in direction="left" appear={false}>
-          <DialogTitle>
-            {!showReadingRegister ? "Detail" : "Review"}
-          </DialogTitle>
-        </Slide>
-        <Slide in direction="left" appear={false}>
-          <DialogContent>
-            <div> */}
-      {/* {!showReadingRegister ? (
-                <BookDetail
-                  reading={reading}
-                  show={() => {
-                    setShoWReadingRegister(true);
-                  }}
-                  updated={() => {
-                    find();
-                    setOpen(false);
-                  }}
-                  book={book}
-                />
-              ) : (
-                <ReadingRegister
-                  book={reading.book && reading.book}
-                  reading={reading}
-                  updated={() => setShoWReadingRegister(false)}
-                />
-              )} */}
-      {/* </div>
-          </DialogContent>
-        </Slide>
-        <DialogActions>
-          <Button onClick={() => handleClose()}>Cancel</Button>
-        </DialogActions>
-      </Dialog> */}
-      <Dialog open={openRegister}>
-        <DialogTitle>Register books!</DialogTitle>
-        <DialogContent>
-          <BookRegister
-            updated={() => handleCloseRegister()}
-            reload={() => find()}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              handleCloseRegister();
-            }}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <div className="text-lgfont-medium">Recently</div>
-
-      {recent.length !== 0 ? (
-        <BookArray
-          books={recent}
-          handleSelect={handleSelect}
-          onClick={onClick}
-        />
-      ) : (
-        <Box sx={{ height: "155px", width: "100%" }} />
+      {!onClick && (
+        <CustomDialog open={open} title="Detail" onClose={handleClose}>
+          <BookDetail book={book} reading={reading} />
+        </CustomDialog>
       )}
+      <div className="text-lg font-medium">Want To Read</div>
+      <div className="w-[640px] overflow-x-auto px-2 py-2 ">
+        {toRead.length !== 0 ? (
+          <BookArray
+            books={toRead}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
+        ) : (
+          <Box sx={{ height: "155px", width: "100%" }} />
+        )}
+      </div>
+      <Divider sx={{ height: "auto", m: 1 }} />
+      <div className="text-lg font-medium mt-2">Reading Now</div>
+      <div className="w-[700px] overflow-x-auto px-2 py-2 ">
+        {readingNow.length !== 0 ? (
+          <BookArray
+            books={readingNow}
+            handleSelect={handleSelect}
+            onClick={onClick}
+          />
+        ) : (
+          <Box sx={{ height: "155px", width: "100%" }} />
+        )}
+      </div>
 
       <Divider sx={{ height: "auto", m: 1 }} />
-      {AlertComponent}
-      {/* <div className="text-xl font-sans"> Books in My Past</div> */}
-      {fiction.length !== 0 && (
-        <>
-          <div className="text-lg  font-medium"> Fiction</div>
-          <BookArray
-            books={fiction}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {nonFiction.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Non Fiction</div>
-          <BookArray
-            books={nonFiction}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {tech.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Professional & Technical</div>
-          <BookArray
-            books={tech}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {art.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Arts & Culture</div>
-          <BookArray
-            books={art}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {study.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Education & Study-aids</div>
-          <BookArray
-            books={study}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {entertainment.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Entertainment</div>
-          <BookArray
-            books={entertainment}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {academic.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Academics & Research</div>
-          <BookArray
-            books={academic}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {practical.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Practical & Hobbies</div>
-          <BookArray
-            books={practical}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
-      {other.length !== 0 && (
-        <>
-          <div className="text-lg font-sans"> Other</div>
-          <BookArray
-            books={other}
-            handleSelect={handleSelect}
-            onClick={onClick}
-          />
-        </>
-      )}
+      <div className="w-[700px] overflow-x-auto px-2  ">
+        {fiction.length !== 0 && (
+          <>
+            <div className="text-lg  font-medium"> Fiction</div>
+            <BookArray
+              books={fiction}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+
+      <div className="w-[700px] overflow-x-auto px-2  ">
+        {nonFiction.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Non Fiction</div>
+            <BookArray
+              books={nonFiction}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+
+      <div className="w-[700px] overflow-x-auto px-2 ">
+        {tech.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Professional & Technical</div>
+            <BookArray
+              books={tech}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+      <div className="w-[700px] overflow-x-auto px-2  ">
+        {art.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Arts & Culture</div>
+            <BookArray
+              books={art}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+      <div className="w-[700px] overflow-x-auto px-2 ">
+        {study.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Education & Study-aids</div>
+            <BookArray
+              books={study}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+      <div className="w-[700px] overflow-x-auto px-2  ">
+        {entertainment.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Entertainment</div>
+            <BookArray
+              books={entertainment}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+      <div className="w-[700px] overflow-x-auto px-2  ">
+        {academic.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Academics & Research</div>
+            <BookArray
+              books={academic}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+      <div className="w-[700px] overflow-x-auto px-2">
+        {practical.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Practical & Hobbies</div>
+            <BookArray
+              books={practical}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
+      <div className="w-[700px] overflow-x-auto px-2 ">
+        {other.length !== 0 && (
+          <>
+            <div className="text-lg font-sans"> Other</div>
+            <BookArray
+              books={other}
+              handleSelect={handleSelect}
+              onClick={onClick}
+            />
+          </>
+        )}
+      </div>
     </>
   );
 };

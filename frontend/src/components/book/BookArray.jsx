@@ -10,7 +10,10 @@ export const BookArray = ({ books, handleSelect, onClick }) => {
       {books.length !== 0 && (
         <>
           <div className="ml-2">
-            <div className="flex overflow-x-auto gap-3">
+            <div
+              className="flex overflow-x-auto gap-3"
+              style={{ minWidth: "max-content" }}
+            >
               {books.map((reading) => (
                 <>
                   <div
@@ -29,20 +32,20 @@ export const BookArray = ({ books, handleSelect, onClick }) => {
                       }}
                       key={reading.readingId}
                     />
-                    {reading.statusType !== "DONE" ? (
-                      <Chip
-                        icon={judgeIcon(reading.statusType)}
-                        label={statusTypeStr(reading.statusType)}
-                        size="small"
-                        sx={{ marginTop: 1 }}
-                      />
-                    ) : (
-                      <Rating
-                        name="read-only"
-                        value={reading.rate && reading.rate}
-                        readOnly
-                        size="small"
-                      />
+                    {reading.statusType === "DONE" && (
+                      <div className="mt-1">
+                        <Rating
+                          name="read-only"
+                          value={reading.rate && reading.rate}
+                          readOnly
+                          size="small"
+                          sx={{
+                            "& .MuiRating-icon": {
+                              fontSize: "15px",
+                            },
+                          }}
+                        />
+                      </div>
                     )}
                   </div>
                 </>

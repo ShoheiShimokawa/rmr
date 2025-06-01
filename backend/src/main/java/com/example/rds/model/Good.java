@@ -1,6 +1,7 @@
 package com.example.rds.model;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.rds.context.GoodRepository;
 import com.example.rds.context.PostRepository;
@@ -31,7 +32,7 @@ public class Good {
 	private Integer goodId;
 	/** 対象のポストID */
 	@NotNull
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "post_id")
 	private Post post;
 	/** いいねしたユーザID */
@@ -44,9 +45,9 @@ public class Good {
 	}
 
 	/** いいねを取り消します。 */
-	public static void delete(GoodRepository rep, Integer goodId) {
-		Good good = rep.findById(goodId).orElseThrow(() -> new EntityNotFoundException("good not found"));
-		rep.delete(good);
+	public static void delete(GoodRepository rep, Integer postId,Integer userId) {
+		Optional<Good> good=rep.findByPostPostIdAndUserId(postId,userId);
+		rep.delete(good.get());
 	}
 	
 	/** ポストにいいねした人を返します。 */
@@ -58,4 +59,7 @@ public class Good {
 	public static List<Good> getGoodPostAll(GoodRepository rep, Integer userId) {
 		return rep.findByUserId(userId);
 	}
+	
+
+
 }
