@@ -6,7 +6,6 @@ import { useContext } from "react";
 import UserContext from "../UserProvider";
 import { BookDetail } from "./BookDetail";
 import { findReadingByUser } from "../../api/reading";
-import { useMessage } from "../../ui/useMessage";
 import { BookArray } from "./BookArray";
 
 export const BookShelf = ({ account, onClick }) => {
@@ -88,7 +87,7 @@ export const BookShelf = ({ account, onClick }) => {
           />
         </CustomDialog>
       )}
-      <div className="text-lg font-medium">Want To Read</div>
+      <div className="text-lg font-medium font-soft">Want To Read</div>
       <div className="w-[640px] overflow-x-auto px-2 py-2 ">
         {toRead.length !== 0 ? (
           <BookArray
@@ -101,7 +100,7 @@ export const BookShelf = ({ account, onClick }) => {
         )}
       </div>
       <Divider sx={{ height: "auto", m: 1 }} />
-      <div className="text-lg font-medium mt-2">Reading Now</div>
+      <div className="text-lg  mt-2 font-medium font-soft">Reading Now</div>
       <div className="w-[700px] overflow-x-auto px-2 py-2 ">
         {readingNow.length !== 0 ? (
           <BookArray
@@ -118,7 +117,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2  ">
         {fiction.length !== 0 && (
           <>
-            <div className="text-lg  font-medium"> Fiction</div>
+            <div className="text-lg font-medium font-soft"> Fiction</div>
             <BookArray
               books={fiction}
               handleSelect={handleSelect}
@@ -131,7 +130,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2  ">
         {nonFiction.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Non Fiction</div>
+            <div className="text-lg font-soft"> Non Fiction</div>
             <BookArray
               books={nonFiction}
               handleSelect={handleSelect}
@@ -144,7 +143,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2 ">
         {tech.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Professional & Technical</div>
+            <div className="text-lg font-soft"> Professional & Technical</div>
             <BookArray
               books={tech}
               handleSelect={handleSelect}
@@ -156,7 +155,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2  ">
         {art.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Arts & Culture</div>
+            <div className="text-lg font-soft"> Arts & Culture</div>
             <BookArray
               books={art}
               handleSelect={handleSelect}
@@ -168,7 +167,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2 ">
         {study.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Education & Study-aids</div>
+            <div className="text-lg font-soft"> Education & Study-aids</div>
             <BookArray
               books={study}
               handleSelect={handleSelect}
@@ -180,7 +179,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2  ">
         {entertainment.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Entertainment</div>
+            <div className="text-lg font-soft"> Entertainment</div>
             <BookArray
               books={entertainment}
               handleSelect={handleSelect}
@@ -192,7 +191,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2">
         {academic.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Academics & Research</div>
+            <div className="text-lg font-soft"> Academics & Research</div>
             <BookArray
               books={academic}
               handleSelect={handleSelect}
@@ -204,7 +203,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2">
         {practical.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Practical & Hobbies</div>
+            <div className="text-lg font-soft"> Practical & Hobbies</div>
             <BookArray
               books={practical}
               handleSelect={handleSelect}
@@ -216,7 +215,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="w-[700px] overflow-x-auto px-2 ">
         {other.length !== 0 && (
           <>
-            <div className="text-lg font-sans"> Other</div>
+            <div className="text-lg font-soft"> Other</div>
             <BookArray
               books={other}
               handleSelect={handleSelect}

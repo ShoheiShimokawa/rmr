@@ -1,6 +1,10 @@
 package com.example.rds.model;
 
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rds.context.AccountRepository;
 import com.example.rds.context.FollowRepository;
@@ -38,7 +42,10 @@ public class Follow {
 
 	/** ユーザーをフォローします。 */
 	public static Follow follow(FollowRepository rep, AccountRepository aRep, Integer userId, Integer followerId) {
-		//TODO:重複チェック
+		Optional<Follow> follow = rep.findByUserUserIdAndFollowerUserId(userId, followerId);
+		if (follow.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Follow already exists.");
+		}
 		var user = aRep.findByUserId(userId).get();
 		var follower = aRep.findByUserId(followerId).get();
 		return rep.save(Follow.builder().user(user).follower(follower).build());

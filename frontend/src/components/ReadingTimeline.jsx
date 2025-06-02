@@ -50,10 +50,8 @@ export const ReadingTimeline = ({ reading }) => {
     },
   ];
 
-  // 日付が存在するものだけ抽出
   const visibleSteps = allSteps.filter((step) => step.date);
 
-  // 現在のステータスが visibleSteps の中で何番目かを調べる
   const activeStep = visibleSteps.findIndex(
     (step) => step.type === reading.statusType
   );
@@ -109,9 +107,9 @@ export const ReadingTimeline = ({ reading }) => {
               {step.icon}
             </Box>
 
-            <Typography variant="caption" color="text.secondary">
+            <div className="font-soft text-xs text-zinc-600">
               {new Date(step.date).toLocaleDateString()}
-            </Typography>
+            </div>
           </CustomStep>
         ))}
       </Stepper>

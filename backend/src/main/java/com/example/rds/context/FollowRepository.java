@@ -1,6 +1,7 @@
 package com.example.rds.context;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,5 @@ public interface FollowRepository extends JpaRepository<Follow, Integer> {
     @Query("SELECT f FROM Follow f WHERE f.follower.userId = :followerId")
     List<Follow> findByFollowerId(@Param("followerId") Integer followerId);
     
+    Optional<Follow> findByUserUserIdAndFollowerUserId(Integer userId, Integer followerId);
 }

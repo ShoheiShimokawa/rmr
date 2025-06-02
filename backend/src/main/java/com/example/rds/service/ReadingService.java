@@ -62,7 +62,7 @@ public class ReadingService {
 	/** 読書を更新します。 */
 	public Reading update(UpdateReading params) {
 		Reading reading = Reading.update(rep, params);
-		if (reading.getStatusType().equals(BookStatusType.DONE)) {
+		if (reading.getStatusType().equals(BookStatusType.DONE) && (!reading.getThoughts().equals("") || reading.getRate()!=0)) {
 			Post.registerPost(pRep, rep, reading.getReadingId());
 		}
 		return reading;

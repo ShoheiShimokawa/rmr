@@ -63,9 +63,7 @@ export const ReadingAnalytics = () => {
           }}
         >
           <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Trends by Genre
-            </Typography>
+            <div className="font-soft text-xl font-bold">Trends by Genre</div>
             {data.length !== 0 && loading === false ? (
               <div className="flex justify-start">
                 <PieChart
@@ -98,9 +96,9 @@ export const ReadingAnalytics = () => {
               width: 500,
             }}
           >
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <div className="font-soft text-xl font-bold">
               Monthly Reading Volume
-            </Typography>
+            </div>
             {monthlyData.length != 0 ? (
               <LineChart
                 xAxis={[

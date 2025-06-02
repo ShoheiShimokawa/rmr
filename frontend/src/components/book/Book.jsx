@@ -3,7 +3,7 @@ export const Book = ({ book, onClick, src }) => {
   return (
     <Box
       component="img"
-      src={!src ? book.thumbnail : src}
+      src={!src ? book?.thumbnail && book?.thumbnail : src}
       sx={{
         width: "85px",
         height: "127px",

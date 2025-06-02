@@ -14,19 +14,7 @@ import { genreToEnum } from "../../util";
 import { BookDetail } from "./BookDetail";
 import { CustomDialog } from "../../ui/CustomDialog";
 
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Chip,
-  Card,
-  CardContent,
-  Tooltip,
-  Box,
-} from "@mui/material";
+import { Chip, Card, CardContent } from "@mui/material";
 
 export const BookSearch = ({ fromPost }) => {
   const [query, setQuery] = useState("");
@@ -59,7 +47,7 @@ export const BookSearch = ({ fromPost }) => {
       author: author,
       genre: genreToEnum(genre),
       description: selectedBook.volumeInfo.description,
-      thumbnail: selectedBook.volumeInfo.imageLinks.thumbnail,
+      thumbnail: selectedBook?.volumeInfo?.imageLinks?.thumbnail,
       publishedDate: selectedBook.volumeInfo.publishedDate,
     };
     setSelectedBook(book);
@@ -139,7 +127,6 @@ export const BookSearch = ({ fromPost }) => {
             sx={{
               p: "2px 4px",
               display: "flex",
-
               width: 400,
             }}
           >
@@ -192,16 +179,20 @@ export const BookSearch = ({ fromPost }) => {
                   >
                     <CardContent>
                       <div className="flex gap-6">
-                        <Book src={book.volumeInfo.imageLinks?.thumbnail} />
+                        <Book src={book.volumeInfo?.imageLinks?.thumbnail} />
 
                         <div className="ml-2 text-sm">
-                          <div>{book.volumeInfo.title}</div>
-                          <div className="text-zinc-500 mt-2 text-sm">
+                          <div className="font-soft">
+                            {book.volumeInfo.title}
+                          </div>
+                          <div className="text-zinc-500 mt-2 text-sm font-soft">
                             {book.volumeInfo.authors
                               ? book.volumeInfo.authors[0]
                               : ""}
                           </div>
-                          <div className="mt-3">{judgeRead(book)}</div>
+                          <div className="mt-3 font-soft">
+                            {judgeRead(book)}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
@@ -209,7 +200,9 @@ export const BookSearch = ({ fromPost }) => {
                 ))}
               </div>
             ) : (
-              <div>No results were found for your search.</div>
+              <div className="font-soft">
+                No results were found for your search.
+              </div>
             )}
           </>
         )}

@@ -33,11 +33,11 @@ export const Sidebar = () => {
         sx={{
           width: "250px",
           position: "sticky",
-          top: "80px",
+          top: "100px",
           bgcolor: "background.paper",
           alignSelf: "flex-start",
-          p: 1,
-          px: 1,
+          p: 4,
+          // px: 1,
         }}
       >
         <List>
@@ -47,7 +47,7 @@ export const Sidebar = () => {
                 component={Link}
                 to={item.path}
                 sx={{
-                  borderRadius: 2,
+                  borderRadius: 4,
                   mb: 1,
                   px: 2,
                   py: 1.5,
@@ -82,6 +82,9 @@ export const Sidebar = () => {
                   primaryTypographyProps={{
                     sx: {
                       textDecoration: "none",
+                      fontWeight: "bold",
+                      fontFamily: "'Nunito sans'",
+                      fontSize: "1.1rem",
                     },
                   }}
                 />

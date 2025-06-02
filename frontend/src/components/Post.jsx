@@ -126,8 +126,10 @@ export const Post = ({
             <div className="w-full">
               <div className="flex justify-between items-start w-full">
                 <div>
-                  <div className="text-sm">{post.user.name}</div>
-                  <div className="text-sm text-zinc-500 ">
+                  <div className="text-sm font-soft font-bold">
+                    {post.user.name}
+                  </div>
+                  <div className="text-sm text-zinc-500 font-soft">
                     {post.user.handle}
                   </div>
                 </div>
@@ -167,19 +169,21 @@ export const Post = ({
                 {post.reading && (
                   <>
                     <div>
-                      <Rating
-                        className="mt-2"
-                        name="read-only"
-                        value={post.reading.rate}
-                        size="small"
-                        readOnly
-                        sx={{
-                          "& .MuiRating-icon": {
-                            fontSize: "15px",
-                          },
-                        }}
-                      />
-                      <div className="text-sm mt-1">
+                      {post.reading.rate != 0 && (
+                        <Rating
+                          className="mt-2"
+                          name="read-only"
+                          value={post.reading.rate}
+                          size="small"
+                          readOnly
+                          sx={{
+                            "& .MuiRating-icon": {
+                              fontSize: "15px",
+                            },
+                          }}
+                        />
+                      )}
+                      <div className="text-sm mt-1 font-soft">
                         {post.reading.thoughts}
                       </div>
                       {visible && (
@@ -193,7 +197,7 @@ export const Post = ({
                           />
                         </>
                       )}
-                      <div className="flex items-center">
+                      <div className="flex items-center mt-1">
                         <IconButton
                           onClick={() => {
                             if (isGooded) {
@@ -205,17 +209,24 @@ export const Post = ({
                         >
                           {!isGooded ? (
                             <FavoriteBorderIcon
+                              sx={{ fontSize: "16px" }}
                               color="error"
                               fontSize="small"
                             />
                           ) : (
-                            <FavoriteIcon color="error" fontSize="small" />
+                            <FavoriteIcon
+                              sx={{ fontSize: "16px" }}
+                              color="error"
+                              fontSize="small"
+                            />
                           )}
                         </IconButton>
 
-                        <div className="text-sm">{localGoodCount}</div>
+                        <div className="text-xs font-soft">
+                          {localGoodCount}
+                        </div>
                       </div>
-                      <div className="flex text-xs text-zinc-500  ">
+                      <div className="flex text-xs text-zinc-500 font-soft ">
                         <div>(last updated: </div>
                         {formatDateTime(
                           post.updateDate ? post.updateDate : post.registerDate

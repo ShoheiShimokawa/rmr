@@ -35,15 +35,20 @@ export const Profile = ({ account }) => {
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
   const handleFollow = async (selectedUserId) => {
-    if (!isLoggedIn()) return;
-    setIsFollowed(true);
-    const param = {
-      userId: selectedUserId,
-      followerId: user && user.userId,
-    };
-    const result = await follow(param);
-    setFollowed(result.data);
-    console.log("success follow.");
+    try {
+      if (!isLoggedIn()) return;
+      setIsFollowed(true);
+      const param = {
+        userId: selectedUserId,
+        followerId: user && user.userId,
+      };
+      const result = await follow(param);
+      setFollowed(result.data);
+      console.log("success follow.");
+    } catch (error) {
+      setIsFollowed(false);
+      notify("You've already followed", "error");
+    }
   };
   const handleCancelFollow = async (selectedFollowId) => {
     if (!isLoggedIn()) return;
@@ -86,9 +91,9 @@ export const Profile = ({ account }) => {
       setFollows(follow.data);
       const result = await getFollower(account && account.userId);
       setFollowers(result.data);
-      var isFollowed = result.data.find(
-        (v) => v.follower.userId === user && user.userId
-      );
+      var isFollowed =
+        user && result.data.find((v) => v.follower.userId === user.userId);
+
       isFollowed && setFollowed(isFollowed);
       isFollowed && setIsFollowed(true);
       const readingResult = await findReadingByUser(account && account.userId);
@@ -220,15 +225,21 @@ export const Profile = ({ account }) => {
           )}
         </div>
       </div>
-      <div className="text-lg ml-3 mt-2 font-bold">
+      <div className="text-lg ml-3 mt-2 font-bold font-soft">
         {account.name}
-        <div className="text-zinc-500">{account.handle}</div>
+        <div className="text-zinc-500 font-soft">{account.handle}</div>
       </div>
-      <div className="mb-2 mt-2 ml-2"> {account.description}</div>
-      <div className="flex">
+      <div className="mb-2 mt-2 ml-2 font-soft"> {account.description}</div>
+      <div className="flex mb-2">
         <div className="flex hover:underline cursor-pointer ml-2">
-          <div className="mr-1 " onClick={handleSelectFollow}>
-            {follows.length != 0 ? follows.length : 0} follows
+          <div
+            className="mr-1 font-soft text-sm flex"
+            onClick={handleSelectFollow}
+          >
+            <div className="font-bold mr-1">
+              {follows.length != 0 ? follows.length : 0}{" "}
+            </div>
+            follows
           </div>
         </div>
         <div className="flex ml-2">
@@ -236,8 +247,11 @@ export const Profile = ({ account }) => {
             className="flex hover:underline cursor-pointer"
             onClick={handleSelectFollower}
           >
-            <div className="mr-1 ">
-              {followers.length != 0 ? followers.length : 0} followers
+            <div className="mr-1 font-soft text-sm flex">
+              <div className="font-bold mr-1">
+                {followers.length != 0 ? followers.length : 0}
+              </div>{" "}
+              followers
             </div>
           </div>
         </div>

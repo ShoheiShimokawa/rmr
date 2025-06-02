@@ -3,6 +3,7 @@ import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { CustomDialog } from "../ui/CustomDialog";
 import { useState, useEffect, useMemo } from "react";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { Book } from "./book/Book";
 import { useNotify } from "../hooks/NotifyProvider";
 import { useRequireLogin } from "../hooks/useRequireLogin";
@@ -119,28 +120,29 @@ export const Memo = () => {
       >
         <StepMemoRegister updated={find} />
       </CustomDialog>
-      <div className="mb-2 flex justify-end">
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<AddIcon />}
-          onClick={handleOpenRegister}
-          sx={{
-            textTransform: "none",
-            backgroundColor: "#000",
-            color: "#fff",
-            fontWeight: "bold",
-            "&:hover": {
-              backgroundColor: "#333",
-            },
-          }}
-        >
-          add Highlight
-        </Button>
-      </div>
+
       <div>
-        {memos.length >= 1 && (
+        {memos.length >= 1 ? (
           <>
+            <div className="mb-2 flex justify-end">
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={handleOpenRegister}
+                sx={{
+                  textTransform: "none",
+                  backgroundColor: "#000",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: "#333",
+                  },
+                }}
+              >
+                add Highlight
+              </Button>
+            </div>
             {formatted.map((entry, i) => (
               <Card sx={{ mb: 1 }}>
                 <CardContent
@@ -216,6 +218,46 @@ export const Memo = () => {
               </Card>
             ))}
           </>
+        ) : (
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              textAlign: "center",
+              // backgroundColor: "#f9f9f9",
+              borderRadius: 2,
+            }}
+          >
+            <MenuBookIcon sx={{ fontSize: 40, mb: 1 }} />
+            <Typography variant="h6" gutterBottom>
+              No highlights yet
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Start by saving something you found interesting in a book you
+              read.
+              <br />
+              For example, “a memorable quote” or “something you learned.”
+            </Typography>
+            <div className="mt-5">
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={handleOpenRegister}
+                sx={{
+                  textTransform: "none",
+                  backgroundColor: "#000",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: "#333",
+                  },
+                }}
+              >
+                add Highlight
+              </Button>
+            </div>
+          </Paper>
         )}
       </div>
     </div>

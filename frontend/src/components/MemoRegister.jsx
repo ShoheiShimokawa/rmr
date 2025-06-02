@@ -31,6 +31,7 @@ export const MemoRegister = ({ updated, book, reading }) => {
     register,
     setValue,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
@@ -47,6 +48,7 @@ export const MemoRegister = ({ updated, book, reading }) => {
       await registerMemo(param);
       notify("success create a highlight!", "success");
       updated && updated();
+      reset();
     } catch (error) {
       notify("Failed to create highlight.", "error");
     }

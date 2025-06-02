@@ -235,12 +235,14 @@ export const BookDetail = ({ book, updated }) => {
       </CustomDialog>
       <div className="flex">
         <Book book={book} />
-        <div className="ml-2 text-lg text-zinc-800 font-bold">
+        <div className="ml-2 text-lg text-zinc-800 font-bold font-soft">
           <div>{book.title}</div>
-          <div className="text-zinc-500 mt-2 text-sm ">{book.author}</div>
+          <div className="text-zinc-500 mt-2 text-sm font-soft">
+            {book.author}
+          </div>
         </div>
       </div>
-      <div className="text-sm font-sans mt-3 ml-1">
+      <div className="text-sm font-sans mt-3 ml-1 font-soft">
         <CollapsibleText text={book.description} />
       </div>
       <div className="flex place-items-center  mt-2 ml-1 mb-1">
@@ -258,13 +260,13 @@ export const BookDetail = ({ book, updated }) => {
             },
           }}
         />
-        <div className="ml-2 text-xs text-stone-600">
+        <div className="ml-2 text-xs text-stone-600 font-soft">
           Published : {book.publishedDate ? book.publishedDate : "-"}
         </div>
       </div>
       <Divider />
       <div className="mt-1 mb-1">
-        <div className="flex justify-between items-start w-full">
+        <div className="flex justify-between items-start w-full font-soft">
           <div className="">Your Reading Timeline</div>
           {myReading && (
             <IconButton aria-label="more" size="small" onClick={handleOpen}>
@@ -295,7 +297,7 @@ export const BookDetail = ({ book, updated }) => {
                   add bookshelf
                 </Button>
               </div>
-              <div className="text-sm text-zinc-700">
+              <div className="text-sm text-zinc-700 font-soft">
                 Not on your Bookshelf yet.
               </div>
             </div>
@@ -489,10 +491,10 @@ export const BookDetail = ({ book, updated }) => {
               ))}
             </AvatarGroup>
           ) : (
-            <div className="text-sm">no one</div>
+            <div className="text-sm font-soft">no one</div>
           )}
 
-          <div className="ml-1 text-sm">reading now.</div>
+          <div className="ml-1 text-sm font-soft">reading now.</div>
         </div>
         <div className="flex place-items-center">
           <div>
@@ -512,13 +514,13 @@ export const BookDetail = ({ book, updated }) => {
                 ))}
               </AvatarGroup>
             ) : (
-              <div className="text-sm">no one</div>
+              <div className="text-sm font-soft">no one</div>
             )}
           </div>
-          <div className="ml-1 text-sm">read it.</div>
+          <div className="ml-1 text-sm font-soft">read it.</div>
         </div>
       </div>
-      <div className="text-lg mb-2 mt-3">Readers' comments</div>
+      <div className="text-lg mb-2 mt-3 font-soft">Readers' comments</div>
       {posts.length >= 1 ? (
         <>
           {posts.map((post) => (
@@ -536,7 +538,7 @@ export const BookDetail = ({ book, updated }) => {
           ))}
         </>
       ) : (
-        <div className="mt-2 flex justify-center text-stone-600 text-sm">
+        <div className="mt-2 flex justify-center text-stone-600 text-sm font-soft">
           no reviews yet.
         </div>
       )}

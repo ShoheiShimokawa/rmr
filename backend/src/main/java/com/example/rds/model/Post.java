@@ -55,7 +55,9 @@ public class Post {
 
 	/** 感想をポストします。すでに同じ状態のreadingに紐づくポストが存在していたら更新します。 */
 	public static Post registerPost(PostRepository rep, ReadingRepository rRep, Integer readingId) {
+		
 		var reading = rRep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Reading not found"));
+		
 		Optional<Post> existPost=rep.findByReadingId(readingId).stream()
 				.findFirst();
 		if (existPost.isPresent() && existPost.get().getReading().getStatusType().equals(BookStatusType.DONE)) {

@@ -1,6 +1,7 @@
 import { Profile } from "./Profile";
 import { getPostAllByUser } from "../api/post";
 import { BookShelf } from "./book/BookShelf";
+import { GiBookshelf } from "react-icons/gi";
 import { Post } from "./Post";
 import { getByHandle } from "../api/account";
 import { useState, useEffect } from "react";
@@ -44,9 +45,18 @@ export const UserPage = () => {
     <div>
       {user && <Profile account={user} />}
       <Divider />
-      <Tabs value={tabIndex} onChange={handleTabChange} className="mb-2">
-        <Tab label="BookShelf" />
-        <Tab label="Posts" />
+      <Tabs
+        value={tabIndex}
+        onChange={handleTabChange}
+        className="mb-4"
+        textColor="inherit"
+        TabIndicatorProps={{ style: { backgroundColor: "black" } }}
+      >
+        <Tab
+          label="BookShelf"
+          sx={{ textTransform: "none", fontWeight: "bold" }}
+        />
+        <Tab label="Posts" sx={{ textTransform: "none", fontWeight: "bold" }} />
       </Tabs>
       <TabPanel value={tabIndex} index={0}>
         {user && <BookShelf account={user && user} />}
