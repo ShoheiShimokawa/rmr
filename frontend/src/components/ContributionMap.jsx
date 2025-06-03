@@ -20,7 +20,6 @@ export const ContributionMap = ({ userId }) => {
   }, []);
   const find = async () => {
     const result = await getPostRecord(userId && userId);
-    console.log(result);
     setRecord(result.data);
   };
   return (

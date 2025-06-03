@@ -24,7 +24,6 @@ export const Community = ({}) => {
     setPosts(sortedPosts);
     const goodList = await getGoodPostAll(user && user.userId);
     const likedIds = goodList.data.map((g) => g.post.postId);
-    console.log(goodList.data);
     setGoodPostIds(likedIds);
     setLoading(false);
   };

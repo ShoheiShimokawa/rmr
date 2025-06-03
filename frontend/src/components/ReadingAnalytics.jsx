@@ -10,6 +10,7 @@ import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { useState, useEffect } from "react";
 import { getMonthlyData } from "../api/reading";
+import { toLargeGenre } from "../util";
 
 export const ReadingAnalytics = () => {
   const [data, setData] = useState([]);
@@ -39,7 +40,7 @@ export const ReadingAnalytics = () => {
       const formattedData = resulta.map((l, index) => ({
         id: index + 1,
         value: l.count,
-        label: l.largeGenre,
+        label: toLargeGenre(l.largeGenre),
       }));
       setData(formattedData);
     }
@@ -59,7 +60,7 @@ export const ReadingAnalytics = () => {
             borderRadius: "13px",
             boxShadow: 3,
             height: 350,
-            width: 500,
+            width: 700,
           }}
         >
           <CardContent>
@@ -93,7 +94,7 @@ export const ReadingAnalytics = () => {
               boxShadow: 3,
               backgroundColor: "white",
               height: 350,
-              width: 500,
+              width: 700,
             }}
           >
             <div className="font-soft text-xl font-bold">
@@ -119,7 +120,7 @@ export const ReadingAnalytics = () => {
                     data: monthlyData.map((item) => item.total),
                   },
                 ]}
-                width={450}
+                width={500}
                 height={300}
                 slotProps={{
                   tooltip: {

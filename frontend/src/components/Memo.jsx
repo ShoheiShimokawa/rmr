@@ -99,6 +99,7 @@ export const Memo = () => {
       <CustomDialog
         open={openDetail}
         title="Highlight"
+        width={"700px"}
         onClose={handleCloseDetail}
       >
         <MemoDetail
@@ -135,6 +136,7 @@ export const Memo = () => {
                   backgroundColor: "#000",
                   color: "#fff",
                   fontWeight: "bold",
+                  fontFamily: "'Nunito sans'",
                   "&:hover": {
                     backgroundColor: "#333",
                   },
@@ -189,7 +191,9 @@ export const Memo = () => {
                         ))}
                     </Box>
 
-                    <div className=" text-sm">📝{entry.primaryMemo.memo}</div>
+                    <div className="font-soft text-sm">
+                      📝{entry.primaryMemo.memo}
+                    </div>
 
                     {entry.otherCount > 0 && (
                       <Typography

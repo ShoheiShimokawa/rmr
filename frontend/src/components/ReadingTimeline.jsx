@@ -43,7 +43,7 @@ export const ReadingTimeline = ({ reading }) => {
       type: "DOING",
     },
     {
-      label: "Read",
+      label: "Completed",
       icon: <DoneIcon />,
       date: reading.readDate,
       type: "DONE",

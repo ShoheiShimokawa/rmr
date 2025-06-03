@@ -10,8 +10,14 @@ import { useNotify } from "../hooks/NotifyProvider";
 export const ProfileChange = ({ account, update }) => {
   const { notify } = useNotify();
   const formSchema = z.object({
-    name: z.string().min(1, "name is required."),
-    description: z.string().max(200).optional(),
+    name: z
+      .string()
+      .min(1, "name is required.")
+      .max(30, "Please enter a name within 30 characters."),
+    description: z
+      .string()
+      .max(300, "Introduction must be 300 characters or fewer.")
+      .optional(),
   });
   const {
     control,
@@ -35,7 +41,6 @@ export const ProfileChange = ({ account, update }) => {
         };
       }
       const result = await updateProfile(params);
-
       notify("Success to change profile.", "success");
       update && update();
     } catch (error) {
@@ -78,9 +83,16 @@ export const ProfileChange = ({ account, update }) => {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
           fullWidth
-          sx={{ textTransform: "none" }}
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#000",
+            color: "#fff",
+            fontWeight: "bold",
+            "&:hover": {
+              backgroundColor: "#333",
+            },
+          }}
           // endIcon={<SendIcon />}
         >
           Edit

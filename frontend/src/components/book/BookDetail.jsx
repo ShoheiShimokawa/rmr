@@ -34,7 +34,7 @@ import {
 import { ReadingRegister } from "../ReadingRegister";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 
-export const BookDetail = ({ book, updated }) => {
+export const BookDetail = ({ book, updated, visible = true }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorAddEl, setAnchorAddEl] = useState(null);
   const [open, setOpen] = useState(false);
@@ -108,7 +108,6 @@ export const BookDetail = ({ book, updated }) => {
     if (!isLoggedIn()) return;
     try {
       const result = await registerBook(book);
-      console.log("success registering book");
       if (result) {
         const rParam = {
           bookId: result.data.bookId,
@@ -200,7 +199,6 @@ export const BookDetail = ({ book, updated }) => {
       iniReadings &&
         setDone(iniReadings.data.filter((r) => r.statusType === "DONE"));
       const goodList = await getGoodPostAll(user && user.userId);
-      console.log("goods:", goodList.data);
       const likedIds = goodList.data.map((g) => g.post.postId);
       setGoodPostIds(likedIds);
     } catch (error) {
@@ -242,7 +240,7 @@ export const BookDetail = ({ book, updated }) => {
           </div>
         </div>
       </div>
-      <div className="text-sm font-sans mt-3 ml-1 font-soft">
+      <div className="text-sm font-sans mt-5 ml-1 font-soft">
         <CollapsibleText text={book.description} />
       </div>
       <div className="flex place-items-center  mt-2 ml-1 mb-1">
@@ -268,7 +266,7 @@ export const BookDetail = ({ book, updated }) => {
       <div className="mt-1 mb-1">
         <div className="flex justify-between items-start w-full font-soft">
           <div className="">Your Reading Timeline</div>
-          {myReading && (
+          {myReading && visible && (
             <IconButton aria-label="more" size="small" onClick={handleOpen}>
               <ChangeCircleIcon />
             </IconButton>
@@ -278,29 +276,31 @@ export const BookDetail = ({ book, updated }) => {
           {myReading ? (
             <ReadingTimeline reading={myReading} />
           ) : (
-            <div>
-              <div className="mt-1">
-                <Button
-                  variant="contained"
-                  endIcon={<GiBookshelf />}
-                  onClick={handleOpenAdd}
-                  sx={{
-                    textTransform: "none",
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    "&:hover": {
-                      backgroundColor: "#333",
-                    },
-                  }}
-                >
-                  add bookshelf
-                </Button>
+            visible && (
+              <div>
+                <div className="mt-1">
+                  <Button
+                    variant="contained"
+                    endIcon={<GiBookshelf />}
+                    onClick={handleOpenAdd}
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      fontWeight: "bold",
+                      "&:hover": {
+                        backgroundColor: "#333",
+                      },
+                    }}
+                  >
+                    add bookshelf
+                  </Button>
+                </div>
+                <div className="text-sm text-zinc-700 font-soft">
+                  Not on your Bookshelf yet.
+                </div>
               </div>
-              <div className="text-sm text-zinc-700 font-soft">
-                Not on your Bookshelf yet.
-              </div>
-            </div>
+            )
           )}
         </div>
         <Menu
@@ -343,7 +343,7 @@ export const BookDetail = ({ book, updated }) => {
                   <ListItemIcon>
                     <CheckCircleIcon fontSize="small" />
                   </ListItemIcon>
-                  Polished!
+                  Completed!
                 </MenuItem>
               </>
             ) : myReading.statusType === "DONE" ? (
@@ -368,7 +368,7 @@ export const BookDetail = ({ book, updated }) => {
                   <ListItemIcon>
                     <CheckCircleIcon fontSize="small" />
                   </ListItemIcon>
-                  Polished!
+                  Completed!
                 </MenuItem>
                 <Divider />
                 <MenuItem
@@ -404,7 +404,7 @@ export const BookDetail = ({ book, updated }) => {
                   <ListItemIcon>
                     <CheckCircleIcon fontSize="small" />
                   </ListItemIcon>
-                  Polished!
+                  Completed!
                 </MenuItem>
                 <Divider />
                 <MenuItem
@@ -461,7 +461,7 @@ export const BookDetail = ({ book, updated }) => {
                   <ListItemIcon>
                     <CheckCircleIcon fontSize="small" />
                   </ListItemIcon>
-                  Polished!
+                  Completed!
                 </MenuItem>
               </>
             )}
@@ -469,7 +469,7 @@ export const BookDetail = ({ book, updated }) => {
         </Menu>
       </div>
       <Divider />
-      <div className="flex mt-2 mb-4 justify-evenly">
+      <div className="flex mt-4 mb-4 justify-evenly">
         <div className="flex place-items-center">
           {doing.length !== 0 ? (
             <AvatarGroup
@@ -520,7 +520,10 @@ export const BookDetail = ({ book, updated }) => {
           <div className="ml-1 text-sm font-soft">read it.</div>
         </div>
       </div>
-      <div className="text-lg mb-2 mt-3 font-soft">Readers' comments</div>
+      <Divider />
+      <div className="text-lg mb-2 mt-3 font-soft font-bold">
+        Readers' comments
+      </div>
       {posts.length >= 1 ? (
         <>
           {posts.map((post) => (

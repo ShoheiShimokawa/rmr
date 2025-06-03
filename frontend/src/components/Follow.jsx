@@ -27,7 +27,6 @@ export const Follow = ({ followerId }) => {
   const find = async () => {
     const result = await getFollow(followerId);
     setFollow(result.data);
-    console.log(result);
   };
   useEffect(() => {
     find();

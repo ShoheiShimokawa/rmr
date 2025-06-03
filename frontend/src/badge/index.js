@@ -1,7 +1,3 @@
-import NaturePeopleRoundedIcon from "@mui/icons-material/NaturePeopleRounded";
-import BusinessCenterRoundedIcon from "@mui/icons-material/BusinessCenterRounded";
-import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
-import AccessibilityNewRoundedIcon from "@mui/icons-material/AccessibilityNewRounded";
 import FiberNewRoundedIcon from "@mui/icons-material/FiberNewRounded";
 import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
@@ -9,11 +5,11 @@ import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
 
 export const statusTypeStr = (str) => {
   if (str === "NONE") {
-    return "Not yet";
+    return "To Read";
   } else if (str === "DOING") {
-    return "In Prog";
+    return "Reading Now";
   } else if (str === "DONE") {
-    return "Conquered";
+    return "Completed";
   }
 };
 

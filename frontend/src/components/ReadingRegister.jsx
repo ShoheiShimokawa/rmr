@@ -56,7 +56,6 @@ export const ReadingRegister = ({ book, reading, updated }) => {
           statusType: "DONE",
         };
         const result = await registerReading(param);
-        console.log("success register reading.");
         updated && updated();
         notify("Congrats!", "success");
       }

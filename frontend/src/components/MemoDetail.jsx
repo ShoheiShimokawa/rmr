@@ -4,17 +4,8 @@ import { CustomDialog } from "../ui/CustomDialog";
 import { useState, useEffect, useMemo } from "react";
 import { MemoRegister } from "./MemoRegister";
 import AddIcon from "@mui/icons-material/Add";
-import { getById } from "../api/memo";
 
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  Chip,
-  Box,
-  Button,
-} from "@mui/material";
+import { Typography, Grid, Chip, Box, Button } from "@mui/material";
 
 export const MemoDetail = ({ memo, updated }) => {
   const [openRegister, setOpenRegister] = useState(false);
@@ -26,8 +17,6 @@ export const MemoDetail = ({ memo, updated }) => {
   const handleCloseRegister = () => {
     setOpenRegister(false);
   };
-
-  // const find = async () => {};
 
   // useEffect(() => {
   //   find();
@@ -51,8 +40,8 @@ export const MemoDetail = ({ memo, updated }) => {
               )}
               {group.memos.map((memo) => (
                 <div key={memo.memoId}>
-                  <div className="text-sm "> {memo.memo}</div>
-                  <div className="text-sm text-gray-500 italic mb-2">
+                  <div className="text-sm font-soft"> {memo.memo}</div>
+                  <div className="text-sm text-gray-500 italic mb-2 font-soft">
                     (page {memo.page ? memo.page : "-"})
                   </div>
                 </div>
@@ -71,6 +60,7 @@ export const MemoDetail = ({ memo, updated }) => {
 
                 color: "#fff",
                 fontWeight: "bold",
+                fontFamily: "'Nunito sans'",
                 "&:hover": {
                   backgroundColor: "#333",
                 },
@@ -81,7 +71,7 @@ export const MemoDetail = ({ memo, updated }) => {
           </div>
 
           <Typography variant="body2" color="text.secondary">
-            <div className="text-xs">
+            <div className="text-xs font-soft">
               📚 {memo.reading.book.title}（{memo.reading.book.author}）
             </div>
           </Typography>

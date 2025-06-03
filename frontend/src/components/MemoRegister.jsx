@@ -71,7 +71,9 @@ export const MemoRegister = ({ updated, book, reading }) => {
     <div>
       {reading && <BookInfo book={reading.book} />}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="font-bold mt-2">*Highlight Impression Words 📝</div>
+        <div className="font-bold mt-2 font-soft">
+          *Highlight Impression Words 📝
+        </div>
         <TextField
           {...register("memo")}
           placeholder="memo impression words."
@@ -85,7 +87,9 @@ export const MemoRegister = ({ updated, book, reading }) => {
           //   disabled={!selectedBook}
         />
 
-        <div className="mt-3 mb-2 font-bold">Note the page number 🔖</div>
+        <div className="mt-3 mb-2 font-bold font-soft">
+          Note the page number 🔖
+        </div>
         <div className="">
           <TextField
             {...register("page", { valueAsNumber: true })}
@@ -110,7 +114,7 @@ export const MemoRegister = ({ updated, book, reading }) => {
           />
         </div>
 
-        <div className="mt-5 mb-1 font-bold">Label 🏷️</div>
+        <div className="mt-5 mb-1 font-bold font-soft">Label 🏷️</div>
         <Controller
           name="label"
           control={control}
@@ -122,18 +126,25 @@ export const MemoRegister = ({ updated, book, reading }) => {
             />
           )}
         />
-        <div className="text-sm mb-4 ml-1 italic text-zinc-500">
+        <div className="text-sm mb-4 ml-1 italic text-zinc-500 font-soft">
           E.g. For work, Investment tips, Inspiring quotes
         </div>
-        <div className="">
+        <div className="flex justify-end mr-5">
           <Button
             type="submit"
             variant="contained"
-            color="primary"
-            fullWidth
             // disabled={!selectedBook}
-            sx={{ textTransform: "none" }}
-            // endIcon={<SendIcon />}
+            sx={{
+              textTransform: "none",
+              backgroundColor: "#000",
+              color: "#fff",
+              fontFamily: "'Nunito sans'",
+              fontWeight: "bold",
+              width: "150px",
+              "&:hover": {
+                backgroundColor: "#333",
+              },
+            }}
           >
             create!
           </Button>

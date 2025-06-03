@@ -210,6 +210,31 @@ export const enumToGenre = (genre) => {
   }
 };
 
+export const toLargeGenre = (genre) => {
+  switch (genre) {
+    case "FICTION":
+      return "Fiction";
+    case "NON_FICTION":
+      return "Non Fiction";
+    case "PROFESSIONAL_TECHNICAL":
+      return "Professional & Technical";
+    case "ARTS_CULTURE":
+      return "Arts & Culture";
+    case "EDUCATION_STUDYAIDS":
+      return "Education & Study aids";
+    case "ENTERTAINMENT":
+      return "Entertainment";
+    case "ACADEMICS_RESEARCH":
+      return "Academics & Research";
+    case "PRACTICAL_HOBBIES":
+      return "Practical & Hobbies";
+    case "OTHER":
+      return "Other";
+    default:
+      return "Unknown";
+  }
+};
+
 export const generateHandleId = () => {
   const timestamp = Date.now().toString(36); // 現在時刻を36進数で
   const random = Math.random().toString(36).substring(2, 10); // ランダム部分

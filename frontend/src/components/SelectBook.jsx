@@ -73,13 +73,8 @@ export const SelectBook = ({ onClick, onNext }) => {
     if (!selectedBook || !user) return;
 
     try {
-      //   setLoading(true);
-      //   const result = getByUserIdAndBookId(user.userId, selectedBook.bookId);
       const result = await registerBook(selectedBook);
-      console.log("success register book!");
       if (selectedReading) {
-        console.log("test");
-        console.log(selectedReading);
         onNext && onNext(selectedReading);
       } else {
         const param = {
@@ -91,8 +86,6 @@ export const SelectBook = ({ onClick, onNext }) => {
         };
         const response = await registerReading(param);
         const reading = response.data;
-
-        console.log(reading);
         onNext && onNext(reading);
       }
 
@@ -104,13 +97,6 @@ export const SelectBook = ({ onClick, onNext }) => {
       //   setLoading(false);
     }
   };
-
-  // const isDisabled =
-  // if (selectedReading) {
-  //     return true;
-  // } else if () {
-
-  // }
 
   const handleOpenBookShelf = () => {
     setOpenBookShelf(true);
@@ -184,10 +170,10 @@ export const SelectBook = ({ onClick, onNext }) => {
             setOpenBookShelf(false);
             getByUserIdAndBookId(user.userId, selectedBook.bookId)
               .then((res) => {
-                setSelectedReading(res.data); // 存在すればセット
+                setSelectedReading(res.data);
               })
               .catch((err) => {
-                setSelectedReading(null); // 存在しない or 204 の場合
+                setSelectedReading(null);
               });
           }}
         />
@@ -199,7 +185,7 @@ export const SelectBook = ({ onClick, onNext }) => {
       >
         <BookSearch fromPost={fromPost} />
       </CustomDialog>
-      <div className="font-bold mb-2">Select a Book 📖</div>
+      <div className="font-bold mb-2 font-soft">Select a Book 📖</div>
       <div className="flex">
         <Button
           variant="contained"
@@ -230,7 +216,7 @@ export const SelectBook = ({ onClick, onNext }) => {
       </div>
       {selectedBook && (
         <form onSubmit={handleSubmit(handleNext)}>
-          <div className="mt-3 mb-2 text-lg">
+          <div className="mt-3 mb-2 text-lg font-soft">
             What's your reading status for this book?
           </div>
 

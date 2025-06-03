@@ -32,8 +32,6 @@ export const StepMemoRegister = ({ updated }) => {
   };
 
   const handleNext = () => setStep(2);
-  const handleBack = () => setStep(1);
-  const steps = ["Select Book", "Register Memo"];
   return (
     <div>
       <CustomStepper activeStep={step}></CustomStepper>
@@ -56,8 +54,8 @@ export const StepMemoRegister = ({ updated }) => {
               position: "absolute",
               width: "100%",
               height: "100%",
-              overflowY: "auto", // ✅ ここでスクロール可能に！
-              pr: 1, // スクロールバー分の余白（好み）
+              overflowY: "auto",
+              pr: 1,
             }}
           >
             <SelectBook
@@ -78,8 +76,8 @@ export const StepMemoRegister = ({ updated }) => {
               position: "absolute",
               width: "100%",
               height: "100%",
-              overflowY: "auto", // ✅ ここでスクロール可能に！
-              pr: 1, // スクロールバー分の余白（好み）
+              overflowY: "auto",
+              pr: 1,
             }}
           >
             <MemoRegister

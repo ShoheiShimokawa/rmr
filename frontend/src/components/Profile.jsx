@@ -44,7 +44,7 @@ export const Profile = ({ account }) => {
       };
       const result = await follow(param);
       setFollowed(result.data);
-      console.log("success follow.");
+      notify("You Followed.", "Success");
     } catch (error) {
       setIsFollowed(false);
       notify("You've already followed", "error");
@@ -52,10 +52,13 @@ export const Profile = ({ account }) => {
   };
   const handleCancelFollow = async (selectedFollowId) => {
     if (!isLoggedIn()) return;
-    await deleteFollow(selectedFollowId);
-    console.log("success delete follow.");
-    setFollowed({});
-    setIsFollowed(false);
+    try {
+      await deleteFollow(selectedFollowId);
+      setFollowed({});
+      setIsFollowed(false);
+    } catch (error) {
+      notify("Failed.", "error");
+    }
   };
 
   const handleChangeOpen = () => {
@@ -174,10 +177,12 @@ export const Profile = ({ account }) => {
               onClick={handleChangeOpen}
               sx={{
                 textTransform: "none",
-                color: "#444", // テキスト色
-                borderColor: "#444", // 枠線の色
+                color: "#444",
+                borderColor: "#444",
+                fontFamily: "'Nunito sans'",
+                fontWeight: "bold",
                 "&:hover": {
-                  backgroundColor: "#eee", // ホバー時の背景
+                  backgroundColor: "#eee",
                   borderColor: "#444",
                 },
               }}
@@ -194,6 +199,7 @@ export const Profile = ({ account }) => {
                 backgroundColor: "#000",
                 borderColor: "#444",
                 fontWeight: "bold",
+                fontFamily: "'Nunito sans'",
                 "&:hover": {
                   backgroundColor: "#333",
                   borderColor: "#444",
@@ -212,9 +218,10 @@ export const Profile = ({ account }) => {
                 textTransform: "none",
                 borderColor: "#444",
                 fontWeight: "bold",
+                fontFamily: "'Nunito sans'",
                 color: "#444",
                 "&:hover": {
-                  backgroundColor: "#eee", // ホバー時の背景
+                  backgroundColor: "#eee",
                   borderColor: "#444",
                 },
               }}

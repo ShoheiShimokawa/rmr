@@ -70,7 +70,7 @@ export const PostRegister = () => {
       publishedDate: selectedBook.volumeInfo.publishedDate,
     };
     const result = await registerBook(book);
-    console.log("success register book!");
+
     setAddedBook(result && result.data);
     setSelectedBook(result.data);
     setOpen(false);
@@ -89,7 +89,7 @@ export const PostRegister = () => {
           <div className="w-[400px]">
             {none.length >= 1 && (
               <>
-                <div className="mb-2">To Read</div>
+                <div className="mb-2 font-soft font-bold">To Read</div>
                 <div className="w-[400px] overflow-x-auto">
                   <BookArray books={none && none} handleSelect={handleSelect} />
                 </div>
@@ -97,7 +97,9 @@ export const PostRegister = () => {
             )}
             {doing.length >= 1 && (
               <>
-                <div className="mt-3 mb-2">Reading Now</div>
+                <div className="mt-3 mb-2 font-soft font-bold">
+                  Reading Now..
+                </div>
                 <div className="w-[400px] overflow-x-auto space-y-2">
                   <BookArray
                     books={doing && doing}
@@ -107,9 +109,12 @@ export const PostRegister = () => {
               </>
             )}
           </div>
-          <IconButton>
-            <SearchIcon onClick={handleSearch} />
-          </IconButton>
+          <div className="flex items-center">
+            <div className="font-soft">Select a book to review</div>
+            <IconButton>
+              <SearchIcon onClick={handleSearch} />
+            </IconButton>
+          </div>
           <div className="ml-2">{addedBook && <Book book={addedBook} />}</div>
           <div className="mt-4">
             <ReadingRegister
@@ -124,7 +129,7 @@ export const PostRegister = () => {
         </div>
 
         <div className="ml-6 mt-5 min-w-[400px]">
-          {selectedBook && <BookDetail book={selectedBook} />}
+          {selectedBook && <BookDetail book={selectedBook} visible={false} />}
         </div>
       </div>
     </div>

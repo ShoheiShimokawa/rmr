@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.rds.context.AccountRepository;
 import com.example.rds.model.Account;
 import com.example.rds.service.AccountService;
 
@@ -23,7 +22,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthController {
 	private AccountService service;
-	private AccountRepository rep;
 
 	private static final String GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=";
 
@@ -44,7 +42,6 @@ if (userInfo != null && userInfo.containsKey("sub")) {
             return ResponseEntity.ok(Map.of(
                 "registered", false,
                 "name", userInfo.get("name"),
-                "email", userInfo.get("email"),
                 "picture", userInfo.get("picture"),
                 "googleSub", userInfo.get("sub")
             ));

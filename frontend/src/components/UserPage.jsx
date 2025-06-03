@@ -54,9 +54,20 @@ export const UserPage = () => {
       >
         <Tab
           label="BookShelf"
-          sx={{ textTransform: "none", fontWeight: "bold" }}
+          sx={{
+            textTransform: "none",
+            fontWeight: "bold",
+            fontFamily: "'Nunito sans'",
+          }}
         />
-        <Tab label="Posts" sx={{ textTransform: "none", fontWeight: "bold" }} />
+        <Tab
+          label="Posts"
+          sx={{
+            textTransform: "none",
+            fontWeight: "bold",
+            fontFamily: "'Nunito sans'",
+          }}
+        />
       </Tabs>
       <TabPanel value={tabIndex} index={0}>
         {user && <BookShelf account={user && user} />}

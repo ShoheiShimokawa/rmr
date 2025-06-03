@@ -35,7 +35,6 @@ export const Login = ({ updated }) => {
       if (result.status === 200 && userData.registered === false) {
         const account = {
           name: userData.name,
-          email: userData.email,
           picture: userData.picture,
           googleSub: userData.googleSub,
         };
@@ -49,7 +48,7 @@ export const Login = ({ updated }) => {
         notify("You've successfully logged in", "success");
       }
     } catch (error) {
-      console.error("Login failed", error);
+      notify("Login Failed.", "error");
     }
   };
   return (
@@ -72,7 +71,6 @@ export const Login = ({ updated }) => {
           className="mx-auto"
           width="200px"
           onSuccess={handleLoginSuccess}
-          onError={() => console.log("Login Failed")}
         />
       </div>
     </div>

@@ -142,18 +142,46 @@ export const Header = () => {
               </IconButton>
               <Menu anchorEl={anchor} open={open} onClose={handleClose}>
                 {user ? (
-                  <MenuItem onClick={() => handleLogout()}>
+                  <MenuItem
+                    onClick={() => handleLogout()}
+                    sx={{
+                      textDecoration: "none",
+                      "&:hover": {
+                        textDecoration: "none",
+                      },
+                    }}
+                  >
                     <ListItemIcon>
                       <LogoutRoundedIcon />
                     </ListItemIcon>
-                    <ListItemText>Log out</ListItemText>
+                    <ListItemText
+                      primaryTypographyProps={{
+                        sx: { textDecoration: "none" },
+                      }}
+                    >
+                      Log out
+                    </ListItemText>
                   </MenuItem>
                 ) : (
-                  <MenuItem onClick={() => handleLogin()}>
+                  <MenuItem
+                    onClick={() => handleLogin()}
+                    sx={{
+                      textDecoration: "none",
+                      "&:hover": {
+                        textDecoration: "none",
+                      },
+                    }}
+                  >
                     <ListItemIcon>
                       <LoginRoundedIcon />
                     </ListItemIcon>
-                    <ListItemText>Log in</ListItemText>
+                    <ListItemText
+                      primaryTypographyProps={{
+                        sx: { textDecoration: "none" },
+                      }}
+                    >
+                      Log in
+                    </ListItemText>
                   </MenuItem>
                 )}
                 <MenuItem
@@ -168,7 +196,10 @@ export const Header = () => {
                   <ListItemIcon>
                     <InfoIcon />
                   </ListItemIcon>
-                  <ListItemText primary="About"></ListItemText>
+                  <ListItemText
+                    primary="About"
+                    primaryTypographyProps={{ sx: { textDecoration: "none" } }}
+                  ></ListItemText>
                 </MenuItem>
               </Menu>
             </Stack>
