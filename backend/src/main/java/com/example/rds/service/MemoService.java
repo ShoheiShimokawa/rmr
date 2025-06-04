@@ -40,7 +40,7 @@ public class MemoService {
     
     /** メモを登録します。 */
     public Memo register(RegisterMemo params) {
-        Label label=Label.findOrRegister(lRep,aRep,params.userId(), params.label());
+        Label label=Label.findOrRegister(lRep,aRep,params.getUserId(), params.getLabel());
         return Memo.register(rep,rRep, params,label);
     }
 

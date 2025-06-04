@@ -136,10 +136,24 @@ public class Post {
 	}
 
 	/** 年間ポスト数 */
-	@Builder
-	public record YearlyPostRecord(LocalDate date, Integer posts) {
-	}
-	@Builder
-	public record PostWithGoodCount(Integer postId, Account user, Reading reading,
-		 LocalDateTime registerDate,LocalDateTime updateDate,long goodCount) {}
+	@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public static class YearlyPostRecord {
+	private LocalDate date;
+	private Integer posts;
+}
+	@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public static class PostWithGoodCount {
+	private Integer postId;
+	private Account user;
+	private Reading reading;
+	private LocalDateTime registerDate;
+	private LocalDateTime updateDate;
+	private long goodCount;
+}
 }

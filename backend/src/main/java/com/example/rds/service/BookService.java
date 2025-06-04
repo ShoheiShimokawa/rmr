@@ -27,7 +27,7 @@ public class BookService {
 
 	/** 本を登録します。*/
 	public Book register(RegisterBook param) {
-		var book = rep.findById(param.id());
+		var book = rep.findById(param.getId());
 			if(book.isEmpty()) {
 				return Book.register(rep, param);
 		} else {

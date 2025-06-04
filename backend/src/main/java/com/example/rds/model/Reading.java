@@ -77,9 +77,14 @@ public class Reading {
 	}
 
 	/** 検索パラメタ */
-	@Builder
-	public record SearchReading(Integer userId, Integer bookId) {
-	}
+	@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public static class SearchReading {
+    private Integer userId;
+    private Integer bookId;
+}
 
 	/** 読書IDで読書を取得します。 */
 	public static Reading get(ReadingRepository rep,Integer readingId) {
@@ -137,17 +142,27 @@ public class Reading {
 		return rep.save(reading);
 	}
 	/** 登録パラメタ */
-	@Builder
-	public record RegisterReading(Integer userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts,String description) {
-		public Reading create() {
-			return Reading.builder()
-					.rate(this.rate)
-					.statusType(this.statusType)
-					.thoughts(this.thoughts)
-					.registerDate(LocalDate.now())
-					.build();
-		}
-	}
+	@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public static class RegisterReading {
+    private Integer userId;
+    private Integer bookId;
+    private Integer rate;
+    private BookStatusType statusType;
+    private String thoughts;
+    private String description;
+
+    public Reading create() {
+        return Reading.builder()
+            .rate(this.rate)
+            .statusType(this.statusType)
+            .thoughts(this.thoughts)
+            .registerDate(LocalDate.now())
+            .build();
+    }
+}
 	
 	/** 読書を更新します。*/
 	@Transactional
@@ -222,7 +237,14 @@ public class Reading {
         }
 	
 	/** 月間読書記録*/
-	@Builder
-	public record MonthlyReading(String month,Integer total,Map<GenreType,Integer>breakdown) {}
+	@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public static class MonthlyReading {
+    private String month;
+    private Integer total;
+    private Map<GenreType, Integer> breakdown;
+}
 	
 }

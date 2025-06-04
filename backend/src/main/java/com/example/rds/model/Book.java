@@ -64,15 +64,34 @@ public class Book {
 	}
 
 	/** 登録パラメタ*/
-	@Builder
-	public record RegisterBook(String id,String isbn,String title, String author, GenreType genre, String description,
-			String thumbnail, String publishedDate) {
-		public Book create() {
-			return Book.builder().id(this.id).isbn(this.isbn).title(this.title).author(this.author).description(this.description)
-					.genre(this.genre).largeGenre(GenreType.classify(this.genre)).thumbnail(this.thumbnail)
-					.publishedDate(this.publishedDate).build();
-		}
+	@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public static class RegisterBook {
+	private String id;
+	private String isbn;
+	private String title;
+	private String author;
+	private GenreType genre;
+	private String description;
+	private String thumbnail;
+	private String publishedDate;
+
+	public Book create() {
+		return Book.builder()
+				.id(this.id)
+				.isbn(this.isbn)
+				.title(this.title)
+				.author(this.author)
+				.description(this.description)
+				.genre(this.genre)
+				.largeGenre(GenreType.classify(this.genre))
+				.thumbnail(this.thumbnail)
+				.publishedDate(this.publishedDate)
+				.build();
 	}
+}
 
 	/**　本を変更します。（手動用） */
 	public Book update(BookRepository rep, RegisterBook param, Integer bookId) {

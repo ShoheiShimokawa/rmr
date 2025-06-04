@@ -67,7 +67,13 @@ public class Label {
             return rep.save(registeredLabel);
         });
 }
-    /** 登録パラメタ */
-    @Builder
-    public record RegisterLabel(Integer userId,String label){};
+    /** 登録パラメタ(暫定対応) */
+   @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public static class RegisterLabel {
+	private Integer userId;
+	private String label;
+}
 }

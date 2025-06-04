@@ -92,13 +92,25 @@ public class Account {
 		user.setDescription(params.description);
 		return rep.save(user);
 	}
-		/** 変更パラメタ */
-	@Builder
-	public record UpdateProfile(Integer userId,String name,String description) {
-		public Account create() {
-			return Account.builder().userId(this.userId).name(this.name).description(this.description).build();
-		}
+
+	/** 変更パラメタ(vscodeでrecordに@Bui;der使うと作動しないため暫定対応) */
+	@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UpdateProfile {
+	private Integer userId;
+	private String name;
+	private String description;
+
+	public Account create() {
+		return Account.builder()
+			.userId(this.userId)
+			.name(this.name)
+			.description(this.description)
+			.build();
 	}
+}
 	/** プロフィール情報を返します。 */
 	public static Optional<Account> getProfile(Integer userId,AccountRepository rep) {
 		return rep.findById(userId);

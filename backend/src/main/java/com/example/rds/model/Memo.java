@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.example.rds.context.LabelRepository;
 import com.example.rds.context.MemoRepository;
 import com.example.rds.context.ReadingRepository;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -76,14 +74,17 @@ public class Memo {
     }
 
     /** 登録パラメタ */
-    @Builder
-    public static record RegisterMemo(
-        Integer readingId,
-        Integer userId,
-        String memo,
-        Integer page,
-        String label
-    ){};
+  @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public static class RegisterMemo {
+    private Integer readingId;
+    private Integer userId;
+    private String memo;
+    private Integer page;
+    private String label;
+}
 
  
     /** ラベリングされたメモを返します。 */
