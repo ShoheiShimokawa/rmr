@@ -9,9 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.rds.context.GoodRepository;
 import com.example.rds.context.PostRepository;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
