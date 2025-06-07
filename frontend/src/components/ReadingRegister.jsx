@@ -5,9 +5,10 @@ import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "../hooks/NotifyProvider";
-import { TextField, Button, Rating } from "@mui/material";
+import { TextField, Button, Rating, FormControlLabel } from "@mui/material";
+import { IOSSwitch } from "../ui/IOSSwitch";
 
-export const ReadingRegister = ({ book, reading, updated }) => {
+export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const { user } = useContext(UserContext);
   const { notify } = useNotify();
   const isDisabled = book || reading ? false : true;
@@ -15,6 +16,7 @@ export const ReadingRegister = ({ book, reading, updated }) => {
   const formSchema = z.object({
     rate: z.number().optional(),
     thoughts: z.string().max(500),
+    recommended: z.boolean(),
   });
 
   const {
@@ -26,8 +28,9 @@ export const ReadingRegister = ({ book, reading, updated }) => {
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      rate: reading ? reading.rate : null,
+      rate: reading ? reading.rate : 0,
       thoughts: reading ? reading.thoughts : "",
+      recommended: isRecommended ? true : false,
     },
   });
   const watchedRate = useWatch({ control, name: "rate" });
@@ -87,29 +90,59 @@ export const ReadingRegister = ({ book, reading, updated }) => {
             </p>
           )}
         </div>
+
         <TextField
           {...register("thoughts")}
           placeholder="share your thoughts or feelings."
           variant="outlined"
           multiline
           fullWidth
-          rows={6}
+          rows={8}
           margin="normal"
           error={!!errors.thoughts}
           helperText={errors.thoughts?.message}
           disabled={isDisabled}
         />
-
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          disabled={isDisabled}
-          sx={{ textTransform: "none" }}
-        >
-          {isSkipped ? "Skip Review" : "Post"}
-        </Button>
+        <div className="font-soft mt-1 mb-2 font-bold">
+          Recommend this book to others?
+        </div>
+        <div className="ml-3">
+          <Controller
+            name="recommended"
+            control={control}
+            disabled={isDisabled}
+            render={({ field }) => (
+              <FormControlLabel
+                control={
+                  <IOSSwitch
+                    {...field}
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  />
+                }
+              />
+            )}
+          />
+        </div>
+        <div className="flex justify-end mt-4">
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isDisabled}
+            sx={{
+              textTransform: "none",
+              backgroundColor: "#000",
+              color: "#fff",
+              width: "150px",
+              fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "#333",
+              },
+            }}
+          >
+            {isSkipped ? "Skip Review" : "Post"}
+          </Button>
+        </div>
       </form>
     </div>
   );

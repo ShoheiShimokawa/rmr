@@ -12,7 +12,7 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import DoneIcon from "@mui/icons-material/Done";
 
 const CustomConnector = styled(StepConnector)(({ theme }) => ({
-  top: 50, // ← アイコンの中央に線を合わせる
+  top: 50,
   left: "calc(-50% + 22px)",
   right: "calc(50% + 22px)",
   "& .MuiStepConnector-line": {

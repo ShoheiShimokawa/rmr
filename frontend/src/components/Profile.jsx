@@ -19,8 +19,9 @@ import { useContext, useEffect, useState } from "react";
 import UserContext from "./UserProvider";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 
-export const Profile = ({ account }) => {
+export const Profile = ({ userId }) => {
   const { user, setUser } = useContext(UserContext);
+  const [account, setAccount] = useState();
   const [open, setOpen] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [follows, setFollows] = useState([]);
@@ -90,18 +91,19 @@ export const Profile = ({ account }) => {
   const find = async () => {
     setLoading(true);
     try {
-      const follow = await getFollow(account && account.userId);
+      const userPageAccount = await getProfile(userId && userId);
+      setAccount(userPageAccount.data);
+      const follow = await getFollow(userId && userId);
       setFollows(follow.data);
-      const result = await getFollower(account && account.userId);
+      const result = await getFollower(userId && userId);
       setFollowers(result.data);
       var isFollowed =
         user && result.data.find((v) => v.follower.userId === user.userId);
-
       isFollowed && setFollowed(isFollowed);
       isFollowed && setIsFollowed(true);
-      const readingResult = await findReadingByUser(account && account.userId);
+      const readingResult = await findReadingByUser(userId && userId);
       setReadings(readingResult.data);
-      const postResult = await getPostAllByUser(account && account.userId);
+      const postResult = await getPostAllByUser(userId && userId);
       setPosts(postResult.data);
     } catch (error) {
       notify("Failed to load. Please try later.", "error");
@@ -115,157 +117,141 @@ export const Profile = ({ account }) => {
 
   return (
     <div>
-      {showLoginDialog && <LoginDialog />}
-      <CustomDialog
-        open={open}
-        title="profile setting"
-        onClose={handleChangeClose}
-      >
-        <ProfileChange
-          account={user}
-          update={() => {
-            handleGetProfile();
-            find();
-          }}
-        />
-      </CustomDialog>
-      <CustomDialog
-        open={showFollow}
-        title="Follows"
-        onClose={handleCloseFollow}
-        width="500px"
-      >
-        <Follow followerId={account && account.userId} />
-      </CustomDialog>
-      <CustomDialog
-        open={showFollower}
-        title="Followers"
-        onClose={handleCloseFollower}
-      >
-        <Follower userId={account.userId && account.userId} />
-      </CustomDialog>
-      <div className="relative w-full flex items-start ml-2">
-        <Avatar src={account.picture} sx={{ width: 90, height: 90 }} />
-
-        {/* <div className="ml-2">
-          <MenuBookRoundedIcon />
-          {loading ? (
-            <CircularProgress size="10px" />
-          ) : readings.length !== 0 ? (
-            readings.length
-          ) : (
-            0
-          )}
-          <br />
-          🖋️
-          {loading ? (
-            <CircularProgress size="10px" />
-          ) : posts.length !== 0 ? (
-            posts.length
-          ) : (
-            0
-          )}
-        </div> */}
-
-        <div className="absolute right-10 top-10">
-          {user && account.userId === user.userId ? (
-            <Button
-              size="small"
-              variant="outlined"
-              color="primary"
-              startIcon={<SettingsIcon />}
-              onClick={handleChangeOpen}
-              sx={{
-                textTransform: "none",
-                color: "#444",
-                borderColor: "#444",
-                fontFamily: "'Nunito sans'",
-                fontWeight: "bold",
-                "&:hover": {
-                  backgroundColor: "#eee",
-                  borderColor: "#444",
-                },
-              }}
-            >
-              Edit
-            </Button>
-          ) : !isFollowed ? (
-            <Button
-              size="small"
-              variant="contained"
-              sx={{
-                textTransform: "none",
-                color: "#fff",
-                backgroundColor: "#000",
-                borderColor: "#444",
-                fontWeight: "bold",
-                fontFamily: "'Nunito sans'",
-                "&:hover": {
-                  backgroundColor: "#333",
-                  borderColor: "#444",
-                },
-              }}
-              onClick={() => handleFollow(account.userId)}
-            >
-              follow
-            </Button>
-          ) : (
-            <Button
-              size="small"
-              variant="outlined"
-              color="primary"
-              sx={{
-                textTransform: "none",
-                borderColor: "#444",
-                fontWeight: "bold",
-                fontFamily: "'Nunito sans'",
-                color: "#444",
-                "&:hover": {
-                  backgroundColor: "#eee",
-                  borderColor: "#444",
-                },
-              }}
-              onClick={() => handleCancelFollow(followed && followed.id)}
-            >
-              followed
-            </Button>
-          )}
-        </div>
-      </div>
-      <div className="text-lg ml-3 mt-2 font-bold font-soft">
-        {account.name}
-        <div className="text-zinc-500 font-soft">{account.handle}</div>
-      </div>
-      <div className="mb-2 mt-2 ml-2 font-soft"> {account.description}</div>
-      <div className="flex mb-2">
-        <div className="flex hover:underline cursor-pointer ml-2">
-          <div
-            className="mr-1 font-soft text-sm flex"
-            onClick={handleSelectFollow}
+      {account && (
+        <>
+          {showLoginDialog && <LoginDialog />}
+          <CustomDialog
+            open={open}
+            title="profile setting"
+            onClose={handleChangeClose}
           >
-            <div className="font-bold mr-1">
-              {follows.length != 0 ? follows.length : 0}{" "}
-            </div>
-            follows
-          </div>
-        </div>
-        <div className="flex ml-2">
-          <div
-            className="flex hover:underline cursor-pointer"
-            onClick={handleSelectFollower}
+            <ProfileChange
+              account={user}
+              update={() => {
+                handleGetProfile();
+                find();
+              }}
+            />
+          </CustomDialog>
+          <CustomDialog
+            open={showFollow}
+            title="Follows"
+            onClose={handleCloseFollow}
+            width="500px"
           >
-            <div className="mr-1 font-soft text-sm flex">
-              <div className="font-bold mr-1">
-                {followers.length != 0 ? followers.length : 0}
-              </div>{" "}
-              followers
+            <Follow followerId={account && account.userId} />
+          </CustomDialog>
+          <CustomDialog
+            open={showFollower}
+            title="Followers"
+            onClose={handleCloseFollower}
+          >
+            <Follower userId={userId && userId} />
+          </CustomDialog>
+          <div className="relative w-full flex items-start ml-2">
+            <Avatar src={account.picture} sx={{ width: 90, height: 90 }} />
+
+            <div className="absolute right-10 top-10">
+              {user && userId === user.userId ? (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<SettingsIcon />}
+                  onClick={handleChangeOpen}
+                  sx={{
+                    textTransform: "none",
+                    color: "#444",
+                    borderColor: "#444",
+                    fontFamily: "'Nunito sans'",
+                    fontWeight: "bold",
+                    "&:hover": {
+                      backgroundColor: "#eee",
+                      borderColor: "#444",
+                    },
+                  }}
+                >
+                  Edit
+                </Button>
+              ) : !isFollowed ? (
+                <Button
+                  size="small"
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    color: "#fff",
+                    backgroundColor: "#000",
+                    borderColor: "#444",
+                    fontWeight: "bold",
+                    fontFamily: "'Nunito sans'",
+                    "&:hover": {
+                      backgroundColor: "#333",
+                      borderColor: "#444",
+                    },
+                  }}
+                  onClick={() => handleFollow(account.userId)}
+                >
+                  follow
+                </Button>
+              ) : (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    textTransform: "none",
+                    borderColor: "#444",
+                    fontWeight: "bold",
+                    fontFamily: "'Nunito sans'",
+                    color: "#444",
+                    "&:hover": {
+                      backgroundColor: "#eee",
+                      borderColor: "#444",
+                    },
+                  }}
+                  onClick={() => handleCancelFollow(followed && followed.id)}
+                >
+                  followed
+                </Button>
+              )}
             </div>
           </div>
-        </div>
-      </div>
-      <div style={{ width: "700px", height: "auto" }}>
-        <ContributionMap userId={account && account.userId} />
-      </div>
+          <div className="text-lg ml-3 mt-2 font-bold font-soft">
+            {account.name}
+            <div className="text-zinc-500 font-soft">{account.handle}</div>
+          </div>
+          <div className="mb-2 mt-2 ml-2 font-soft"> {account.description}</div>
+          <div className="flex mb-2">
+            <div className="flex hover:underline cursor-pointer ml-2">
+              <div
+                className="mr-1 font-soft text-sm flex"
+                onClick={handleSelectFollow}
+              >
+                <div className="font-bold mr-1">
+                  {follows.length != 0 ? follows.length : 0}{" "}
+                </div>
+                follows
+              </div>
+            </div>
+            <div className="flex ml-2">
+              <div
+                className="flex hover:underline cursor-pointer"
+                onClick={handleSelectFollower}
+              >
+                <div className="mr-1 font-soft text-sm flex">
+                  <div className="font-bold mr-1">
+                    {followers.length != 0 ? followers.length : 0}
+                  </div>{" "}
+                  followers
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style={{ width: "700px", height: "auto" }}>
+            <ContributionMap userId={userId && userId} />
+          </div>
+        </>
+      )}
     </div>
   );
 };

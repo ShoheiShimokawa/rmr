@@ -1,7 +1,9 @@
 import FiberNewRoundedIcon from "@mui/icons-material/FiberNewRounded";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
+import { Chip } from "@mui/material";
 
 export const statusTypeStr = (str) => {
   if (str === "NONE") {
@@ -15,7 +17,7 @@ export const statusTypeStr = (str) => {
 
 export const judgeIcon = (str) => {
   if (str === "NONE") {
-    return <FiberNewRoundedIcon />;
+    return <BookmarkBorderIcon />;
   } else if (str === "DOING") {
     return <AutoStoriesRoundedIcon />;
   } else {
@@ -45,42 +47,66 @@ export const judgeRead = (str) => {
     return "finish!";
   }
 };
-export const judgeRate = (str) => {
-  if (str === "ONE") {
-    return <StarRateRoundedIcon fontSize="2" />;
-  } else if (str === "TWO") {
+
+export const judgePostLabel = (post) => {
+  if (post.postType === "ONLY_STAR") {
     return (
-      <span>
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-      </span>
+      <Chip
+        label="Rated!"
+        size="small"
+        color="success"
+        sx={{
+          color: "white",
+          "& .MuiChip-label": {
+            fontSize: "0.70rem",
+            fontFamily: "'Nunito sans'",
+            fontWeight: "bold",
+          },
+          "&:hover .MuiChip-label": {
+            textDecoration: "none",
+            fontFamily: "'Nunito sans'",
+            fontWeight: "bold",
+          },
+        }}
+      />
     );
-  } else if (str === "THREE") {
+  } else if (post.postType === "WITH_THOUGHTS") {
     return (
-      <span>
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-      </span>
+      <Chip
+        label="Reviewed!"
+        size="small"
+        color="info"
+        sx={{
+          color: "white",
+          "& .MuiChip-label": {
+            fontSize: "0.70rem",
+            fontFamily: "'Nunito sans'",
+          },
+          "&:hover .MuiChip-label": {
+            textDecoration: "none",
+            fontFamily: "'Nunito sans'",
+          },
+        }}
+      />
     );
-  } else if (str === "FOUR") {
+  } else if (post.postType === "RECOMMENDED") {
     return (
-      <span>
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-      </span>
-    );
-  } else if (str === "FIVE") {
-    return (
-      <span>
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-        <StarRateRoundedIcon fontSize="2" />
-      </span>
+      <Chip
+        label="Recommended!"
+        size="small"
+        color="warning"
+        sx={{
+          color: "white",
+          "& .MuiChip-label": {
+            fontSize: "0.70rem",
+            fontFamily: "'Nunito sans'",
+          },
+          "&:hover .MuiChip-label": {
+            textDecoration: "none",
+            fontFamily: "'Nunito sans'",
+          },
+        }}
+      />
     );
   }
 };

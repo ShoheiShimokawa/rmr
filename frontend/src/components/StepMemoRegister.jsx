@@ -1,25 +1,9 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  Chip,
-  Box,
-  Button,
-  Slide,
-  Stepper,
-  Step,
-  StepLabel,
-  Paper,
-  stepConnectorClasses,
-  styled,
-  StepConnector,
-} from "@mui/material";
+import { Box, Slide } from "@mui/material";
 import { CustomStepper } from "../ui/CustomStepper";
 import { SelectBook } from "./SelectBook";
 import { MemoRegister } from "./MemoRegister";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 
 export const StepMemoRegister = ({ updated }) => {
   const [step, setStep] = useState(0);
@@ -31,7 +15,6 @@ export const StepMemoRegister = ({ updated }) => {
     setStep(next);
   };
 
-  const handleNext = () => setStep(2);
   return (
     <div>
       <CustomStepper activeStep={step}></CustomStepper>

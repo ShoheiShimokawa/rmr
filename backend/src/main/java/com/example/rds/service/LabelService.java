@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.example.rds.context.AccountRepository;
 import com.example.rds.context.LabelRepository;
 import com.example.rds.model.Label;
-import com.example.rds.model.Label.RegisterLabel;
 
 import lombok.RequiredArgsConstructor;
 

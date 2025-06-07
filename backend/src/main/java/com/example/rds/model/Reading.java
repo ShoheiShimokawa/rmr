@@ -78,13 +78,13 @@ public class Reading {
 
 	/** 検索パラメタ */
 	@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public static class SearchReading {
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class SearchReading {
     private Integer userId;
     private Integer bookId;
-}
+	}
 
 	/** 読書IDで読書を取得します。 */
 	public static Reading get(ReadingRepository rep,Integer readingId) {
@@ -143,22 +143,23 @@ public static class SearchReading {
 	}
 	/** 登録パラメタ */
 	@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public static class RegisterReading {
-    private Integer userId;
-    private Integer bookId;
-    private Integer rate;
-    private BookStatusType statusType;
-    private String thoughts;
-    private String description;
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class RegisterReading {
+    	private Integer userId;
+    	private Integer bookId;
+    	private Integer rate;
+    	private BookStatusType statusType;
+		private String thoughts;
+		private boolean recommended;
+    	private String description;
 
-    public Reading create() {
+    	public Reading create() {
         return Reading.builder()
             .rate(this.rate)
             .statusType(this.statusType)
-            .thoughts(this.thoughts)
+				.thoughts(this.thoughts)
             .registerDate(LocalDate.now())
             .build();
     }
@@ -178,7 +179,7 @@ public static class RegisterReading {
 		return rep.save(reading);
 	}
 	/** 変更パラメタ */
-	public record UpdateReading(Integer readingId,String userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts) {
+	public record UpdateReading(Integer readingId,String userId,Integer bookId,Integer rate,BookStatusType statusType,String thoughts,boolean recommended) {
 	}
 	
 	/** 読書を読書中にします。*/

@@ -206,7 +206,7 @@ export const enumToGenre = (genre) => {
     case "TRUE_CRIME":
       return "True Crime";
     default:
-      return "UNKNOWN";
+      return "Unknown";
   }
 };
 

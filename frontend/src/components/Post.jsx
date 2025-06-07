@@ -1,5 +1,12 @@
 import { useContext, useState } from "react";
-import { Avatar, Rating, List, IconButton } from "@mui/material";
+import {
+  Avatar,
+  Rating,
+  List,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { formatDateTime } from "../util";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { Link } from "react-router-dom";
@@ -13,6 +20,8 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNotify } from "../hooks/NotifyProvider";
 import { useLocation } from "react-router-dom";
+import { judgePostLabel } from "../badge/index";
+import { ReadingRegister } from "./ReadingRegister";
 
 export const Post = ({
   post,
@@ -25,6 +34,7 @@ export const Post = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedBook, setSelectedBook] = useState();
   const [showBookDetail, setShowBookDetail] = useState(false);
+  const [selectedPost, setSelectedPost] = useState();
   const [open, setOpen] = useState(false);
   const [isGooded, setIsGooded] = useState(isInitiallyGooded);
   const [localGoodCount, setLocalGoodCount] = useState(post.goodCount || 0);
@@ -88,9 +98,14 @@ export const Post = ({
     setOpen(false);
   };
 
-  const handleOpenUpdate = () => {
+  const handleOpenUpdate = (selectedPost) => {
+    setSelectedPost(selectedPost);
     setOpenUpdate(true);
     handleClose();
+  };
+
+  const handleCloseUpdate = () => {
+    setOpenUpdate(false);
   };
 
   return (
@@ -103,9 +118,22 @@ export const Post = ({
       >
         <BookDetail book={selectedBook} />
       </CustomDialog>
+      <CustomDialog
+        open={openUpdate}
+        title="Edit Post"
+        onClose={handleCloseUpdate}
+      >
+        <ReadingRegister
+          reading={selectedPost && selectedPost.reading}
+          updated={handleCloseUpdate}
+          isRecommended={
+            selectedPost && selectedPost.postType === "RECOMMENDED"
+          }
+        />
+      </CustomDialog>
       {post && post.user && (
         <List>
-          <div key={post.postId} className="w-xl flex ">
+          <div key={post.postId} className="w-xl flex group">
             <div className="mr-2">
               {!fromDetail ? (
                 <Link
@@ -124,24 +152,39 @@ export const Post = ({
               )}
             </div>
             <div className="w-full">
-              <div className="flex justify-between items-start w-full">
+              <div className="flex justify-between items-start items-center w-full ml-1 ">
                 <div>
-                  <div className="text-sm font-soft font-bold">
-                    {post.user.name}
+                  <div className="flex items-center">
+                    <div className="text-sm font-soft font-bold">
+                      {post.user.name}
+                    </div>
+                    {visible && (
+                      <div className="font-soft font-bold text-sm ml-2">
+                        {judgePostLabel(post)}
+                      </div>
+                    )}
                   </div>
-                  <div className="text-sm text-zinc-500 font-soft">
-                    {post.user.handle}
+                  <div className="flex text-xs text-zinc-500 font-soft mt-1 mb-1">
+                    <div>(last updated: </div>
+                    {formatDateTime(
+                      post.updateDate ? post.updateDate : post.registerDate
+                    )}
+                    )
                   </div>
                 </div>
-
-                {/* {user && user.userId === post.user.userId && (
-                  <> */}
-                {/* <IconButton
+                {user && user.userId === post.user.userId && (
+                  <>
+                    <IconButton
                       aria-label="more"
                       size="small"
                       onClick={handleOpen}
+                      sx={{
+                        width: 22,
+                        height: 22,
+                        padding: 0.5,
+                      }}
                     >
-                      <MoreVertIcon />
+                      <MoreVertIcon sx={{ fontSize: 20 }} />
                     </IconButton>
                     <Menu
                       className="absolute bottom-0"
@@ -151,21 +194,19 @@ export const Post = ({
                       onClose={handleClose}
                     >
                       <div>
-                        <MenuItem>
-                          <div
-                            onClick={() => {
-                              handleOpenUpdate();
-                            }}
-                          >
-                            edit
-                          </div>
+                        <MenuItem
+                          onClick={() => {
+                            handleOpenUpdate(post);
+                          }}
+                        >
+                          edit
                         </MenuItem>
                       </div>
-                    </Menu> */}
-                {/* </>
-                )} */}
+                    </Menu>
+                  </>
+                )}
               </div>
-              <div className="flex gap-6">
+              <div>
                 {post.reading && (
                   <>
                     <div>
@@ -178,7 +219,7 @@ export const Post = ({
                           readOnly
                           sx={{
                             "& .MuiRating-icon": {
-                              fontSize: "15px",
+                              fontSize: "14px",
                             },
                           }}
                         />
@@ -188,7 +229,7 @@ export const Post = ({
                       </div>
                       {visible && (
                         <>
-                          <div className="mt-3"></div>
+                          <div className="mt-2"></div>
                           <BookInfo
                             book={post.reading.book}
                             onClick={() => {
@@ -209,13 +250,13 @@ export const Post = ({
                         >
                           {!isGooded ? (
                             <FavoriteBorderIcon
-                              sx={{ fontSize: "16px" }}
+                              sx={{ fontSize: "15px" }}
                               color="error"
                               fontSize="small"
                             />
                           ) : (
                             <FavoriteIcon
-                              sx={{ fontSize: "16px" }}
+                              sx={{ fontSize: "15px" }}
                               color="error"
                               fontSize="small"
                             />
@@ -225,13 +266,6 @@ export const Post = ({
                         <div className="text-xs font-soft">
                           {localGoodCount}
                         </div>
-                      </div>
-                      <div className="flex text-xs text-zinc-500 font-soft ">
-                        <div>(last updated: </div>
-                        {formatDateTime(
-                          post.updateDate ? post.updateDate : post.registerDate
-                        )}
-                        )
                       </div>
                     </div>
                   </>

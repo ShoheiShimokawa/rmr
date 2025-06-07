@@ -1,17 +1,13 @@
-import { Box } from "@mui/material";
 import { Book } from "./Book";
-import { Button, Chip, Slide, Paper, Rating } from "@mui/material";
-import { statusTypeStr, judgeIcon } from "../../badge/index";
-import { useContext, useEffect, useState } from "react";
 
-export const BookArray = ({ books, handleSelect, onClick }) => {
+export const BookArray = ({ books, handleSelect, onClick, width, height }) => {
   return (
     <div>
       {books.length !== 0 && (
         <>
           <div className="ml-2">
             <div
-              className="flex overflow-x-auto gap-3"
+              className="flex overflow-x-auto gap-4"
               style={{ minWidth: "max-content" }}
             >
               {books.map((reading) => (
@@ -31,8 +27,10 @@ export const BookArray = ({ books, handleSelect, onClick }) => {
                         onClick && onClick(reading.book);
                       }}
                       key={reading.readingId}
+                      width={width && width}
+                      height={height && height}
                     />
-                    {reading.statusType === "DONE" && (
+                    {/* {reading.statusType === "DONE" && reading.rate !== 0 && (
                       <div className="mt-1">
                         <Rating
                           name="read-only"
@@ -46,7 +44,7 @@ export const BookArray = ({ books, handleSelect, onClick }) => {
                           }}
                         />
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </>
               ))}

@@ -38,7 +38,6 @@ if (userInfo != null && userInfo.containsKey("sub")) {
         if (account.isPresent()) {
             return ResponseEntity.ok(Map.of("user", account.get()));
         } else {
-            // 未登録 → 200で必要な情報だけ返す（e.g., name）
             return ResponseEntity.ok(Map.of(
                 "registered", false,
                 "name", userInfo.get("name"),

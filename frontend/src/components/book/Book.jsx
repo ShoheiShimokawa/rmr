@@ -1,12 +1,12 @@
 import { Box } from "@mui/material";
-export const Book = ({ book, onClick, src }) => {
+export const Book = ({ book, onClick, src, width, height }) => {
   return (
     <Box
       component="img"
       src={!src ? book?.thumbnail && book?.thumbnail : src}
       sx={{
-        width: "85px",
-        height: "127px",
+        width: width ? width : "85px",
+        height: height ? height : "127px",
         cursor: "pointer",
         boxShadow: 1,
         borderRadius: 1,

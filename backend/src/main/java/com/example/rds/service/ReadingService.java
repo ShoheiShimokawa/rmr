@@ -12,7 +12,6 @@ import com.example.rds.model.Post;
 import com.example.rds.model.Reading;
 import com.example.rds.model.Reading.MonthlyReading;
 import com.example.rds.model.Reading.RegisterReading;
-import com.example.rds.model.Reading.SearchReading;
 import com.example.rds.model.Reading.UpdateReading;
 import com.example.rds.type.BookStatusType;
 
@@ -53,8 +52,8 @@ public class ReadingService {
 	public Reading register(RegisterReading param) {
 		var reading =Reading.register(rep, bRep,aRep, param);
 		var readingId = reading.getReadingId();
-		if(reading.getStatusType()==BookStatusType.DONE){
-		Post.registerPost(pRep,rep,readingId);
+		if(reading.getStatusType()==BookStatusType.DONE && (reading.getRate()!=0 || !reading.getThoughts().equals("")) || param.isRecommended()  ){
+			Post.registerPost(pRep,rep,readingId,param.isRecommended());
 		}
 		return reading;
 	}
@@ -63,7 +62,7 @@ public class ReadingService {
 	public Reading update(UpdateReading params) {
 		Reading reading = Reading.update(rep, params);
 		if (reading.getStatusType().equals(BookStatusType.DONE) && (!reading.getThoughts().equals("") || reading.getRate()!=0)) {
-			Post.registerPost(pRep, rep, reading.getReadingId());
+			Post.registerPost(pRep, rep, reading.getReadingId(),params.recommended());
 		}
 		return reading;
 	}

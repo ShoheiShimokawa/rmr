@@ -80,8 +80,8 @@ public class Account {
 			String googleSub,
 			String handle,
 			String name,
-			String picture,
-			String email) {
+			String picture
+			) {
     }
 	
 	
@@ -95,10 +95,10 @@ public class Account {
 
 	/** 変更パラメタ(vscodeでrecordに@Bui;der使うと作動しないため暫定対応) */
 	@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public static class UpdateProfile {
+	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class UpdateProfile {
 	private Integer userId;
 	private String name;
 	private String description;

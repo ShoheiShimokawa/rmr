@@ -85,13 +85,18 @@ export const PostRegister = () => {
         <BookSearch fromPost={fromPost} />
       </CustomDialog>
       <div className="flex">
-        <div className="flex-[2]">
-          <div className="w-[400px]">
+        <div className="min-w-[370px]">
+          <div className=" mr-3">
             {none.length >= 1 && (
               <>
                 <div className="mb-2 font-soft font-bold">To Read</div>
-                <div className="w-[400px] overflow-x-auto">
-                  <BookArray books={none && none} handleSelect={handleSelect} />
+                <div className="w-[370px] overflow-x-auto">
+                  <BookArray
+                    books={none && none}
+                    handleSelect={handleSelect}
+                    width={"70px"}
+                    height={"100px"}
+                  />
                 </div>
               </>
             )}
@@ -100,10 +105,12 @@ export const PostRegister = () => {
                 <div className="mt-3 mb-2 font-soft font-bold">
                   Reading Now..
                 </div>
-                <div className="w-[400px] overflow-x-auto space-y-2">
+                <div className="w-[370px] overflow-x-auto space-y-2">
                   <BookArray
                     books={doing && doing}
                     handleSelect={handleSelect}
+                    width={"70px"}
+                    height={"100px"}
                   />
                 </div>
               </>
@@ -115,7 +122,11 @@ export const PostRegister = () => {
               <SearchIcon onClick={handleSearch} />
             </IconButton>
           </div>
-          <div className="ml-2">{addedBook && <Book book={addedBook} />}</div>
+          <div className="ml-2">
+            {addedBook && (
+              <Book book={addedBook} width={"70px"} height={"100px"} />
+            )}
+          </div>
           <div className="mt-4">
             <ReadingRegister
               book={selectedBook && selectedBook}
@@ -128,7 +139,7 @@ export const PostRegister = () => {
           </div>
         </div>
 
-        <div className="ml-6 mt-5 min-w-[400px]">
+        <div className="ml-8 mt-5 min-w-[430px]">
           {selectedBook && <BookDetail book={selectedBook} visible={false} />}
         </div>
       </div>

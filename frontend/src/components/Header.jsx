@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import {
-  ListItemText,
   ListItemIcon,
   Avatar,
   Divider,
@@ -23,9 +22,6 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
 } from "@mui/material";
 
 export const Header = () => {
@@ -154,13 +150,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <LogoutRoundedIcon />
                     </ListItemIcon>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        sx: { textDecoration: "none" },
-                      }}
-                    >
-                      Log out
-                    </ListItemText>
+                    Log out
                   </MenuItem>
                 ) : (
                   <MenuItem
@@ -175,13 +165,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <LoginRoundedIcon />
                     </ListItemIcon>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        sx: { textDecoration: "none" },
-                      }}
-                    >
-                      Log in
-                    </ListItemText>
+                    Log in
                   </MenuItem>
                 )}
                 <MenuItem
@@ -196,10 +180,7 @@ export const Header = () => {
                   <ListItemIcon>
                     <InfoIcon />
                   </ListItemIcon>
-                  <ListItemText
-                    primary="About"
-                    primaryTypographyProps={{ sx: { textDecoration: "none" } }}
-                  ></ListItemText>
+                  About
                 </MenuItem>
               </Menu>
             </Stack>

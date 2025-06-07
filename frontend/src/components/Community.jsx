@@ -1,12 +1,11 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import { getPostAll } from "../api/post";
 import { Post } from "./Post";
-import { debounce } from "lodash";
 import { Skeleton } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
 import UserContext from "./UserProvider";
 import { getGoodPostAll } from "../api/post";
-import { Divider, Button } from "@mui/material";
+import { Divider } from "@mui/material";
 
 export const Community = ({}) => {
   const [loading, setLoading] = useState(true);
@@ -16,16 +15,21 @@ export const Community = ({}) => {
   const [goodPostIds, setGoodPostIds] = useState([]);
 
   const find = async () => {
-    setLoading(true);
-    const result = await getPostAll();
-    const sortedPosts = result.data.slice().sort((a, b) => {
-      return new Date(b.registerDate) - new Date(a.registerDate);
-    });
-    setPosts(sortedPosts);
-    const goodList = await getGoodPostAll(user && user.userId);
-    const likedIds = goodList.data.map((g) => g.post.postId);
-    setGoodPostIds(likedIds);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const result = await getPostAll();
+      const sortedPosts = result.data.slice().sort((a, b) => {
+        return new Date(b.registerDate) - new Date(a.registerDate);
+      });
+      setPosts(sortedPosts);
+      const goodList = await getGoodPostAll(user && user.userId);
+      const likedIds = goodList.data.map((g) => g.post.postId);
+      setGoodPostIds(likedIds);
+    } catch (error) {
+      notify("Failed to load.Please try later.", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

@@ -3,6 +3,7 @@ import { Post } from "../Post";
 import { getGoodPostAll } from "../../api/post";
 import { CustomDialog } from "../../ui/CustomDialog";
 import { useNotify } from "../../hooks/NotifyProvider";
+import { FaPenNib } from "react-icons/fa";
 import React, { useState, useEffect, useCallback } from "react";
 import { ReadingTimeline } from "../ReadingTimeline";
 import { useContext } from "react";
@@ -183,6 +184,12 @@ export const BookDetail = ({ book, updated, visible = true }) => {
     setOpen(false);
   };
 
+  const postsWithThoughts = posts.filter(
+    (post) =>
+      (post.reading && post.reading.thoughts) ||
+      (post.reading && post.reading.rate)
+  );
+
   const find = async () => {
     setLoading(true);
     try {
@@ -215,11 +222,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   return (
     <div>
       {showLoginDialog && <LoginDialog />}
-      {loading && (
-        <div className="flex justify-center items-center min-h-[300px]">
-          <CircularProgress />
-        </div>
-      )}
+
       <CustomDialog
         open={openRegister}
         title="Review"
@@ -227,12 +230,15 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       >
         <ReadingRegister
           book={bookForReading}
-          updated={handleCloseRegister}
+          updated={() => {
+            handleCloseRegister();
+            updated && updated();
+          }}
           reading={myReading && myReading}
         />
       </CustomDialog>
       <div className="flex">
-        <Book book={book} />
+        <Book book={book} width={"95px"} height={"137px"} />
         <div className="ml-2 text-lg text-zinc-800 font-bold font-soft">
           <div>{book.title}</div>
           <div className="text-zinc-500 mt-2 text-sm font-soft">
@@ -263,9 +269,9 @@ export const BookDetail = ({ book, updated, visible = true }) => {
         </div>
       </div>
       <Divider />
-      <div className="mt-1 mb-1">
-        <div className="flex justify-between items-start w-full font-soft">
-          <div className="">Your Reading Timeline</div>
+      <div className="mt-2 mb-2">
+        <div className="flex justify-between items-start w-full font-soft font-bold">
+          <div className="ml-1">Your Reading Timeline</div>
           {myReading && visible && (
             <IconButton aria-label="more" size="small" onClick={handleOpen}>
               <ChangeCircleIcon />
@@ -347,17 +353,37 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                 </MenuItem>
               </>
             ) : myReading.statusType === "DONE" ? (
-              <MenuItem
-                onClick={() => {
-                  handleDelete();
-                  handleClose();
-                }}
-              >
-                <ListItemIcon>
-                  <DeleteIcon fontSize="small" color="error" />
-                </ListItemIcon>
-                Delete from bookshelf
-              </MenuItem>
+              <>
+                {!myReading.rate && !myReading.thoughts && (
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        handleDoneReading();
+                        handleClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <div className="ml-1">
+                          <FaPenNib fontSize="small" color="error" />
+                        </div>
+                      </ListItemIcon>
+                      <div className="font-soft">review</div>
+                    </MenuItem>
+                    <Divider />
+                  </>
+                )}
+                <MenuItem
+                  onClick={() => {
+                    handleDelete();
+                    handleClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <DeleteIcon fontSize="small" color="error" />
+                  </ListItemIcon>
+                  <div className="font-soft">Delete from bookshelf</div>
+                </MenuItem>
+              </>
             ) : myReading.statusType === "DOING" ? (
               <>
                 <MenuItem
@@ -524,25 +550,28 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       <div className="text-lg mb-2 mt-3 font-soft font-bold">
         Readers' comments
       </div>
-      {posts.length >= 1 ? (
+      {postsWithThoughts.length >= 1 ? (
         <>
-          {posts.map((post) => (
+          {postsWithThoughts.map((post) => (
             <>
-              <div key={post.postId}>
+              <Box key={post.postId} sx={{ width: "95%", margin: "0 auto" }}>
                 <Post
                   post={post}
                   fromDetail={true}
                   isInitiallyGooded={goodPostIds.includes(post.postId)}
                 />
-              </div>
-
-              {posts.length >= 2 && <Divider />}
+              </Box>
+              <>
+                {posts.length >= 2 && (
+                  <Divider sx={{ width: "95%", margin: "0 auto" }} />
+                )}
+              </>
             </>
           ))}
         </>
       ) : (
         <div className="mt-2 flex justify-center text-stone-600 text-sm font-soft">
-          no reviews yet.
+          no comments yet.
         </div>
       )}
     </div>

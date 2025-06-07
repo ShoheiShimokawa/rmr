@@ -92,7 +92,6 @@ export const SelectBook = ({ onClick, onNext }) => {
       onClick && onClick();
     } catch (error) {
       console.error("Reading registration failed", error);
-      // エラー通知や Snackbar などを追加しても◎
     } finally {
       //   setLoading(false);
     }
@@ -166,7 +165,6 @@ export const SelectBook = ({ onClick, onNext }) => {
           account={user}
           onClick={(selectedBook) => {
             setSelectedBook(selectedBook);
-
             setOpenBookShelf(false);
             getByUserIdAndBookId(user.userId, selectedBook.bookId)
               .then((res) => {

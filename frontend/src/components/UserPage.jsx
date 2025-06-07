@@ -43,7 +43,7 @@ export const UserPage = () => {
   };
   return (
     <div>
-      {user && <Profile account={user} />}
+      {user && <Profile userId={user.userId} />}
       <Divider />
       <Tabs
         value={tabIndex}

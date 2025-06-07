@@ -155,7 +155,7 @@ export const Memo = () => {
                     borderRadius: 2,
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "flex-start", // 上揃え
+                    alignItems: "flex-start",
                     "&:hover": {
                       backgroundColor: "#f5f5f5",
                       boxShadow: 3,

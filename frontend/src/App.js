@@ -24,7 +24,7 @@ function App() {
           <ScrollToTop />
           <NotifyProvider>
             <CssBaseline />
-            <Container maxWidth="lg" sx={{ px: 2, overflow: "visible" }}>
+            <Container maxWidth="lg" sx={{ px: 1, overflow: "visible" }}>
               <Box
                 sx={{
                   position: "sticky",

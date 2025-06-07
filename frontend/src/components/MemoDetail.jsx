@@ -18,10 +18,6 @@ export const MemoDetail = ({ memo, updated }) => {
     setOpenRegister(false);
   };
 
-  // useEffect(() => {
-  //   find();
-  // }, []);
-
   return (
     <div>
       <CustomDialog
@@ -34,9 +30,29 @@ export const MemoDetail = ({ memo, updated }) => {
       {memo && (
         <div>
           {memo.labelingMemo.map((group, j) => (
-            <Box key={j} sx={{ mb: 2, pl: 1 }}>
+            <Box
+              key={j}
+              sx={{
+                mb: 2,
+                pl: 1,
+                textDecoration: "none",
+                "&:hover": {
+                  textDecoration: "none",
+                },
+              }}
+            >
               {group.label?.label && (
-                <Chip label={group.label.label} size="small" className="mb-1" />
+                <Chip
+                  label={group.label.label}
+                  size="small"
+                  className="mb-1"
+                  sx={{
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "none",
+                    },
+                  }}
+                />
               )}
               {group.memos.map((memo) => (
                 <div key={memo.memoId}>

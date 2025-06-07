@@ -82,7 +82,6 @@ export const BookShelf = ({ account, onClick }) => {
             reading={reading}
             updated={() => {
               find();
-              handleClose();
             }}
           />
         </CustomDialog>
@@ -94,133 +93,168 @@ export const BookShelf = ({ account, onClick }) => {
             books={toRead}
             handleSelect={handleSelect}
             onClick={onClick}
+            width={"80px"}
+            height={"120px"}
           />
         ) : (
-          <Box sx={{ height: "155px", width: "100%" }} />
+          <Box sx={{ height: "120px", width: "100%" }} />
         )}
       </div>
       <Divider sx={{ height: "auto", m: 1 }} />
-      <div className="text-lg  mt-2 font-medium font-soft">Reading Now</div>
+      <div className="text-lg  mt-2 font-medium font-soft py-1">
+        Reading Now
+      </div>
       <div className="w-[700px] overflow-x-auto px-2 py-2 ">
         {readingNow.length !== 0 ? (
           <BookArray
             books={readingNow}
             handleSelect={handleSelect}
             onClick={onClick}
+            width={"80px"}
+            height={"120px"}
           />
         ) : (
-          <Box sx={{ height: "155px", width: "100%" }} />
+          <Box sx={{ height: "120px", width: "100%" }} />
         )}
       </div>
 
       <Divider sx={{ height: "auto", m: 1 }} />
-      <div className="w-[700px] overflow-x-auto px-2  ">
-        {fiction.length !== 0 && (
+      {fiction.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1">
           <>
-            <div className="text-lg font-medium font-soft"> Fiction</div>
+            <div className="text-lg  mt-2 mb-2 font-medium font-soft">
+              Fiction
+            </div>
             <BookArray
               books={fiction}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-
-      <div className="w-[700px] overflow-x-auto px-2  ">
-        {nonFiction.length !== 0 && (
+        </div>
+      )}
+      {nonFiction.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
           <>
-            <div className="text-lg font-soft"> Non Fiction</div>
+            <div className="text-lg mb-2 font-soft"> Non Fiction</div>
             <BookArray
               books={nonFiction}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-
-      <div className="w-[700px] overflow-x-auto px-2 ">
-        {tech.length !== 0 && (
+        </div>
+      )}
+      {tech.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1">
           <>
-            <div className="text-lg font-soft"> Professional & Technical</div>
+            <div className="text-lg mb-2 font-soft">
+              Professional & Technical
+            </div>
             <BookArray
               books={tech}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-      <div className="w-[700px] overflow-x-auto px-2  ">
-        {art.length !== 0 && (
+        </div>
+      )}
+      {art.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
           <>
-            <div className="text-lg font-soft"> Arts & Culture</div>
+            <div className="text-lg mb-2 font-soft"> Arts & Culture</div>
             <BookArray
               books={art}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-      <div className="w-[700px] overflow-x-auto px-2 ">
-        {study.length !== 0 && (
+        </div>
+      )}
+      {study.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
           <>
-            <div className="text-lg font-soft"> Education & Study-aids</div>
+            <div className="text-lg mb-2 font-soft">Education & Study-aids</div>
             <BookArray
               books={study}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-      <div className="w-[700px] overflow-x-auto px-2  ">
-        {entertainment.length !== 0 && (
+        </div>
+      )}
+      {entertainment.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
           <>
-            <div className="text-lg font-soft"> Entertainment</div>
+            <div className="text-lg mb-2 font-soft"> Entertainment</div>
             <BookArray
               books={entertainment}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-      <div className="w-[700px] overflow-x-auto px-2">
-        {academic.length !== 0 && (
+        </div>
+      )}
+      {academic.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1">
           <>
-            <div className="text-lg font-soft"> Academics & Research</div>
+            <div className="text-lg mb-2 font-soft"> Academics & Research</div>
             <BookArray
               books={academic}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-      <div className="w-[700px] overflow-x-auto px-2">
-        {practical.length !== 0 && (
+        </div>
+      )}
+      {practical.length !== 0 && (
+        <div className="w-[700px] overflow-x-auto px-2 py-1">
           <>
-            <div className="text-lg font-soft"> Practical & Hobbies</div>
+            <div className="text-lg mb-2 font-soft"> Practical & Hobbies</div>
             <BookArray
               books={practical}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
-        )}
-      </div>
-      <div className="w-[700px] overflow-x-auto px-2 ">
+        </div>
+      )}
+      <div className="w-[700px] overflow-x-auto px-2 py-1 ">
         {other.length !== 0 && (
           <>
-            <div className="text-lg font-soft"> Other</div>
+            <div className="text-lg mb-2 font-soft"> Other</div>
             <BookArray
               books={other}
               handleSelect={handleSelect}
               onClick={onClick}
+              width={"80px"}
+              height={"120px"}
             />
+            <Divider sx={{ height: "auto", m: 1 }} />
           </>
         )}
       </div>

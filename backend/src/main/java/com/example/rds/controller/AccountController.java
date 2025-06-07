@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.rds.model.Account;
@@ -29,12 +30,12 @@ public class AccountController {
 	private final FollowService foService;
 
 	@GetMapping("/account")
-	public Optional<Account> getProfile(Integer userId) {
+	public Optional<Account> getProfile(@RequestParam Integer userId) {
 		return service.getProfile(userId);
 	}
 
 	@GetMapping("/account/handle")
-	public Optional<Account> getByHandle(String handle) {
+	public Optional<Account> getByHandle(@RequestParam String handle) {
 		return service.getByHandle(handle);
 	}
 
@@ -44,12 +45,12 @@ public class AccountController {
 	}
 
 	@GetMapping("/account/follower")
-	public List<Follow> getFollower(Integer userId) {
+	public List<Follow> getFollower(@RequestParam Integer userId) {
 		return foService.getFollower(userId);
 	}
 
 	@GetMapping("/account/follow")
-	public List<Follow> getFollow(Integer followerId){
+	public List<Follow> getFollow(@RequestParam Integer followerId){
 		return foService.getFollow(followerId);
 	}
 

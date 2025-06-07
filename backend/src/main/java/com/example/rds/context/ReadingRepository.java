@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.rds.model.Label;
 import com.example.rds.model.Reading;
 
 public interface ReadingRepository extends JpaRepository<Reading, Integer> {

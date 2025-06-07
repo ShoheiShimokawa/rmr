@@ -31,7 +31,7 @@ export const ReadingAnalytics = () => {
       const resulta = Object.entries(
         result.data.reduce((counts, reading) => {
           counts[reading.book.largeGenre] =
-            (counts[reading.book.largeGenre] || 0) + 1; // カウント処理
+            (counts[reading.book.largeGenre] || 0) + 1;
           return counts;
         }, {})
       )
@@ -59,12 +59,14 @@ export const ReadingAnalytics = () => {
             p: 1,
             borderRadius: "13px",
             boxShadow: 3,
-            height: 350,
+            height: 370,
             width: 700,
           }}
         >
           <CardContent>
-            <div className="font-soft text-xl font-bold">Trends by Genre</div>
+            <div className="font-soft text-xl font-bold">
+              Your Reading by Genre
+            </div>
             {data.length !== 0 && loading === false ? (
               <div className="flex justify-start">
                 <PieChart

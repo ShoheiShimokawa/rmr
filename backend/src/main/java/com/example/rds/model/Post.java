@@ -12,6 +12,7 @@ import com.example.rds.context.GoodRepository;
 import com.example.rds.context.PostRepository;
 import com.example.rds.context.ReadingRepository;
 import com.example.rds.type.BookStatusType;
+import com.example.rds.type.PostType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,6 +44,8 @@ public class Post {
 	@ManyToOne
 	@JoinColumn(name = "reading_id")
 	private Reading reading;
+	/** 推薦 */
+	private PostType postType;
 	/** ポスト日 */
 	private LocalDateTime registerDate;
 	/** 更新日 */
@@ -54,7 +57,7 @@ public class Post {
 	}
 
 	/** 感想をポストします。すでに同じ状態のreadingに紐づくポストが存在していたら更新します。 */
-	public static Post registerPost(PostRepository rep, ReadingRepository rRep, Integer readingId) {
+	public static Post registerPost(PostRepository rep, ReadingRepository rRep, Integer readingId,boolean recommended) {
 		
 		var reading = rRep.findById(readingId).orElseThrow(() -> new EntityNotFoundException("Reading not found"));
 		
@@ -62,12 +65,28 @@ public class Post {
 				.findFirst();
 		if (existPost.isPresent() && existPost.get().getReading().getStatusType().equals(BookStatusType.DONE)) {
 			var updatedPost = existPost.get();
+			if (recommended) {
+				updatedPost.setPostType(PostType.RECOMMENDED);
+			}else if(recommended==false && reading.getThoughts().equals("") && reading.getRate()==0){
+				updatedPost.setPostType(PostType.ONLY_STAR);
+			} else {
+				updatedPost.setPostType(PostType.WITH_THOUGHTS);
+			}
 			updatedPost.setReading(reading);
 			updatedPost.setUpdateDate(LocalDateTime.now());
 			return rep.save(updatedPost);
-		}
-		var post = Post.builder().reading(reading).user(reading.getUser()).registerDate(LocalDateTime.now()).build();
+		} else {
+			PostType postType;
+			if (recommended) {
+				postType=PostType.RECOMMENDED;
+			}else if(recommended==false && reading.getThoughts().equals("") && reading.getRate()==0){
+				postType=PostType.ONLY_STAR;
+			} else {
+				postType=PostType.WITH_THOUGHTS;
+			}
+		var post = Post.builder().reading(reading).user(reading.getUser()).postType(postType).registerDate(LocalDateTime.now()).build();
 		return rep.save(post);
+		}
 	}
 	
 	/** ユーザに紐づくポストを全て返します。 */
@@ -84,14 +103,15 @@ public class Post {
 	/** いいね数を含めたユーザに紐づくポストを全て返します。 */
 	public static List<PostWithGoodCount> getPostWithGoodCount(PostRepository rep, GoodRepository gRep, Integer userId) {
 	List<Post> posts = Post.getPostAllByUser(rep, userId);
-	Map<Integer, Long> goodCounts = gRep.countGroupByPostId(); // Map<postId, count>
+	Map<Integer, Long> goodCounts = gRep.countGroupByPostId(); 
 
 	return posts.stream().map(post -> {
 		long goodCount = goodCounts.getOrDefault(post.getPostId(), 0L);
 		return PostWithGoodCount.builder()
 			.postId(post.getPostId())
 			.user(post.getUser())
-			.reading(post.getReading())
+				.reading(post.getReading())
+			.postType(post.getPostType())
 			.registerDate(post.getRegisterDate())
 			.updateDate(post.getUpdateDate())
 			.goodCount(goodCount)
@@ -110,6 +130,7 @@ public class Post {
 			.postId(post.getPostId())
 			.user(post.getUser())
 			.reading(post.getReading())
+			.postType(post.getPostType())
 			.registerDate(post.getRegisterDate())
 			.updateDate(post.getUpdateDate())
 			.goodCount(goodCount)
@@ -152,6 +173,7 @@ public static class PostWithGoodCount {
 	private Integer postId;
 	private Account user;
 	private Reading reading;
+	private PostType postType;
 	private LocalDateTime registerDate;
 	private LocalDateTime updateDate;
 	private long goodCount;

@@ -35,9 +35,9 @@ export const HandleRegister = ({ account, updated }) => {
       handle: `@${values.handle}`,
       googleSub: account.googleSub,
       picture: account.picture,
-      email: account.email,
     };
     const result = await registerAccount(params);
+
     setUser(result.data);
     notify("You've successfully created your account!", "success");
     updated && updated();
