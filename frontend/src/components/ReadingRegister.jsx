@@ -13,11 +13,23 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const { notify } = useNotify();
   const isDisabled = book || reading ? false : true;
 
-  const formSchema = z.object({
-    rate: z.number().optional(),
-    thoughts: z.string().max(500),
-    recommended: z.boolean(),
-  });
+  const formSchema = z
+    .object({
+      rate: z.number().optional(),
+      thoughts: z.string().max(500),
+      recommended: z.boolean(),
+    })
+    .refine(
+      (data) => {
+        return (
+          !data.recommended || (data.thoughts && data.thoughts.trim() !== "")
+        );
+      },
+      {
+        path: ["thoughts"],
+        message: "Thought is required if you recommend this book.",
+      }
+    );
 
   const {
     control,
@@ -35,9 +47,15 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   });
   const watchedRate = useWatch({ control, name: "rate" });
   const watchedThoughts = useWatch({ control, name: "thoughts" });
+  const watchedRecommended = useWatch({ control, name: "recommended" });
 
   const isSkipped =
     !watchedRate && (!watchedThoughts || watchedThoughts.trim() === "");
+
+  const isSubmitDisabled =
+    isDisabled ||
+    (watchedRecommended && (!watchedThoughts || watchedThoughts.trim() === ""));
+
   const onSubmit = async (values) => {
     try {
       if (reading) {
@@ -90,19 +108,6 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
             </p>
           )}
         </div>
-
-        <TextField
-          {...register("thoughts")}
-          placeholder="share your thoughts or feelings."
-          variant="outlined"
-          multiline
-          fullWidth
-          rows={8}
-          margin="normal"
-          error={!!errors.thoughts}
-          helperText={errors.thoughts?.message}
-          disabled={isDisabled}
-        />
         <div className="font-soft mt-1 mb-2 font-bold">
           Recommend this book to others?
         </div>
@@ -124,11 +129,28 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
             )}
           />
         </div>
+        <TextField
+          {...register("thoughts")}
+          placeholder={
+            watchedRecommended
+              ? "Tell us why you'd recommend this book!"
+              : "Share your thoughts or feelings."
+          }
+          variant="outlined"
+          multiline
+          fullWidth
+          rows={8}
+          margin="normal"
+          error={!!errors.thoughts}
+          helperText={errors.thoughts?.message}
+          disabled={isDisabled}
+        />
+
         <div className="flex justify-end mt-4">
           <Button
             type="submit"
             variant="contained"
-            disabled={isDisabled}
+            disabled={isSubmitDisabled}
             sx={{
               textTransform: "none",
               backgroundColor: "#000",

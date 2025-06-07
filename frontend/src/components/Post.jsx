@@ -238,7 +238,7 @@ export const Post = ({
                           />
                         </>
                       )}
-                      <div className="flex items-center mt-1">
+                      <div className="flex items-center mt-1 ">
                         <IconButton
                           onClick={() => {
                             if (isGooded) {

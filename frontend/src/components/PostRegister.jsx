@@ -122,12 +122,13 @@ export const PostRegister = () => {
               <SearchIcon onClick={handleSearch} />
             </IconButton>
           </div>
-          <div className="ml-2">
+          <div className="ml-2 mb-6">
             {addedBook && (
               <Book book={addedBook} width={"70px"} height={"100px"} />
             )}
           </div>
-          <div className="mt-4">
+
+          <div className="mt-5">
             <ReadingRegister
               book={selectedBook && selectedBook}
               reading={selectedReading && selectedReading}
