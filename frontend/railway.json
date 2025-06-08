@@ -1,0 +1,10 @@
+{
+  "build": {
+    "command": "npm run build"
+  },
+  "deploy": {
+    "startCommand": "",
+    "outputDirectory": "build",
+    "rootDirectory": "frontend"
+  }
+}
