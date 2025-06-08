@@ -87,7 +87,7 @@ export const BookShelf = ({ account, onClick }) => {
         </CustomDialog>
       )}
       <div className="text-lg font-medium font-soft">Want To Read</div>
-      <div className="w-[640px] overflow-x-auto px-2 py-2 ">
+      <div className="w-[700px] overflow-x-auto px-2 py-2 ">
         {toRead.length !== 0 ? (
           <BookArray
             books={toRead}
@@ -97,7 +97,17 @@ export const BookShelf = ({ account, onClick }) => {
             height={"120px"}
           />
         ) : (
-          <Box sx={{ height: "120px", width: "100%" }} />
+          <Box
+            sx={{
+              height: "120px",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div className="font-soft text-zinc-500">No books.</div>
+          </Box>
         )}
       </div>
       <Divider sx={{ height: "auto", m: 1 }} />
@@ -114,7 +124,17 @@ export const BookShelf = ({ account, onClick }) => {
             height={"120px"}
           />
         ) : (
-          <Box sx={{ height: "120px", width: "100%" }} />
+          <Box
+            sx={{
+              height: "120px",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div className="font-soft text-zinc-500">No books.</div>
+          </Box>
         )}
       </div>
 

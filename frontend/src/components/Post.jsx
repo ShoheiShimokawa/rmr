@@ -251,13 +251,13 @@ export const Post = ({
                           {!isGooded ? (
                             <FavoriteBorderIcon
                               sx={{ fontSize: "15px" }}
-                              color="error"
+                              className="text-zinc-600 hover:text-red-500 transition-colors duration-200"
                               fontSize="small"
                             />
                           ) : (
                             <FavoriteIcon
                               sx={{ fontSize: "15px" }}
-                              color="error"
+                              className="text-red-500"
                               fontSize="small"
                             />
                           )}

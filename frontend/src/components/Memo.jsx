@@ -228,8 +228,8 @@ export const Memo = () => {
             sx={{
               p: 4,
               textAlign: "center",
-              // backgroundColor: "#f9f9f9",
               borderRadius: 2,
+              my: 8,
             }}
           >
             <MenuBookIcon sx={{ fontSize: 40, mb: 1 }} />

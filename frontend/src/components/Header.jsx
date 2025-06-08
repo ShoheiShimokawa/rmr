@@ -98,10 +98,10 @@ export const Header = () => {
             minHeight: "48px",
           }}
         >
-          <div className="ml-8">
+          <div className="ml-10 mt-2">
             <Link to="/">
               <img
-                src="/signreadMore.png"
+                src="/rmr_logo.png"
                 alt="readMore Logo"
                 style={{
                   width: "150px",
