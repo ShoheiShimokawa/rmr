@@ -1,7 +1,7 @@
-import axios from "axios"
+import axios from "axios";
 
-const url = "http://localhost:8080/api/";
+const url = process.env.REACT_APP_API_URL;
 
 export const login = (token) => {
-    return axios.post(url + "auth/google", { token });
-}
+  return axios.post(url + "auth/google", { token });
+};

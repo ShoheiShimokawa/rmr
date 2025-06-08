@@ -1,5 +1,6 @@
 package com.example.rds;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -8,13 +9,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class CorsConfig {
+    @Value("${frontend.origin}")
+    private String frontendOrigin;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // 必要なオリジンを追加
-        configuration.addAllowedMethod("*"); // 必要なHTTPメソッドを追加
-        configuration.addAllowedHeader("*"); // 必要なヘッダーを追加
+        configuration.addAllowedOriginPattern(frontendOrigin); // 柔軟に
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true); // 認証系で必須になることが多い
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

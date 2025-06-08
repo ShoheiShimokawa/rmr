@@ -3,8 +3,8 @@ package com.example.rds;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,23 +14,25 @@ import org.springframework.web.client.RestTemplate;
 import com.example.rds.model.Account;
 import com.example.rds.service.AccountService;
 
-import lombok.AllArgsConstructor;
-
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
-@AllArgsConstructor
 public class AuthController {
-	private AccountService service;
+	private  final AccountService service;
 
-	private static final String GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=";
+	@Value("${google.token.info.url}")
+    private String googleTokenInfoUrl;
 
+
+    public AuthController(AccountService service) {
+        this.service = service;
+    }
+    
 	@PostMapping("/google")
  public ResponseEntity<Map<String, Object>> googleLogin(@RequestBody Map<String, String> requestBody) {
      String token = requestBody.get("token");
      RestTemplate restTemplate = new RestTemplate();
      
-     String url = GOOGLE_TOKEN_INFO_URL + token;
+     String url = googleTokenInfoUrl + token;
      Map<String, Object> userInfo = restTemplate.getForObject(url, Map.class);
 if (userInfo != null && userInfo.containsKey("sub")) {
         Optional<Account> account = service.get((String) userInfo.get("sub"));
