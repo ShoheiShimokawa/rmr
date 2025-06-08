@@ -1,19 +1,10 @@
 import { Profile } from "./Profile";
 import { getPostAllByUser } from "../api/post";
 import { BookShelf } from "./book/BookShelf";
-import { GiBookshelf } from "react-icons/gi";
 import { Post } from "./Post";
 import { getByHandle } from "../api/account";
-import { useState, useEffect } from "react";
-import {
-  Divider,
-  Tabs,
-  Tab,
-  Box,
-  ListItem,
-  List,
-  CircularProgress,
-} from "@mui/material";
+import { useState, useEffect, useCallback } from "react";
+import { Divider, Tabs, Tab, Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useNotify } from "../hooks/NotifyProvider";
 
@@ -24,7 +15,7 @@ export const UserPage = () => {
   const [loading, setLoading] = useState(false);
   const { notify } = useNotify();
 
-  const find = async () => {
+  const find = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getByHandle(handle);
@@ -41,10 +32,10 @@ export const UserPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [handle, notify]);
   useEffect(() => {
     find();
-  }, [handle]);
+  }, [find]);
 
   const TabPanel = ({ children, value, index }) => {
     return (

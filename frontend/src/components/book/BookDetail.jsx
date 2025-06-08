@@ -11,7 +11,7 @@ import UserContext from "../UserProvider";
 import { GiBookshelf } from "react-icons/gi";
 import { CollapsibleText } from "../CollapsibleText";
 import { registerReading, findReadingById } from "../../api/reading";
-import { Menu, MenuItem, MenuIcon } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 import { registerBook } from "../../api/book";
 import { findPostByBookId } from "../../api/post";
 import { deleteReading, toDoing } from "../../api/reading";
@@ -30,7 +30,6 @@ import {
   AvatarGroup,
   IconButton,
   ListItemIcon,
-  CircularProgress,
 } from "@mui/material";
 import { ReadingRegister } from "../ReadingRegister";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
@@ -40,7 +39,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   const [anchorAddEl, setAnchorAddEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { user } = useContext(UserContext);
   const [bookForReading, setBookForReading] = useState();
   const [posts, setPosts] = useState([]);
@@ -118,7 +116,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           description: "",
           statusType: "NONE",
         };
-        const r = await registerReading(rParam);
+        await registerReading(rParam);
         notify("Add want to read list.", "success");
         find();
       }
@@ -190,8 +188,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       (post.reading && post.reading.rate)
   );
 
-  const find = async () => {
-    setLoading(true);
+  const find = useCallback(async () => {
     try {
       var result = await findPostByBookId(book.id && book.id);
       setPosts(result.data);
@@ -210,14 +207,12 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       setGoodPostIds(likedIds);
     } catch (error) {
       notify("Failed to loading. Please try again.", "error");
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [book.id, notify, user]);
 
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
 
   return (
     <div>

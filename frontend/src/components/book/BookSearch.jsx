@@ -9,7 +9,7 @@ import { isBlank } from "../../util";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { findReadingByUser, registerReading } from "../../api/reading";
+import { findReadingByUser } from "../../api/reading";
 import { genreToEnum } from "../../util";
 import { BookDetail } from "./BookDetail";
 import { CustomDialog } from "../../ui/CustomDialog";
@@ -24,7 +24,6 @@ export const BookSearch = ({ fromPost }) => {
   const { user } = useContext(UserContext);
   const [myReadings, setMyReadings] = useState([]);
   const [myReading, setMyReading] = useState();
-  const [bookForReading, setBookForReading] = useState();
   const [open, setOpen] = useState(false);
   const [iniSearch, setIniSearch] = useState(false);
 
@@ -91,12 +90,6 @@ export const BookSearch = ({ fromPost }) => {
     !isBlank(query) && searchBooks();
   };
 
-  const shrinkDescription = (description) => {
-    return description.length <= 100
-      ? description
-      : description.substr(0, 100) + "...";
-  };
-
   const handleKeyDown = (event) => {
     if (!isBlank(query) && event.key === "Enter") {
       event.preventDefault();
@@ -109,11 +102,11 @@ export const BookSearch = ({ fromPost }) => {
       const myR = await findReadingByUser(user && user.userId);
       setMyReadings(myR.data);
     }
-  }, [myReadings]);
+  }, [user]);
 
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
 
   return (
     <div>

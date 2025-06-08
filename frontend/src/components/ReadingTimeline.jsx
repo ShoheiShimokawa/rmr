@@ -1,7 +1,6 @@
 import {
   Stepper,
   Step,
-  StepLabel,
   StepConnector,
   Box,
   Typography,

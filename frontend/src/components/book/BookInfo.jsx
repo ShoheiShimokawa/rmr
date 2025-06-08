@@ -1,5 +1,4 @@
 import { Book } from "./Book";
-import PersonIcon from "@mui/icons-material/Person";
 
 export const BookInfo = ({ book, onClick }) => {
   return (

@@ -34,7 +34,6 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const {
     control,
     register,
-    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -76,7 +75,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           userId: user.userId,
           statusType: "DONE",
         };
-        const result = await registerReading(param);
+        await registerReading(param);
         updated && updated();
         notify("Congrats!", "success");
       }

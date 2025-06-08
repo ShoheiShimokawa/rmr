@@ -11,12 +11,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import PeopleIcon from "@mui/icons-material/People";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
-import { useContext, useState } from "react";
-import UserContext from "./UserProvider";
-import { useNavigate } from "react-router-dom";
 
 export const Sidebar = () => {
-  const { user, setUser } = useContext(UserContext);
   const items = [
     { text: "Community", path: "/", icon: <PeopleIcon /> },
     { text: "Search", path: "/book", icon: <SearchIcon /> },

@@ -1,9 +1,7 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useContext } from "react";
-import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button, Rating } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { updateProfile } from "../api/account";
 import { useNotify } from "../hooks/NotifyProvider";
 
@@ -20,9 +18,7 @@ export const ProfileChange = ({ account, update }) => {
       .optional(),
   });
   const {
-    control,
     register,
-    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -40,7 +36,7 @@ export const ProfileChange = ({ account, update }) => {
           userId: account.userId,
         };
       }
-      const result = await updateProfile(params);
+      await updateProfile(params);
       notify("Success to change profile.", "success");
       update && update();
     } catch (error) {

@@ -1,18 +1,14 @@
 import { Box, Divider } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { CustomDialog } from "../../ui/CustomDialog";
 import React from "react";
-import { useContext } from "react";
-import UserContext from "../UserProvider";
 import { BookDetail } from "./BookDetail";
 import { findReadingByUser } from "../../api/reading";
 import { BookArray } from "./BookArray";
 
 export const BookShelf = ({ account, onClick }) => {
   const [readings, setReadings] = useState([]);
-  const { user } = useContext(UserContext);
   const [open, setOpen] = useState(false);
-  const [showReadingRegister, setShoWReadingRegister] = useState(false);
   const [reading, setReading] = useState();
   const [book, setBook] = useState();
 
@@ -58,7 +54,6 @@ export const BookShelf = ({ account, onClick }) => {
   const handleSelect = (selectedReading) => {
     setReading(selectedReading);
     setBook(selectedReading.book);
-    setShoWReadingRegister(false);
     setOpen(true);
   };
 
@@ -66,13 +61,13 @@ export const BookShelf = ({ account, onClick }) => {
     setOpen(false);
   };
 
-  const find = async () => {
+  const find = useCallback(async () => {
     const result = await findReadingByUser(account.userId && account.userId);
     setReadings(result.data);
-  };
+  }, [account.userId]);
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
   return (
     <>
       {!onClick && (

@@ -4,11 +4,11 @@ import {
   ChartsItemTooltipContent,
   ChartsTooltip,
 } from "@mui/x-charts";
-import { Card, CardContent, Typography, Grid } from "@mui/material";
+import { Card, CardContent, Grid } from "@mui/material";
 import { findReadingByUser } from "../api/reading";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getMonthlyData } from "../api/reading";
 import { toLargeGenre } from "../util";
 
@@ -20,7 +20,7 @@ export const ReadingAnalytics = () => {
 
   const maxValue = Math.max(...monthlyData.map((item) => item.total));
 
-  const find = async () => {
+  const find = useCallback(async () => {
     setLoading(true);
     if (user) {
       const monthly = await getMonthlyData(user?.userId);
@@ -45,11 +45,11 @@ export const ReadingAnalytics = () => {
       setData(formattedData);
     }
     setLoading(false);
-  };
+  }, [user]);
 
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
 
   return (
     <div>
@@ -102,7 +102,7 @@ export const ReadingAnalytics = () => {
             <div className="font-soft text-xl font-bold">
               Monthly Reading Volume
             </div>
-            {monthlyData.length != 0 ? (
+            {monthlyData.length !== 0 ? (
               <LineChart
                 xAxis={[
                   {

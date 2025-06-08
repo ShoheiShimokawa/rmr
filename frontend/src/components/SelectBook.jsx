@@ -2,7 +2,7 @@ import { CustomDialog } from "../ui/CustomDialog";
 import { BookShelf } from "./book/BookShelf";
 import { BookSearch } from "./book/BookSearch";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { registerBook } from "../api/book";
 import { GiBookshelf } from "react-icons/gi";
@@ -14,16 +14,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerReading } from "../api/reading";
-import {
-  Card,
-  CardContent,
-  //   Typography,
-  Grid,
-  Chip,
-  //   Box,
-  Button,
-  Slide,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import { getByUserIdAndBookId } from "../api/reading";
 import { RadioGroup, Radio, Typography, Sheet, Box } from "@mui/joy";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
@@ -147,13 +138,13 @@ export const SelectBook = ({ onClick, onNext }) => {
     setOpenBookSearch(false);
   };
 
-  const find = async () => {
-    const result = await getByUserIdAndBookId(
-      user.userId,
-      selectedBook && selectedBook.bookId
-    );
-    setSelectedReading(result.data);
-  };
+  // const find = async () => {
+  //   const result = await getByUserIdAndBookId(
+  //     user.userId,
+  //     selectedBook && selectedBook.bookId
+  //   );
+  //   setSelectedReading(result.data);
+  // };
   return (
     <div>
       <CustomDialog
