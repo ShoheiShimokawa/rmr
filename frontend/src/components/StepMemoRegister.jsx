@@ -7,11 +7,9 @@ import { useState } from "react";
 
 export const StepMemoRegister = ({ updated }) => {
   const [step, setStep] = useState(0);
-  const [prevStep, setPrevStep] = useState(0);
   const [selectedReading, setSelectedReading] = useState();
 
   const goToStep = (next) => {
-    setPrevStep(step);
     setStep(next);
   };
 

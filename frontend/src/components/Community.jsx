@@ -7,14 +7,14 @@ import UserContext from "./UserProvider";
 import { getGoodPostAll } from "../api/post";
 import { Divider } from "@mui/material";
 
-export const Community = ({}) => {
+export const Community = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const { user } = useContext(UserContext);
   const { notify } = useNotify();
   const [goodPostIds, setGoodPostIds] = useState([]);
 
-  const find = async () => {
+  const find = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getPostAll();
@@ -30,11 +30,11 @@ export const Community = ({}) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [notify, user]);
 
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
   return (
     <div>
       <div className="container space-y-1 w-xl">

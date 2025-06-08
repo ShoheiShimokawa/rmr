@@ -2,27 +2,22 @@ import { getMemos } from "../api/memo";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { CustomDialog } from "../ui/CustomDialog";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { Book } from "./book/Book";
-import { useNotify } from "../hooks/NotifyProvider";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { StepMemoRegister } from "./StepMemoRegister";
 import {
   Card,
   CardContent,
   Typography,
-  Grid,
   Chip,
   Box,
   Button,
-  Slide,
   Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { MemoDetail } from "./MemoDetail";
-import { MemoRegister } from "./MemoRegister";
-import { SelectBook } from "./SelectBook";
 
 export const Memo = () => {
   const [memos, setMemos] = useState([]);
@@ -30,7 +25,6 @@ export const Memo = () => {
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
   const [openRegister, setOpenRegister] = useState(false);
-  const { notify } = useNotify();
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
   const formatted = useMemo(() => {
@@ -80,7 +74,7 @@ export const Memo = () => {
     setOpenDetail(false);
   };
 
-  const find = async () => {
+  const find = useCallback(async () => {
     if (!user) {
       return;
     }
@@ -89,10 +83,10 @@ export const Memo = () => {
       setMemos(result.data);
       return result.data;
     } catch (error) {}
-  };
+  }, [user]);
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
   return (
     <div>
       {showLoginDialog && <LoginDialog />}

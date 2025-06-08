@@ -1,7 +1,6 @@
-import { registerReading, findReadingByUser } from "../api/reading";
+import { findReadingByUser } from "../api/reading";
 import { registerBook } from "../api/book";
-import { Box, Divider } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { IconButton } from "@mui/material";
 import { Book } from "./book/Book";
 import { CustomDialog } from "../ui/CustomDialog";
@@ -29,10 +28,10 @@ export const PostRegister = () => {
     return r.statusType === "DOING";
   });
 
-  const find = async () => {
+  const find = useCallback(async () => {
     const result = await findReadingByUser(user.userId);
     setReadings(result.data);
-  };
+  }, [user]);
 
   const handleSelect = (selectedReading) => {
     setSelectedReading(selectedReading);
@@ -78,7 +77,7 @@ export const PostRegister = () => {
 
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
   return (
     <div>
       <CustomDialog open={open} title="search" onClose={handleClose}>

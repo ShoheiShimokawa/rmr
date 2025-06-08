@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,7 +7,7 @@ import { useNotify } from "../hooks/NotifyProvider";
 import { getLabels } from "../api/label";
 import { BookInfo } from "../components/book/BookInfo";
 import { registerMemo } from "../api/memo";
-import { Button, Box, TextField, InputAdornment } from "@mui/material";
+import { Button, TextField, InputAdornment } from "@mui/material";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 
@@ -29,7 +29,6 @@ export const MemoRegister = ({ updated, book, reading }) => {
   const {
     control,
     register,
-    setValue,
     handleSubmit,
     reset,
     formState: { errors },
@@ -54,10 +53,10 @@ export const MemoRegister = ({ updated, book, reading }) => {
     }
   };
 
-  const find = async () => {
+  const find = useCallback(async () => {
     const result = await getLabels(user && user.userId);
     setLabels(result.data);
-  };
+  }, [user]);
 
   const optionsLabel = labels
     .filter((label) => label.label)
@@ -65,7 +64,7 @@ export const MemoRegister = ({ updated, book, reading }) => {
 
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
 
   return (
     <div>

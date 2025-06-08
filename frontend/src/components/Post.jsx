@@ -19,7 +19,6 @@ import { CustomDialog } from "../ui/CustomDialog";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNotify } from "../hooks/NotifyProvider";
-import { useLocation } from "react-router-dom";
 import { judgePostLabel } from "../badge/index";
 import { ReadingRegister } from "./ReadingRegister";
 
@@ -40,7 +39,6 @@ export const Post = ({
   const [localGoodCount, setLocalGoodCount] = useState(post.goodCount || 0);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const { notify } = useNotify();
-  const location = useLocation();
 
   const handleClick = (selectedHandle) => {
     const origin = window.location.origin;
@@ -58,7 +56,7 @@ export const Post = ({
             postId: post.postId,
             userId: user.userId,
           };
-          const result = await good(param);
+          await good(param);
         }
       } catch (error) {
         notify("You already good for this post.", "error");
@@ -76,7 +74,7 @@ export const Post = ({
           postId: post.postId,
           userId: user.userId,
         };
-        const result = await deleteGood(param);
+        await deleteGood(param);
       }
     }
   };
@@ -210,7 +208,7 @@ export const Post = ({
                 {post.reading && (
                   <>
                     <div>
-                      {post.reading.rate != 0 && (
+                      {post.reading.rate !== 0 && (
                         <Rating
                           className="mt-2"
                           name="read-only"

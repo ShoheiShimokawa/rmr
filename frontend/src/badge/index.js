@@ -1,8 +1,6 @@
-import FiberNewRoundedIcon from "@mui/icons-material/FiberNewRounded";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
-import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
 import { Chip } from "@mui/material";
 
 export const statusTypeStr = (str) => {

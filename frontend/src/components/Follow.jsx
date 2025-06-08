@@ -1,5 +1,5 @@
 import { getFollow } from "../api/account";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useNotify } from "../hooks/NotifyProvider";
 import {
   Avatar,
@@ -9,7 +9,7 @@ import {
   ListItemAvatar,
   CircularProgress,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export const Follow = ({ followerId }) => {
   const [follows, setFollow] = useState([]);
@@ -23,7 +23,7 @@ export const Follow = ({ followerId }) => {
     window.open(newUrl, "_blank");
   };
 
-  const find = async () => {
+  const find = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getFollow(followerId);
@@ -33,10 +33,10 @@ export const Follow = ({ followerId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [followerId, notify]);
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
 
   return (
     <div>

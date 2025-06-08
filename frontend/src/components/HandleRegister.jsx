@@ -1,14 +1,14 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { registerAccount } from "../api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button, Rating, InputAdornment } from "@mui/material";
+import { TextField, Button, InputAdornment } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
 export const HandleRegister = ({ account, updated }) => {
   const { notify } = useNotify();
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const allowedChars = /^[a-zA-Z0-9\-._~]+$/;
   const formSchema = z.object({
     handle: z.string().min(1, "ID is required.").max(12).regex(allowedChars, {
@@ -17,9 +17,7 @@ export const HandleRegister = ({ account, updated }) => {
     name: z.string().min(1, "name is required.").max(30),
   });
   const {
-    control,
     register,
-    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({

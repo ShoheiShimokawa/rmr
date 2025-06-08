@@ -12,10 +12,8 @@ import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
 import { ProfileChange } from "./ProfileChange";
 import { ContributionMap } from "./ContributionMap";
-import { getPostAllByUser } from "../api/post";
-import { findReadingByUser } from "../api/reading";
-import { Avatar, Button, Typography, CircularProgress } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { Avatar, Button } from "@mui/material";
+import { useContext, useEffect, useState, useCallback } from "react";
 import UserContext from "./UserProvider";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 
@@ -29,9 +27,6 @@ export const Profile = ({ userId }) => {
   const [showFollower, setShowFollower] = useState(false);
   const [followed, setFollowed] = useState({});
   const [isFollowed, setIsFollowed] = useState(false);
-  const [readings, setReadings] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
   const { notify } = useNotify();
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
@@ -88,8 +83,7 @@ export const Profile = ({ userId }) => {
     handleChangeClose();
   };
 
-  const find = async () => {
-    setLoading(true);
+  const find = useCallback(async () => {
     try {
       const userPageAccount = await getProfile(userId && userId);
       setAccount(userPageAccount.data);
@@ -101,19 +95,13 @@ export const Profile = ({ userId }) => {
         user && result.data.find((v) => v.follower.userId === user.userId);
       isFollowed && setFollowed(isFollowed);
       isFollowed && setIsFollowed(true);
-      const readingResult = await findReadingByUser(userId && userId);
-      setReadings(readingResult.data);
-      const postResult = await getPostAllByUser(userId && userId);
-      setPosts(postResult.data);
     } catch (error) {
       notify("Failed to load. Please try later.", "error");
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [userId, notify, user]);
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
 
   return (
     <div>
@@ -228,7 +216,7 @@ export const Profile = ({ userId }) => {
                 onClick={handleSelectFollow}
               >
                 <div className="font-bold mr-1">
-                  {follows.length != 0 ? follows.length : 0}{" "}
+                  {follows.length !== 0 ? follows.length : 0}{" "}
                 </div>
                 follows
               </div>
@@ -240,7 +228,7 @@ export const Profile = ({ userId }) => {
               >
                 <div className="mr-1 font-soft text-sm flex">
                   <div className="font-bold mr-1">
-                    {followers.length != 0 ? followers.length : 0}
+                    {followers.length !== 0 ? followers.length : 0}
                   </div>{" "}
                   followers
                 </div>

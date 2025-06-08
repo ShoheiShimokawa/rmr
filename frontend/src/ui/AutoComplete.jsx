@@ -1,4 +1,4 @@
-import { TextField, Autocomplete, InputAdornment } from "@mui/material";
+import { TextField, Autocomplete } from "@mui/material";
 import React, { useState, useMemo } from "react";
 
 export const AutoComplete = ({ options, value, onChange, disabled }) => {

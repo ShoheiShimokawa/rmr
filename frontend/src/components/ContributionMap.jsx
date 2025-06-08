@@ -5,7 +5,7 @@ import { Tooltip } from "react-tooltip";
 import { getPostRecord } from "../api/post";
 import "./heatmap-custom.css";
 import { generateFullDateRange, mergeActivityData } from "../util";
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export const ContributionMap = ({ userId }) => {
   const [record, setRecord] = useState([]);
@@ -15,13 +15,15 @@ export const ContributionMap = ({ userId }) => {
   const baseDates = generateFullDateRange(startDate, today);
   const mergedData = mergeActivityData(baseDates, record);
 
-  useEffect(() => {
-    find();
-  }, []);
-  const find = async () => {
+  const find = useCallback(async () => {
     const result = await getPostRecord(userId && userId);
     setRecord(result.data);
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    find();
+  }, [find]);
+
   return (
     <div>
       <CalendarHeatmap

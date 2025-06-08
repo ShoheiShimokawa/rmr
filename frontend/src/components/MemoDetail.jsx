@@ -1,15 +1,12 @@
-import { useContext } from "react";
-import UserContext from "./UserProvider";
 import { CustomDialog } from "../ui/CustomDialog";
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { MemoRegister } from "./MemoRegister";
 import AddIcon from "@mui/icons-material/Add";
 
-import { Typography, Grid, Chip, Box, Button } from "@mui/material";
+import { Typography, Chip, Box, Button } from "@mui/material";
 
 export const MemoDetail = ({ memo, updated }) => {
   const [openRegister, setOpenRegister] = useState(false);
-  const [selectedReading, setSelectedReading] = useState();
   const handleOpenRegister = () => {
     setOpenRegister(true);
   };

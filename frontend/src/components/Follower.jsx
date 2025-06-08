@@ -1,8 +1,7 @@
-import { getFollower, getFollow } from "../api/account";
+import { getFollower } from "../api/account";
 import { useNotify } from "../hooks/NotifyProvider";
 import {
   Avatar,
-  Typography,
   List,
   ListItem,
   ListItemText,
@@ -10,7 +9,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export const Follower = ({ userId }) => {
   const [followers, setFollowers] = useState([]);
@@ -23,7 +22,7 @@ export const Follower = ({ userId }) => {
     const newUrl = `/${selectedHandle}${basePath}`;
     window.open(newUrl, "_blank");
   };
-  const find = async () => {
+  const find = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getFollower(userId);
@@ -33,10 +32,10 @@ export const Follower = ({ userId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, notify]);
   useEffect(() => {
     find();
-  }, []);
+  }, [find]);
   return (
     <div>
       {loading ? (

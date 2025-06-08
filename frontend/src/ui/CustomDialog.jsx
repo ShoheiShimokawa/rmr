@@ -1,12 +1,9 @@
-// components/CustomDialog.jsx
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   IconButton,
-  Button,
-  Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 

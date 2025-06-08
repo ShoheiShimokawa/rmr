@@ -5,12 +5,10 @@ import {
   StepConnector,
   stepConnectorClasses,
   styled,
-  Typography,
   Box,
 } from "@mui/material";
 import Check from "@mui/icons-material/Check";
 
-// 小さいコネクター
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 6,
@@ -20,17 +18,16 @@ const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`& .${stepConnectorClasses.line}`]: {
     borderTopWidth: 2,
     borderRadius: 1,
-    borderColor: theme.palette.mode === "dark" ? "#555" : "#ccc", // デフォルト
+    borderColor: theme.palette.mode === "dark" ? "#555" : "#ccc",
   },
   [`&.${stepConnectorClasses.active} .${stepConnectorClasses.line}`]: {
-    borderColor: "#784af4", // ✅ active時の紫
+    borderColor: "#784af4",
   },
   [`&.${stepConnectorClasses.completed} .${stepConnectorClasses.line}`]: {
-    borderColor: "#784af4", // ✅ completed時の紫
+    borderColor: "#784af4",
   },
 }));
 
-// 小さい丸とチェックアイコン
 const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
   color: theme.palette.mode === "dark" ? "#aaa" : "#ccc",
   display: "flex",
@@ -42,7 +39,7 @@ const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
   "& .QontoStepIcon-completedIcon": {
     color: "#784af4",
     zIndex: 1,
-    fontSize: 16, // ← 小さめチェック
+    fontSize: 16,
   },
   "& .QontoStepIcon-circle": {
     width: 6,
@@ -75,7 +72,7 @@ export const CustomStepper = ({ activeStep }) => {
         alternativeLabel
         activeStep={activeStep}
         connector={<QontoConnector />}
-        sx={{ minHeight: "40px" }} // 全体の高さ制限
+        sx={{ minHeight: "40px" }}
       >
         {steps.map((label) => (
           <Step key={label}>
