@@ -10,8 +10,6 @@ export const genreToEnum = (genre) => {
       return "BIOGRAPHY_AUTOBIOGRAPHY";
     case "Body, Mind & Spirit":
       return "BODY_MIND_SPIRIT";
-    case "Biography & Autobiography":
-      return "BIOGRAPHY_AUTOBIOGRAPHY";
     case "Business & Economics":
       return "BUSINESS_ECONOMICS";
     case "Comics & Graphic Novels":
@@ -115,8 +113,6 @@ export const enumToGenre = (genre) => {
       return "Biography & Autobiography";
     case "BODY_MIND_SPIRIT":
       return "Body, Mind & Spirit";
-    case "BIOGRAPHY_AUTOBIOGRAPHY":
-      return "Biography & Autobiography";
     case "BUSINESS_ECONOMICS":
       return "Business & Economics";
     case "COMICS_GRAPHIC_NOVELS":
