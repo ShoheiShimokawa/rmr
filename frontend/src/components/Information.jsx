@@ -35,19 +35,20 @@ export const Information = () => {
         <div className="font-soft mb-3 mt-5 text-3xl font-bold">
           Contact us here:
         </div>
-        <div className="flex">
+        <div className=" font-soft mt-3 mb-3">
+          We want to make this service even better, so if you find any glitches
+          or feature requests, please don't hesitate to contact us.{" "}
+        </div>
+        <div className="flex items-center">
           <XIcon fontSize="small" />
+          <div className="font-soft ml-2">@ReadMyReads</div>
         </div>
         <div className="flex items-center mt-1">
           <MailOutlineIcon fontSize="small" />{" "}
           <div className="font-soft ml-2">readmyreads@gmail.com</div>
         </div>
       </div>
-      <div className="text-lg font-soft mt-3">
-        {" "}
-        We want to make this service even better, so if you find any glitches or
-        feature requests, please don't hesitate to contact us.{" "}
-      </div>
+
       <br></br>
       <br></br>
 
