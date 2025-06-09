@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import { format } from "date-fns";
 
 export const genreToEnum = (genre) => {
   switch (genre) {
@@ -261,6 +261,7 @@ export const isBlank = (str) => {
   return /^\s*$/.test(str);
 };
 
-export const formatDateTime = (isoString) => {
-  return dayjs(isoString).format("YYYY/MM/DD HH:mm");
+export const formatDateTime = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, "yyyy/MM/dd HH:mm");
 };
