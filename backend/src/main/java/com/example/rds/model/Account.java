@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.rds.context.AccountRepository;
+import com.example.rds.util.BadRequestException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
@@ -85,25 +86,32 @@ public class Account {
     }
 	
 	
-	/** プロフィールを変更します。（初期段階は自己紹介文のみ）*/
+	/** プロフィールを変更します。*/
 	public static Account update(AccountRepository rep,UpdateProfile params) {
-		var user=rep.findByUserId(params.userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
+		var user = rep.findByUserId(params.userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
+		rep.findByHandle(params.handle).ifPresent(existing -> {
+       if (!existing.getUserId().equals(params.userId)) {
+    throw new BadRequestException("This handle is already taken.");
+}
+    });
+		user.setHandle(params.handle);
 		user.setName(params.name);
 		user.setDescription(params.description);
 		return rep.save(user);
 	}
 
-	/** 変更パラメタ(vscodeでrecordに@Bui;der使うと作動しないため暫定対応) */
+	/** 変更パラメタ(vscodeでrecordに@Builder使うと作動しないため暫定対応) */
 	@Data
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class UpdateProfile {
-	private Integer userId;
-	private String name;
-	private String description;
+		private Integer userId;
+		private String handle;
+		private String name;
+		private String description;
 
-	public Account create() {
+		public Account create() {
 		return Account.builder()
 			.userId(this.userId)
 			.name(this.name)

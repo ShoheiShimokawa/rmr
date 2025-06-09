@@ -1,5 +1,4 @@
 import { getFollow } from "../api/account";
-import { useLocation } from "react-router-dom";
 import { useNotify } from "../hooks/NotifyProvider";
 import {
   Avatar,
@@ -15,11 +14,9 @@ export const Follow = ({ followerId }) => {
   const [follows, setFollow] = useState([]);
   const [loading, setLoading] = useState(false);
   const { notify } = useNotify();
-  const location = useLocation();
 
   const handleClick = (selectedHandle) => {
-    const basePath = location.pathname.replace(/^\/@[^/]+/, "");
-    const newUrl = `/${selectedHandle}${basePath}`;
+    const newUrl = `${window.location.origin}/${selectedHandle}`;
     window.open(newUrl, "_blank");
   };
 
@@ -71,7 +68,7 @@ export const Follow = ({ followerId }) => {
                   </ListItemAvatar>
                   <ListItemText
                     primary={follow.user.name}
-                    secondary={follow.user.handle}
+                    secondary={`@${follow.user.handle}`}
                   />
                 </ListItem>
               ))}

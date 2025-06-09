@@ -1,13 +1,21 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, InputAdornment } from "@mui/material";
 import { updateProfile } from "../api/account";
 import { useNotify } from "../hooks/NotifyProvider";
 
 export const ProfileChange = ({ account, update }) => {
   const { notify } = useNotify();
+  const allowedChars = /^[a-zA-Z0-9_-]+$/;
   const formSchema = z.object({
+    handle: z
+      .string()
+      .min(1, "ID is required.")
+      .max(30, "Please enter a user ID within 30 characters")
+      .regex(allowedChars, {
+        message: "Only letters, numbers, and -._~ are allowed.",
+      }),
     name: z
       .string()
       .min(1, "name is required.")
@@ -21,9 +29,11 @@ export const ProfileChange = ({ account, update }) => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      handle: account.handle && account.handle,
       name: account.name && account.name,
       description: account.description ? account.description : "",
     },
@@ -40,18 +50,50 @@ export const ProfileChange = ({ account, update }) => {
       notify("Success to change profile.", "success");
       update && update();
     } catch (error) {
-      notify("Failed to change profile.", "error");
+      if (error.response?.status === 400 && error.response?.data?.message) {
+        const errorMessage = error.response.data.message;
+        if (errorMessage.includes("handle")) {
+          setError("handle", {
+            type: "manual",
+            message: errorMessage,
+          });
+        } else {
+          notify(errorMessage, "error");
+        }
+      } else {
+        notify("Failed to change profile.", "error");
+      }
     }
   };
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
-          {...register("name")}
-          label="name"
+          {...register("handle")}
+          label="*user ID"
           variant="standard"
           multiline
           fullWidth
+          margin="normal"
+          error={!!errors.handle}
+          helperText={errors.handle?.message}
+          sx={{ width: "35ch" }}
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+          }}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">@</InputAdornment>,
+          }}
+        />
+        <TextField
+          {...register("name")}
+          label="*name"
+          variant="standard"
+          multiline
+          fullWidth
+          margin="normal"
           error={!!errors.name}
           helperText={errors.name?.message}
           slotProps={{
@@ -62,7 +104,7 @@ export const ProfileChange = ({ account, update }) => {
         />
         <TextField
           {...register("description")}
-          label="introduction"
+          label=" introduction"
           variant="standard"
           multiline
           rows={6}

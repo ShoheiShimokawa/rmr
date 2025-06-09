@@ -8,18 +8,15 @@ import {
   ListItemAvatar,
   CircularProgress,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 
 export const Follower = ({ userId }) => {
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const location = useLocation();
   const { notify } = useNotify();
 
   const handleClick = (selectedHandle) => {
-    const basePath = location.pathname.replace(/^\/@[^/]+/, "");
-    const newUrl = `/${selectedHandle}${basePath}`;
+    const newUrl = `${window.location.origin}/${selectedHandle}`;
     window.open(newUrl, "_blank");
   };
   const find = useCallback(async () => {
@@ -73,7 +70,7 @@ export const Follower = ({ userId }) => {
                   </ListItemAvatar>
                   <ListItemText
                     primary={follower.follower.name}
-                    secondary={follower.follower.handle}
+                    secondary={`@${follower.follower.handle}`}
                   />
                 </ListItem>
               ))}
