@@ -79,7 +79,7 @@ public class Post {
 			PostType postType;
 			if (recommended) {
 				postType=PostType.RECOMMENDED;
-			}else if(recommended==false && reading.getThoughts().equals("") && reading.getRate()==0){
+			}else if(recommended==false && reading.getThoughts().equals("") && reading.getRate()!=0){
 				postType=PostType.ONLY_STAR;
 			} else {
 				postType=PostType.WITH_THOUGHTS;
