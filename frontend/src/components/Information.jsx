@@ -8,7 +8,7 @@ export const Information = () => {
       <div className="text-4xl font-soft font-bold">ReadMyReads is ...</div>
       <br></br>
       <div className="text-xl font-soft">
-        ReadMyReads, or rmr, is your personal reading hub — simple, honest, and
+        ReadMyReads, or rmr, is your reading hub — simple, honest, and
         shareable.
       </div>
       <br></br>

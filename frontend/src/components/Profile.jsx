@@ -204,9 +204,13 @@ export const Profile = ({ userId }) => {
               )}
             </div>
           </div>
-          <div className="text-lg ml-3 mt-2 font-bold font-soft">
-            {account.name}
-            <div className="text-zinc-500 font-soft">@{account.handle}</div>
+          <div className="ml-2 ">
+            <div className="text-xl mt-3 font-bold font-soft">
+              {account.name}
+            </div>
+            <div className="text-zinc-500 font-soft text-lg">
+              @{account.handle}
+            </div>
           </div>
           <div className="mb-2 mt-2 ml-2 font-soft  break-words">
             {" "}
