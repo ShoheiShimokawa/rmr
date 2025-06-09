@@ -1,7 +1,8 @@
 import { registerReading, updateReading } from "../api/reading";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
-import { useContext } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useContext, useState } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "../hooks/NotifyProvider";
@@ -11,6 +12,7 @@ import { IOSSwitch } from "../ui/IOSSwitch";
 export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const { user } = useContext(UserContext);
   const { notify } = useNotify();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isDisabled = book || reading ? false : true;
 
   const formSchema = z
@@ -56,6 +58,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
     (watchedRecommended && (!watchedThoughts || watchedThoughts.trim() === ""));
 
   const onSubmit = async (values) => {
+    setIsSubmitting(true);
     try {
       if (reading) {
         const updateParam = {
@@ -82,6 +85,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
     } catch (error) {
       notify("Something went wrong.", "error");
     } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -161,7 +165,13 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
               },
             }}
           >
-            {isSkipped ? "Skip Review" : "Post"}
+            {isSubmitting ? (
+              <CircularProgress size={20} sx={{ color: "#fff" }} />
+            ) : isSkipped ? (
+              "Skip Review"
+            ) : (
+              "Post"
+            )}
           </Button>
         </div>
       </form>
