@@ -1,6 +1,6 @@
 package com.example.rds.model;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,15 +61,15 @@ public class Reading {
 	/** 感想 */
 	private String thoughts;
 	/** 登録日 */
-	private LocalDate registerDate;
+	private Instant registerDate;
 	/**  更新日 */
-	private LocalDate updateDate;
+	private Instant updateDate;
 	/** 読む予定登録日 */
-	private LocalDate toReadDate;
+	private Instant toReadDate;
 	/** 読書開始日 */
-	private LocalDate readingDate;
+	private Instant readingDate;
 	/** 読了日 */
-	private LocalDate readDate;
+	private Instant readDate;
 
 	/** ユーザIDと本IDで、そのユーザに紐づく読書があれば返します。 */
 	public static Optional<Reading> getByUserIdAndBookId(ReadingRepository rep, Integer userId,Integer bookId) {
@@ -131,13 +131,13 @@ public class Reading {
 		reading.setBook(book);
 		reading.setUser(user);
 		if (reading.getStatusType().equals(BookStatusType.NONE)) {
-			reading.setToReadDate(LocalDate.now());
+			reading.setToReadDate(Instant.now());
 		}
 		else if(reading.getStatusType().equals(BookStatusType.DOING)) {
-			reading.setReadingDate(LocalDate.now());
+			reading.setReadingDate(Instant.now());
 		}
 		else if(reading.getStatusType().equals(BookStatusType.DONE)) {
-			reading.setReadDate(LocalDate.now());
+			reading.setReadDate(Instant.now());
 		}
 		return rep.save(reading);
 	}
@@ -160,7 +160,7 @@ public class Reading {
             .rate(this.rate)
             .statusType(this.statusType)
 				.thoughts(this.thoughts)
-            .registerDate(LocalDate.now())
+            .registerDate(Instant.now())
             .build();
     }
 }
@@ -171,10 +171,10 @@ public class Reading {
 		Reading reading = rep.findById(params.readingId).orElseThrow(()->new EntityNotFoundException("Reading not found"));
 		reading.setRate(params.rate);
 		reading.setThoughts(params.thoughts);
-		reading.setUpdateDate(LocalDate.now());		
+		reading.setUpdateDate(Instant.now());		
 		reading.setStatusType(params.statusType);
 		if (params.statusType.equals(BookStatusType.DONE)) {
-			reading.setReadDate(LocalDate.now());
+			reading.setReadDate(Instant.now());
 		}
 		return rep.save(reading);
 	}
@@ -186,14 +186,14 @@ public class Reading {
 	public static Reading toDoing(ReadingRepository rep,Integer readingId) {
 		Reading reading = rep.findById(readingId).orElseThrow(()->new EntityNotFoundException("Reading not found"));
 		reading.setStatusType(BookStatusType.DOING);
-		reading.setReadingDate(LocalDate.now());
+		reading.setReadingDate(Instant.now());
 		return rep.save(reading);
 	}
 	
 	/** 読書を読書済みにします。 */
 	public static Reading toDone(ReadingRepository rep,Integer readingId) {
 		Reading reading = rep.findById(readingId).orElseThrow(()->new EntityNotFoundException("Reading not found"));
-		reading.setReadDate(LocalDate.now());
+		reading.setReadDate(Instant.now());
 		return reading;
 	}
 	

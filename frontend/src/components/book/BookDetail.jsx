@@ -30,6 +30,7 @@ import {
   AvatarGroup,
   IconButton,
   ListItemIcon,
+  CircularProgress,
 } from "@mui/material";
 import { ReadingRegister } from "../ReadingRegister";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
@@ -49,6 +50,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   const [openAdd, setOpenAdd] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const [goodPostIds, setGoodPostIds] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleOpenAdd = (event) => {
     if (!isLoggedIn()) return;
@@ -153,7 +155,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       const result = await registerBook(book);
       setBookForReading(result.data);
       handleRegister();
-      find();
     } catch (error) {
       notify("Failed. Please try again.", "error");
     }
@@ -189,6 +190,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   );
 
   const find = useCallback(async () => {
+    setLoading(true);
     try {
       var result = await findPostByBookId(book.id && book.id);
       setPosts(result.data);
@@ -207,6 +209,8 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       setGoodPostIds(likedIds);
     } catch (error) {
       notify("Failed to loading. Please try again.", "error");
+    } finally {
+      setLoading(false);
     }
   }, [book.id, notify, user]);
 
@@ -228,6 +232,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           updated={() => {
             handleCloseRegister();
             updated && updated();
+            find();
           }}
           reading={myReading && myReading}
         />
@@ -265,229 +270,237 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       </div>
       <Divider />
       <div className="mt-2 mb-2">
-        <div className="flex justify-between items-start w-full font-soft font-bold">
-          <div className="ml-1">Your Reading Timeline</div>
-          {myReading && visible && (
-            <IconButton aria-label="more" size="small" onClick={handleOpen}>
-              <ChangeCircleIcon />
-            </IconButton>
-          )}
-        </div>
-        <div className="mt-2  w-full flex justify-center">
-          {myReading ? (
-            <ReadingTimeline reading={myReading} />
-          ) : (
-            visible && (
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[150px]">
+            <CircularProgress size={20} />
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-start w-full font-soft font-bold">
+              <div className="ml-1">Your Reading Timeline</div>
+              {myReading && visible && (
+                <IconButton aria-label="more" size="small" onClick={handleOpen}>
+                  <ChangeCircleIcon />
+                </IconButton>
+              )}
+            </div>
+            <div className="mt-2  w-full flex justify-center">
+              {myReading ? (
+                <ReadingTimeline reading={myReading} />
+              ) : (
+                visible && (
+                  <div>
+                    <div className="mt-1">
+                      <Button
+                        variant="contained"
+                        endIcon={<GiBookshelf />}
+                        onClick={handleOpenAdd}
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: "#000",
+                          color: "#fff",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            backgroundColor: "#333",
+                          },
+                        }}
+                      >
+                        add bookshelf
+                      </Button>
+                    </div>
+                    <div className="text-sm text-zinc-700 font-soft">
+                      Not on your Bookshelf yet.
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+            <Menu
+              className="absolute bottom-0"
+              // id="long-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+            >
               <div>
-                <div className="mt-1">
-                  <Button
-                    variant="contained"
-                    endIcon={<GiBookshelf />}
-                    onClick={handleOpenAdd}
-                    sx={{
-                      textTransform: "none",
-                      backgroundColor: "#000",
-                      color: "#fff",
-                      fontWeight: "bold",
-                      "&:hover": {
-                        backgroundColor: "#333",
-                      },
-                    }}
-                  >
-                    add bookshelf
-                  </Button>
-                </div>
-                <div className="text-sm text-zinc-700 font-soft">
-                  Not on your Bookshelf yet.
-                </div>
-              </div>
-            )
-          )}
-        </div>
-        <Menu
-          className="absolute bottom-0"
-          // id="long-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-        >
-          <div>
-            {!myReading ? (
-              <>
-                <MenuItem
-                  onClick={() => {
-                    handleRegisterWithNone();
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon>
-                    <BookmarkBorderIcon fontSize="small" />
-                  </ListItemIcon>
-                  Next in Line
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleRegisterWithDoing();
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon>
-                    <MenuBookIcon fontSize="small" />
-                  </ListItemIcon>
-                  Reading
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleRegisterWithDone();
-                  }}
-                >
-                  <ListItemIcon>
-                    <CheckCircleIcon fontSize="small" />
-                  </ListItemIcon>
-                  Completed!
-                </MenuItem>
-              </>
-            ) : myReading.statusType === "DONE" ? (
-              <>
-                {!myReading.rate && !myReading.thoughts && (
+                {!myReading ? (
                   <>
                     <MenuItem
                       onClick={() => {
-                        handleDoneReading();
+                        handleRegisterWithNone();
                         handleClose();
                       }}
                     >
                       <ListItemIcon>
-                        <div className="ml-1">
-                          <FaPenNib fontSize="small" color="error" />
-                        </div>
+                        <BookmarkBorderIcon fontSize="small" />
                       </ListItemIcon>
-                      <div className="font-soft">review</div>
+                      Next in Line
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleRegisterWithDoing();
+                        handleClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <MenuBookIcon fontSize="small" />
+                      </ListItemIcon>
+                      Reading
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleRegisterWithDone();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <CheckCircleIcon fontSize="small" />
+                      </ListItemIcon>
+                      Completed!
+                    </MenuItem>
+                  </>
+                ) : myReading.statusType === "DONE" ? (
+                  <>
+                    {!myReading.rate && !myReading.thoughts && (
+                      <>
+                        <MenuItem
+                          onClick={() => {
+                            handleDoneReading();
+                            handleClose();
+                          }}
+                        >
+                          <ListItemIcon>
+                            <div className="ml-1">
+                              <FaPenNib fontSize="small" color="error" />
+                            </div>
+                          </ListItemIcon>
+                          <div className="font-soft">review</div>
+                        </MenuItem>
+                        <Divider />
+                      </>
+                    )}
+                    <MenuItem
+                      onClick={() => {
+                        handleDelete();
+                        handleClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <DeleteIcon fontSize="small" color="error" />
+                      </ListItemIcon>
+                      <div className="font-soft">Delete from bookshelf</div>
+                    </MenuItem>
+                  </>
+                ) : myReading.statusType === "DOING" ? (
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        handleDoneReading();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <CheckCircleIcon fontSize="small" />
+                      </ListItemIcon>
+                      Completed!
                     </MenuItem>
                     <Divider />
+                    <MenuItem
+                      onClick={() => {
+                        handleDelete();
+                        handleClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <DeleteIcon fontSize="small" color="error" />
+                      </ListItemIcon>
+                      Delete from bookshelf
+                    </MenuItem>
+                  </>
+                ) : (
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        handleStartReading();
+                        handleClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <MenuBookIcon fontSize="small" />
+                      </ListItemIcon>
+                      Reading now
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleDoneReading();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <CheckCircleIcon fontSize="small" />
+                      </ListItemIcon>
+                      Completed!
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem
+                      onClick={() => {
+                        handleDelete();
+                        handleClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <DeleteIcon fontSize="small" color="error" />
+                      </ListItemIcon>
+                      Delete from bookshelf
+                    </MenuItem>
                   </>
                 )}
-                <MenuItem
-                  onClick={() => {
-                    handleDelete();
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon>
-                    <DeleteIcon fontSize="small" color="error" />
-                  </ListItemIcon>
-                  <div className="font-soft">Delete from bookshelf</div>
-                </MenuItem>
-              </>
-            ) : myReading.statusType === "DOING" ? (
-              <>
-                <MenuItem
-                  onClick={() => {
-                    handleDoneReading();
-                  }}
-                >
-                  <ListItemIcon>
-                    <CheckCircleIcon fontSize="small" />
-                  </ListItemIcon>
-                  Completed!
-                </MenuItem>
-                <Divider />
-                <MenuItem
-                  onClick={() => {
-                    handleDelete();
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon>
-                    <DeleteIcon fontSize="small" color="error" />
-                  </ListItemIcon>
-                  Delete from bookshelf
-                </MenuItem>
-              </>
-            ) : (
-              <>
-                <MenuItem
-                  onClick={() => {
-                    handleStartReading();
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon>
-                    <MenuBookIcon fontSize="small" />
-                  </ListItemIcon>
-                  Reading now
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleDoneReading();
-                  }}
-                >
-                  <ListItemIcon>
-                    <CheckCircleIcon fontSize="small" />
-                  </ListItemIcon>
-                  Completed!
-                </MenuItem>
-                <Divider />
-                <MenuItem
-                  onClick={() => {
-                    handleDelete();
-                    handleClose();
-                  }}
-                >
-                  <ListItemIcon>
-                    <DeleteIcon fontSize="small" color="error" />
-                  </ListItemIcon>
-                  Delete from bookshelf
-                </MenuItem>
-              </>
-            )}
-          </div>
-        </Menu>
-        <Menu
-          className="absolute bottom-0"
-          anchorEl={anchorAddEl}
-          open={openAdd}
-          onClose={handleCloseAdd}
-        >
-          <div>
-            {!myReading && (
-              <>
-                <MenuItem
-                  onClick={() => {
-                    handleRegisterWithNone();
-                    handleCloseAdd();
-                  }}
-                >
-                  <ListItemIcon>
-                    <BookmarkBorderIcon fontSize="small" />
-                  </ListItemIcon>
-                  Next in Line
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleRegisterWithDoing();
-                    handleCloseAdd();
-                  }}
-                >
-                  <ListItemIcon>
-                    <MenuBookIcon fontSize="small" />
-                  </ListItemIcon>
-                  Reading
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleRegisterWithDone();
-                  }}
-                >
-                  <ListItemIcon>
-                    <CheckCircleIcon fontSize="small" />
-                  </ListItemIcon>
-                  Completed!
-                </MenuItem>
-              </>
-            )}
-          </div>
-        </Menu>
+              </div>
+            </Menu>
+            <Menu
+              className="absolute bottom-0"
+              anchorEl={anchorAddEl}
+              open={openAdd}
+              onClose={handleCloseAdd}
+            >
+              <div>
+                {!myReading && (
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        handleRegisterWithNone();
+                        handleCloseAdd();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <BookmarkBorderIcon fontSize="small" />
+                      </ListItemIcon>
+                      Next in Line
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleRegisterWithDoing();
+                        handleCloseAdd();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <MenuBookIcon fontSize="small" />
+                      </ListItemIcon>
+                      Reading
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleRegisterWithDone();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <CheckCircleIcon fontSize="small" />
+                      </ListItemIcon>
+                      Completed!
+                    </MenuItem>
+                  </>
+                )}
+              </div>
+            </Menu>
+          </>
+        )}
       </div>
       <Divider />
       <div className="flex mt-4 mb-4 justify-evenly">
