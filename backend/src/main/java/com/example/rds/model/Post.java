@@ -1,7 +1,8 @@
 package com.example.rds.model;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +48,9 @@ public class Post {
 	/** 推薦 */
 	private PostType postType;
 	/** ポスト日 */
-	private LocalDateTime registerDate;
+	private Instant registerDate;
 	/** 更新日 */
-	private LocalDateTime updateDate;
+	private Instant updateDate;
 
 	/** ID(google)に紐付く投稿を全て返します。 */
 	public static List<Post> findById(PostRepository rep,String id) {
@@ -73,7 +74,7 @@ public class Post {
 				updatedPost.setPostType(PostType.WITH_THOUGHTS);
 			}
 			updatedPost.setReading(reading);
-			updatedPost.setUpdateDate(LocalDateTime.now());
+			updatedPost.setUpdateDate(Instant.now());
 			return rep.save(updatedPost);
 		} else {
 			PostType postType;
@@ -84,7 +85,7 @@ public class Post {
 			} else {
 				postType=PostType.WITH_THOUGHTS;
 			}
-		var post = Post.builder().reading(reading).user(reading.getUser()).postType(postType).registerDate(LocalDateTime.now()).build();
+		var post = Post.builder().reading(reading).user(reading.getUser()).postType(postType).registerDate(Instant.now()).build();
 		return rep.save(post);
 		}
 	}
@@ -142,7 +143,12 @@ public class Post {
 	/** 年間ポスト数を返します。 */
 	public static List<YearlyPostRecord> getPostRecord(PostRepository rep, Integer userId) {
 		List<Post> posts = rep.findByUserId(userId);
-		var a = posts.stream().collect(Collectors.groupingBy((Post post) -> post.getRegisterDate().toLocalDate()));
+		var a = posts.stream()
+    .collect(Collectors.groupingBy((Post post) ->
+        post.getRegisterDate()
+             .atZone(ZoneOffset.UTC)
+            .toLocalDate()
+    ));
 		Map<LocalDate, Integer> map = new HashMap<>();
 		for (var b : a.entrySet()) {
 			map.putIfAbsent(b.getKey(), b.getValue().toArray().length);
@@ -174,8 +180,8 @@ public static class PostWithGoodCount {
 	private Account user;
 	private Reading reading;
 	private PostType postType;
-	private LocalDateTime registerDate;
-	private LocalDateTime updateDate;
+	private Instant registerDate;
+	private Instant updateDate;
 	private long goodCount;
 }
 }

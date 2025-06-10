@@ -23,8 +23,11 @@ export const UserPage = () => {
       const postResult = await getPostAllByUser(
         result.data.userId && result.data.userId
       );
+
       const sortedPosts = postResult.data.slice().sort((a, b) => {
-        return new Date(b.registerDate) - new Date(a.registerDate);
+        const dateA = a.registerDate ? new Date(a.registerDate).getTime() : 0;
+        const dateB = b.registerDate ? new Date(b.registerDate).getTime() : 0;
+        return dateB - dateA;
       });
       setPosts(sortedPosts);
     } catch (error) {

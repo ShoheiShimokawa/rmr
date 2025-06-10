@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 export const genreToEnum = (genre) => {
   switch (genre) {
@@ -262,6 +263,8 @@ export const isBlank = (str) => {
 };
 
 export const formatDateTime = (dateString) => {
-  const date = new Date(dateString);
-  return format(date, "yyyy/MM/dd HH:mm");
+  const date = new Date(dateString); // ISO文字列 → Date型
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const zonedDate = toZonedTime(date, timeZone);
+  return format(zonedDate, "yyyy/MM/dd HH:mm");
 };
