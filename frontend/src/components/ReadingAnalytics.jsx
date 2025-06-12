@@ -59,8 +59,10 @@ export const ReadingAnalytics = () => {
             p: 1,
             borderRadius: "13px",
             boxShadow: 3,
-            height: 370,
-            width: 700,
+            height: "auto",
+            width: "100%",
+            maxWidth: 800,
+            margin: "0 auto",
           }}
         >
           <CardContent>
@@ -95,8 +97,10 @@ export const ReadingAnalytics = () => {
               borderRadius: "13px",
               boxShadow: 3,
               backgroundColor: "white",
-              height: 350,
-              width: 700,
+              height: "auto",
+              width: "100%",
+              maxWidth: 800,
+              margin: "0 auto",
             }}
           >
             <div className="font-soft text-xl font-bold">

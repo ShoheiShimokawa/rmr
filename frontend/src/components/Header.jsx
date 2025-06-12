@@ -83,7 +83,7 @@ export const Header = () => {
         position="sticky"
         elevation={0}
         sx={{
-          height: 80,
+          height: 70,
           backgroundColor: "white",
           color: "black",
           alignSelf: "flex-start",
@@ -93,97 +93,96 @@ export const Header = () => {
           variant="dense"
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
             minHeight: "48px",
           }}
         >
-          <div className="ml-10 mt-2">
-            <Link to="/">
-              <img
-                src="/rmr_logo.png"
-                alt="readMore Logo"
-                style={{
-                  width: "150px",
-                  height: "150px",
-                  objectFit: "contain",
-                }}
-              />
-            </Link>
-          </div>
-          <div className="ml-auto mr-12">
-            <Stack
-              direction="row"
-              sx={{
-                p: 2,
-                gap: 1,
-                alignItems: "center",
-              }}
-            >
-              <IconButton onClick={handlePostClick}>
-                <FaPenNib />
-              </IconButton>
-              <Avatar
-                onClick={handleUserPage}
-                src={user && user.picture}
-                sx={{ width: 34, height: 34 }}
-              />
-              <IconButton
-                aria-label="more"
-                id="long-button"
-                aria-haspopup="true"
-                onClick={handleClick}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu anchorEl={anchor} open={open} onClose={handleClose}>
-                {user ? (
-                  <MenuItem
-                    onClick={() => handleLogout()}
-                    sx={{
-                      textDecoration: "none",
-                      "&:hover": {
-                        textDecoration: "none",
-                      },
-                    }}
-                  >
-                    <ListItemIcon>
-                      <LogoutRoundedIcon />
-                    </ListItemIcon>
-                    Log out
-                  </MenuItem>
-                ) : (
-                  <MenuItem
-                    onClick={() => handleLogin()}
-                    sx={{
-                      textDecoration: "none",
-                      "&:hover": {
-                        textDecoration: "none",
-                      },
-                    }}
-                  >
-                    <ListItemIcon>
-                      <LoginRoundedIcon />
-                    </ListItemIcon>
-                    Log in
-                  </MenuItem>
-                )}
-                <MenuItem
-                  onClick={handleInfo}
-                  sx={{
-                    textDecoration: "none",
-                    "&:hover": {
-                      textDecoration: "none",
-                    },
+          <div className="w-full max-w-[1000px] mx-auto flex justify-between items-center px-1">
+            <div className="mt-2">
+              <Link to="/">
+                <img
+                  src="/rmr_logo.png"
+                  alt="rmr Logo"
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    objectFit: "contain",
                   }}
+                />
+              </Link>
+            </div>
+            <div className="">
+              <Stack
+                direction="row"
+                sx={{
+                  gap: 1,
+                  alignItems: "center",
+                }}
+              >
+                <IconButton onClick={handlePostClick}>
+                  <FaPenNib />
+                </IconButton>
+                <Avatar
+                  onClick={handleUserPage}
+                  src={user && user.picture}
+                  sx={{ width: 34, height: 34 }}
+                />
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-haspopup="true"
+                  onClick={handleClick}
                 >
-                  <ListItemIcon>
-                    <InfoIcon />
-                  </ListItemIcon>
-                  About
-                </MenuItem>
-              </Menu>
-            </Stack>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu anchorEl={anchor} open={open} onClose={handleClose}>
+                  {user ? (
+                    <MenuItem
+                      onClick={() => handleLogout()}
+                      sx={{
+                        textDecoration: "none",
+                        "&:hover": {
+                          textDecoration: "none",
+                        },
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LogoutRoundedIcon />
+                      </ListItemIcon>
+                      Log out
+                    </MenuItem>
+                  ) : (
+                    <MenuItem
+                      onClick={() => handleLogin()}
+                      sx={{
+                        textDecoration: "none",
+                        "&:hover": {
+                          textDecoration: "none",
+                        },
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LoginRoundedIcon />
+                      </ListItemIcon>
+                      Log in
+                    </MenuItem>
+                  )}
+                  <MenuItem
+                    onClick={handleInfo}
+                    sx={{
+                      textDecoration: "none",
+                      "&:hover": {
+                        textDecoration: "none",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <InfoIcon />
+                    </ListItemIcon>
+                    About
+                  </MenuItem>
+                </Menu>
+              </Stack>
+            </div>
           </div>
         </Toolbar>
         <Divider />

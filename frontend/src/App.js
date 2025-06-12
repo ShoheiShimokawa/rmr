@@ -53,6 +53,7 @@ function App() {
                   </div>
                   <Divider
                     orientation="vertical"
+                    className="hidden md:block"
                     flexItem
                     sx={{ borderColor: "#ddd", alignSelf: "stretch" }}
                   />
