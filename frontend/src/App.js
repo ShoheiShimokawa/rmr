@@ -45,7 +45,12 @@ function App() {
                     gap: 3,
                   }}
                 >
-                  <Sidebar />
+                  <div className="hidden md:block">
+                    <Sidebar />
+                  </div>
+                  <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+                    <Sidebar mobile />
+                  </div>
                   <Divider
                     orientation="vertical"
                     flexItem

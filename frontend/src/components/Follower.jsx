@@ -47,7 +47,9 @@ export const Follower = ({ userId }) => {
                 <ListItem
                   key={follower.id}
                   onClick={() => {
-                    handleClick(follower.user.handle && follower.user.handle);
+                    handleClick(
+                      follower.follower.handle && follower.follower.handle
+                    );
                   }}
                   sx={{
                     cursor: "pointer",
