@@ -38,6 +38,7 @@ function App() {
               <Box>
                 <Box
                   component="main"
+                  className="flex flex-col md:flex-row gap-2 pb-[50px] md:pb-0"
                   sx={{
                     flexGrow: 1,
                     display: "flex",

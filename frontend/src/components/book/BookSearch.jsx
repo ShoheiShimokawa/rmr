@@ -120,7 +120,6 @@ export const BookSearch = ({ fromPost }) => {
             sx={{
               p: "2px 4px",
               display: "flex",
-              width: 400,
             }}
           >
             <InputBase

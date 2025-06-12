@@ -27,7 +27,7 @@ export const Sidebar = ({ mobile = false }) => {
   if (mobile) {
     return (
       <Box
-        className="flex justify-around items-center py-2 border-t"
+        className="flex justify-around items-center py-1 border-t"
         sx={{
           backgroundColor: "white",
         }}
@@ -39,7 +39,7 @@ export const Sidebar = ({ mobile = false }) => {
             className="flex flex-col items-center text-xs text-zinc-700"
           >
             <div>{item.icon}</div>
-            <div className="text-[0.65rem] mt-1">{item.text}</div>
+            <div className="text-[0.65rem] mt-1 font-soft">{item.text}</div>
           </Link>
         ))}
       </Box>

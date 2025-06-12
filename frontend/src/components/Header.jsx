@@ -83,7 +83,7 @@ export const Header = () => {
         position="sticky"
         elevation={0}
         sx={{
-          height: 70,
+          height: 65,
           backgroundColor: "white",
           color: "black",
           alignSelf: "flex-start",
