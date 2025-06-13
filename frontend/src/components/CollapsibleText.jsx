@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@mui/material";
 
-export const CollapsibleText = ({ text, maxLength = 150, maxNewlines = 6 }) => {
+export const CollapsibleText = ({ text, maxLength = 150, maxNewlines = 4 }) => {
   const [expanded, setExpanded] = useState(false);
 
   const lineCount = text && text.split("\n").length;

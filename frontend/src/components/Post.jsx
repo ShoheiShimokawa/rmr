@@ -228,7 +228,7 @@ export const Post = ({
                       <div className="text-sm mt-1 font-soft ">
                         <CollapsibleText
                           text={post.reading.thoughts}
-                          maxLength={500}
+                          maxLength={400}
                         />
                       </div>
                       {visible && (
