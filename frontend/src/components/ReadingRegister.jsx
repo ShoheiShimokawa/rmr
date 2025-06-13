@@ -18,7 +18,9 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const formSchema = z
     .object({
       rate: z.number().optional(),
-      thoughts: z.string().max(500),
+      thoughts: z
+        .string()
+        .max(700, "Your thoughts must be under 700 characters."),
       recommended: z.boolean(),
     })
     .refine(
@@ -148,6 +150,17 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           helperText={errors.thoughts?.message}
           disabled={isDisabled}
         />
+        <div className="text-xs text-right mt-1 font-soft">
+          <span
+            className={
+              watchedThoughts.length > 700
+                ? "text-red-500 font-bold"
+                : "text-zinc-500"
+            }
+          >
+            {watchedThoughts.length}/700
+          </span>
+        </div>
 
         <div className="flex justify-end mt-4">
           <Button

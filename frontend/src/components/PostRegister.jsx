@@ -115,10 +115,10 @@ export const PostRegister = () => {
               </>
             )}
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center mt-1">
             <div className="font-soft">Select a book to review</div>
-            <IconButton>
-              <SearchIcon onClick={handleSearch} />
+            <IconButton onClick={handleSearch}>
+              <SearchIcon />
             </IconButton>
           </div>
           <div className="ml-2 mb-6">

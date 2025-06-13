@@ -8,6 +8,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { formatDateTime } from "../util";
+import { CollapsibleText } from "./CollapsibleText";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { Link } from "react-router-dom";
 import { BookDetail } from "./book/BookDetail";
@@ -131,23 +132,25 @@ export const Post = ({
       </CustomDialog>
       {post && post.user && (
         <List>
-          <div key={post.postId} className="w-xl flex group">
-            <div className="mr-2">
-              {!fromDetail ? (
-                <Link
-                  to={`/${post.user.handle}`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <Avatar src={post.user.picture} />
-                </Link>
-              ) : (
-                <Avatar
-                  src={post.user && post.user.picture}
-                  onClick={() => {
-                    handleClick(post.user.handle && post.user.handle);
-                  }}
-                />
-              )}
+          <div key={post.postId} className="w-full mx-auto flex group ">
+            <div className="flex">
+              <div className="mr-1">
+                {!fromDetail ? (
+                  <Link
+                    to={`/${post.user.handle}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Avatar src={post.user.picture} />
+                  </Link>
+                ) : (
+                  <Avatar
+                    src={post.user && post.user.picture}
+                    onClick={() => {
+                      handleClick(post.user.handle && post.user.handle);
+                    }}
+                  />
+                )}
+              </div>
             </div>
             <div className="w-full">
               <div className="flex justify-between items-start items-center w-full ml-1 ">
@@ -222,8 +225,11 @@ export const Post = ({
                           }}
                         />
                       )}
-                      <div className="text-sm mt-1 font-soft">
-                        {post.reading.thoughts}
+                      <div className="text-sm mt-1 font-soft ">
+                        <CollapsibleText
+                          text={post.reading.thoughts}
+                          maxLength={500}
+                        />
                       </div>
                       {visible && (
                         <>
