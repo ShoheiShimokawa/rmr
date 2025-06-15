@@ -82,7 +82,7 @@ export const BookShelf = ({ account, onClick }) => {
         </CustomDialog>
       )}
       <div className="text-lg font-medium font-soft">Want To Read</div>
-      <div className="w-[700px] overflow-x-auto px-2 py-2 ">
+      <div className="w-full overflow-x-auto px-2 py-2 ">
         {toRead.length !== 0 ? (
           <BookArray
             books={toRead}
@@ -109,7 +109,7 @@ export const BookShelf = ({ account, onClick }) => {
       <div className="text-lg  mt-2 font-medium font-soft py-1">
         Reading Now
       </div>
-      <div className="w-[700px] overflow-x-auto px-2 py-2 ">
+      <div className="w-full overflow-x-auto px-2 py-2 ">
         {readingNow.length !== 0 ? (
           <BookArray
             books={readingNow}
@@ -135,7 +135,7 @@ export const BookShelf = ({ account, onClick }) => {
 
       <Divider sx={{ height: "auto", m: 1 }} />
       {fiction.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1">
+        <div className="w-full overflow-x-auto px-2 py-1">
           <>
             <div className="text-lg  mt-2 mb-2 font-medium font-soft">
               Fiction
@@ -152,7 +152,7 @@ export const BookShelf = ({ account, onClick }) => {
         </div>
       )}
       {nonFiction.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
+        <div className="w-full overflow-x-auto px-2 py-1 ">
           <>
             <div className="text-lg mb-2 font-soft"> Non Fiction</div>
             <BookArray
@@ -167,7 +167,7 @@ export const BookShelf = ({ account, onClick }) => {
         </div>
       )}
       {tech.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1">
+        <div className="w-full overflow-x-auto px-2 py-1">
           <>
             <div className="text-lg mb-2 font-soft">
               Professional & Technical
@@ -184,7 +184,7 @@ export const BookShelf = ({ account, onClick }) => {
         </div>
       )}
       {art.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
+        <div className="w-full overflow-x-auto px-2 py-1 ">
           <>
             <div className="text-lg mb-2 font-soft"> Arts & Culture</div>
             <BookArray
@@ -199,7 +199,7 @@ export const BookShelf = ({ account, onClick }) => {
         </div>
       )}
       {study.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
+        <div className="w-full overflow-x-auto px-2 py-1 ">
           <>
             <div className="text-lg mb-2 font-soft">Education & Study-aids</div>
             <BookArray
@@ -214,7 +214,7 @@ export const BookShelf = ({ account, onClick }) => {
         </div>
       )}
       {entertainment.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1 ">
+        <div className="w-full overflow-x-auto px-2 py-1 ">
           <>
             <div className="text-lg mb-2 font-soft"> Entertainment</div>
             <BookArray
@@ -229,7 +229,7 @@ export const BookShelf = ({ account, onClick }) => {
         </div>
       )}
       {academic.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1">
+        <div className="w-full overflow-x-auto px-2 py-1">
           <>
             <div className="text-lg mb-2 font-soft"> Academics & Research</div>
             <BookArray
@@ -244,7 +244,7 @@ export const BookShelf = ({ account, onClick }) => {
         </div>
       )}
       {practical.length !== 0 && (
-        <div className="w-[700px] overflow-x-auto px-2 py-1">
+        <div className="w-full overflow-x-auto px-2 py-1">
           <>
             <div className="text-lg mb-2 font-soft"> Practical & Hobbies</div>
             <BookArray
@@ -258,7 +258,7 @@ export const BookShelf = ({ account, onClick }) => {
           </>
         </div>
       )}
-      <div className="w-[700px] overflow-x-auto px-2 py-1 ">
+      <div className="w-full overflow-x-auto px-2 py-1 ">
         {other.length !== 0 && (
           <>
             <div className="text-lg mb-2 font-soft"> Other</div>

@@ -16,7 +16,7 @@ export const CollapsibleText = ({ text, maxLength = 150, maxNewlines = 4 }) => {
     : text;
 
   return (
-    <div className="text-sm leading-relaxed whitespace-pre-wrap break-words break-all w-full max-w-full overflow-hidden">
+    <div className="text-sm font-soft leading-relaxed whitespace-pre-wrap break-words break-all w-full max-w-full overflow-hidden">
       <div>{displayText}</div>
       {(isTooLong || isTooManyNewlines) && (
         <Button

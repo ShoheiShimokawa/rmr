@@ -20,7 +20,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
       rate: z.number().optional(),
       thoughts: z
         .string()
-        .max(700, "Your thoughts must be under 700 characters."),
+        .max(600, "Your thoughts must be under 600 characters."),
       recommended: z.boolean(),
     })
     .refine(
@@ -153,12 +153,12 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
         <div className="text-xs text-right mt-1 font-soft">
           <span
             className={
-              watchedThoughts.length > 700
+              watchedThoughts.length > 600
                 ? "text-red-500 font-bold"
                 : "text-zinc-500"
             }
           >
-            {watchedThoughts.length}/700
+            {watchedThoughts.length}/600
           </span>
         </div>
 

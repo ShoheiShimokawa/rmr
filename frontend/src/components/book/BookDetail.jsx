@@ -221,7 +221,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   return (
     <div>
       {showLoginDialog && <LoginDialog />}
-
       <CustomDialog
         open={openRegister}
         title="Review"

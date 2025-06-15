@@ -254,8 +254,10 @@ export const Profile = ({ userId }) => {
                   </div>
                 </div>
               </div>
-              <div style={{ width: "700px", height: "auto" }}>
-                <ContributionMap userId={userId && userId} />
+              <div className="w-full overflow-x-auto">
+                <div className="min-w-[600px]">
+                  <ContributionMap userId={userId && userId} />
+                </div>
               </div>
             </>
           )}

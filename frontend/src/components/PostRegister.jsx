@@ -2,13 +2,12 @@ import { findReadingByUser } from "../api/reading";
 import { registerBook } from "../api/book";
 import { useContext, useEffect, useState, useCallback } from "react";
 import { IconButton } from "@mui/material";
-import { Book } from "./book/Book";
 import { CustomDialog } from "../ui/CustomDialog";
 import { BookArray } from "./book/BookArray";
 import SearchIcon from "@mui/icons-material/Search";
 import { ReadingRegister } from "./ReadingRegister";
 import { BookSearch } from "./book/BookSearch";
-import { BookDetail } from "./book/BookDetail";
+import { BookWithDesc } from "./book/BookWithDesc";
 import UserContext from "./UserProvider";
 import { genreToEnum } from "../util";
 
@@ -18,14 +17,9 @@ export const PostRegister = () => {
   const [open, setOpen] = useState(false);
   const [selectedReading, setSelectedReading] = useState(null);
   const [selectedBook, setSelectedBook] = useState(null);
-  const [addedBook, setAddedBook] = useState();
 
-  const none = readings.filter((r) => {
-    return r.statusType === "NONE";
-  });
-
-  const doing = readings.filter((r) => {
-    return r.statusType === "DOING";
+  const recently = readings.filter((r) => {
+    return r.statusType === "NONE" || r.statusType === "DOING";
   });
 
   const find = useCallback(async () => {
@@ -69,8 +63,6 @@ export const PostRegister = () => {
       publishedDate: selectedBook.volumeInfo.publishedDate,
     };
     const result = await registerBook(book);
-
-    setAddedBook(result && result.data);
     setSelectedBook(result.data);
     setOpen(false);
   };
@@ -84,29 +76,14 @@ export const PostRegister = () => {
         <BookSearch fromPost={fromPost} />
       </CustomDialog>
       <div className="flex">
-        <div className="min-w-[370px]">
-          <div className=" mr-3">
-            {none.length >= 1 && (
+        <div className="w-full">
+          <div className="mr-3">
+            {recently.length >= 1 && (
               <>
-                <div className="mb-2 font-soft font-bold">To Read</div>
-                <div className="w-[370px] overflow-x-auto">
+                <div className="mb-2 font-soft font-bold">Recently</div>
+                <div className="w-full  overflow-x-auto">
                   <BookArray
-                    books={none && none}
-                    handleSelect={handleSelect}
-                    width={"70px"}
-                    height={"100px"}
-                  />
-                </div>
-              </>
-            )}
-            {doing.length >= 1 && (
-              <>
-                <div className="mt-3 mb-2 font-soft font-bold">
-                  Reading Now..
-                </div>
-                <div className="w-[370px] overflow-x-auto space-y-2">
-                  <BookArray
-                    books={doing && doing}
+                    books={recently && recently}
                     handleSelect={handleSelect}
                     width={"70px"}
                     height={"100px"}
@@ -121,13 +98,10 @@ export const PostRegister = () => {
               <SearchIcon />
             </IconButton>
           </div>
-          <div className="ml-2 mb-6">
-            {addedBook && (
-              <Book book={addedBook} width={"70px"} height={"100px"} />
-            )}
+          <div className="mt-2">
+            {selectedBook && <BookWithDesc book={selectedBook} />}
           </div>
-
-          <div className="mt-5">
+          <div className="mt-4 mb-2">
             <ReadingRegister
               book={selectedBook && selectedBook}
               reading={selectedReading && selectedReading}
@@ -137,10 +111,6 @@ export const PostRegister = () => {
               }}
             />
           </div>
-        </div>
-
-        <div className="ml-8 mt-5 min-w-[430px]">
-          {selectedBook && <BookDetail book={selectedBook} visible={false} />}
         </div>
       </div>
     </div>
