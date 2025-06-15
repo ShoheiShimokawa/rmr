@@ -101,7 +101,7 @@ export const PostRegister = () => {
           <div className="mt-2">
             {selectedBook && <BookWithDesc book={selectedBook} />}
           </div>
-          <div className="mt-4 mb-2">
+          <div className="mt-4 mb-5">
             <ReadingRegister
               book={selectedBook && selectedBook}
               reading={selectedReading && selectedReading}
