@@ -45,5 +45,6 @@ sketch
 /backend/.env
 /frontend/.env
 build/
+/backend/data
 
 # End of https://www.toptal.com/developers/gitignore/api/java,react
