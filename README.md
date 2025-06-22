@@ -13,25 +13,29 @@ Create your own digital bookshelf, log your reading journey, and highlight favor
 
 ## Getting Started
 
-1. git clone this project.
+git clone this project
 
 ### Frontend
 
-2. add these files.
+cd frontend
 
-- node_modules
+npm install
+
+add env file.
+
 - .env  
    Set the following environment variable:
   REACT_APP_API_URL=http://localhost:8080/api/
 
 ### Backend
 
-3. add these files
-   .vscode
+cd backend
 
-- launch.json
+add these files
 
-```json
+- .vscode
+
+```json:launch
 {
   "configurations": [
     {
@@ -48,9 +52,7 @@ Create your own digital bookshelf, log your reading journey, and highlight favor
 }
 ```
 
-- settings.json
-
-```json
+```json:settings
 {
   "java.configuration.runtimes": [
     {
@@ -62,4 +64,5 @@ Create your own digital bookshelf, log your reading journey, and highlight favor
 }
 ```
 
-.env
+- .env
+  Configure by referencing application.properties.
