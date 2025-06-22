@@ -17,9 +17,12 @@ git clone this project
 
 ### Frontend
 
-cd frontend
+move to frontend, install npm.
 
+```bash
+cd frontend
 npm install
+```
 
 add env file.
 
@@ -29,13 +32,22 @@ add env file.
 
 ### Backend
 
-cd backend
+move to backend.
 
-add these files
+```bash
+cd backend
+```
+
+add these files.
+
+- .env
+  Configure by referencing application.properties.
 
 - .vscode
+  in .vscode, add two files
+- launch.json
 
-```json:launch
+```json
 {
   "configurations": [
     {
@@ -52,7 +64,9 @@ add these files
 }
 ```
 
-```json:settings
+- settings.json
+
+```json
 {
   "java.configuration.runtimes": [
     {
@@ -63,6 +77,3 @@ add these files
   ]
 }
 ```
-
-- .env
-  Configure by referencing application.properties.
