@@ -29,6 +29,7 @@ export const ProfileChange = ({ account, update }) => {
       .optional(),
     x: z
       .string()
+      .max(15, "Please enter your X ID.")
       .refine(
         (val) => {
           return val === "" || allowedChars.test(val);
@@ -41,6 +42,7 @@ export const ProfileChange = ({ account, update }) => {
       .optional(),
     facebook: z
       .string()
+      .max(15, "Please enter your facebook ID.")
       .refine(
         (val) => {
           return val === "" || allowedChars.test(val);
@@ -53,6 +55,7 @@ export const ProfileChange = ({ account, update }) => {
       .optional(),
     link: z
       .string()
+      .max(200, "URL must be 200 characters or fewer.")
       .transform((val) => (val === "" ? undefined : val))
       .optional()
       .superRefine((val, ctx) => {
