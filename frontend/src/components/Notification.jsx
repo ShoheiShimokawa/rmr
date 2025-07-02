@@ -155,7 +155,9 @@ export const Notification = () => {
                   </List>
                 </>
               ) : (
-                <div>no data.</div>
+                <div className="flex justify-center font-soft">
+                  no notifications.
+                </div>
               )}
             </>
           )}
