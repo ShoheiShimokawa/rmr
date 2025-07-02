@@ -231,14 +231,7 @@ export const Memo = () => {
               No highlights yet
             </div>
             <div className="font-soft mt-4">
-              <div className="mb-2">
-                Start by saving something you found interesting in a book you
-                read.
-              </div>
-
-              <div>
-                For example, “a memorable quote” or “something you learned.”
-              </div>
+              <div className="mb-2">Note your favorite phrases here!</div>
             </div>
             <div className="mt-5">
               <Button

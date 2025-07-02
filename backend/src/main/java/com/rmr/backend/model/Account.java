@@ -40,6 +40,12 @@ public class Account {
 	private String email;
 	/** 自己紹介文 */
 	private String description;
+	/** X */
+	private String x;
+	/** FaceBook */
+	private String facebook;
+	/** リンク */
+	private String link;
 	/** 登録日 */
 	private LocalDate RegisterDate;
 	/** 更新日 */
@@ -60,17 +66,6 @@ public class Account {
 		return rep.findAll();
 	}
 	
-	/** ハンドルを発行します。 */
-	// public static Account registerHandle(AccountRepository rep,Integer userId,String handle) {
-	// 	var a=rep.findByHandle(handle);
-	// 	if(a.isPresent()) {
-	// 		return "すでに存在しているIDです。";
-	// 	} else {
-	// 		var b = rep.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("good not found"));
-	// 		b.setHandle(handle);
-	// 	return rep.save(b);
-	// 	}
-	// };
 	
 	/** アカウントを登録します。 */
 	public static Account register(AccountRepository rep, Account account) {
@@ -85,7 +80,6 @@ public class Account {
 			) {
     }
 	
-	
 	/** プロフィールを変更します。*/
 	public static Account update(AccountRepository rep,UpdateProfile params) {
 		Account user = rep.findByUserId(params.userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
@@ -97,6 +91,9 @@ public class Account {
 		user.setHandle(params.handle);
 		user.setName(params.name);
 		user.setDescription(params.description);
+		user.setX(params.x);
+		user.setFacebook(params.facebook);
+		user.setLink(params.link);
 		return rep.save(user);
 	}
 
@@ -110,6 +107,9 @@ public class Account {
 		private String handle;
 		private String name;
 		private String description;
+		private String x;
+		private String facebook;
+		private String link;
 
 		public Account create() {
 		return Account.builder()

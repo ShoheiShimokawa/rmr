@@ -4,6 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, InputAdornment } from "@mui/material";
 import { updateProfile } from "../api/account";
 import { useNotify } from "../hooks/NotifyProvider";
+import XIcon from "@mui/icons-material/X";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkIcon from "@mui/icons-material/Link";
 
 export const ProfileChange = ({ account, update }) => {
   const { notify } = useNotify();
@@ -14,7 +17,7 @@ export const ProfileChange = ({ account, update }) => {
       .min(1, "ID is required.")
       .max(30, "Please enter a user ID within 30 characters")
       .regex(allowedChars, {
-        message: "Only letters, numbers, and -._~ are allowed.",
+        message: "Only letters, numbers, and -_ are allowed.",
       }),
     name: z
       .string()
@@ -24,6 +27,52 @@ export const ProfileChange = ({ account, update }) => {
       .string()
       .max(300, "Introduction must be 300 characters or fewer.")
       .optional(),
+    x: z
+      .string()
+      .refine(
+        (val) => {
+          return val === "" || allowedChars.test(val);
+        },
+        {
+          message: "Only letters, numbers, and -_ are allowed.",
+        }
+      )
+      .transform((val) => (val === "" ? undefined : val))
+      .optional(),
+    facebook: z
+      .string()
+      .refine(
+        (val) => {
+          return val === "" || allowedChars.test(val);
+        },
+        {
+          message: "Only letters, numbers, and -_ are allowed.",
+        }
+      )
+      .transform((val) => (val === "" ? undefined : val))
+      .optional(),
+    link: z
+      .string()
+      .transform((val) => (val === "" ? undefined : val))
+      .optional()
+      .superRefine((val, ctx) => {
+        if (val === undefined) return;
+
+        try {
+          const parsed = new URL(val);
+          if (parsed.protocol !== "https:") {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Only https links are allowed.",
+            });
+          }
+        } catch {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Must be a valid URL.",
+          });
+        }
+      }),
   });
   const {
     register,
@@ -36,6 +85,9 @@ export const ProfileChange = ({ account, update }) => {
       handle: account.handle && account.handle,
       name: account.name && account.name,
       description: account.description ? account.description : "",
+      x: account.x ? account.x : "",
+      facebook: account.facebook ? account.facebook : "",
+      link: account.link ? account.link : "",
     },
   });
   const onSubmit = async (values) => {
@@ -68,14 +120,15 @@ export const ProfileChange = ({ account, update }) => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
+        <div className="mt-4">
+          <div className="font-soft font-bold">User Id*</div>
           <TextField
             {...register("handle")}
-            label="user ID*"
-            variant="standard"
+            variant="outlined"
             multiline
             fullWidth
-            margin="normal"
+            margin="dense"
+            size="small"
             error={!!errors.handle}
             helperText={errors.handle?.message}
             sx={{ maxWidth: 280 }}
@@ -91,14 +144,15 @@ export const ProfileChange = ({ account, update }) => {
             }}
           />
         </div>
-        <div>
+        <div className="mt-4">
+          <div className="font-soft font-bold">Name*</div>
           <TextField
             {...register("name")}
-            label="name*"
-            variant="standard"
+            variant="outlined"
             multiline
             fullWidth
-            margin="normal"
+            margin="dense"
+            size="small"
             sx={{ maxWidth: 280 }}
             error={!!errors.name}
             helperText={errors.name?.message}
@@ -109,22 +163,110 @@ export const ProfileChange = ({ account, update }) => {
             }}
           />
         </div>
-        <TextField
-          {...register("description")}
-          label="introduction"
-          variant="standard"
-          multiline
-          rows={6}
-          fullWidth
-          margin="normal"
-          error={!!errors.description}
-          helperText={errors.description?.message}
-          slotProps={{
-            inputLabel: {
-              shrink: true,
-            },
-          }}
-        />
+        <div className="mt-4">
+          <div className="font-soft font-bold">Introduction</div>
+          <TextField
+            {...register("description")}
+            variant="outlined"
+            multiline
+            rows={4}
+            fullWidth
+            margin="dense"
+            size="small"
+            placeholder="Tell us about yourself or your reading interests..."
+            error={!!errors.description}
+            helperText={errors.description?.message}
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+        </div>
+        <div className="flex justify-around">
+          <div>
+            <div className="flex items-center font-soft font-bold mt-4">
+              <XIcon sx={{ fontSize: "20px" }} />
+              <div className="ml-2">X</div>
+            </div>
+            <div>
+              <TextField
+                {...register("x")}
+                variant="outlined"
+                multiline
+                fullWidth
+                margin="dense"
+                size="small"
+                placeholder="your_X_ID"
+                error={!!errors.x}
+                helperText={errors.x?.message}
+                sx={{ maxWidth: 200 }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">@</InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center font-soft font-bold mt-4">
+              <FacebookIcon sx={{ fontSize: "20px" }} />
+              <div className="ml-2">FaceBook</div>
+            </div>
+            <div>
+              <TextField
+                {...register("facebook")}
+                variant="outlined"
+                multiline
+                fullWidth
+                margin="dense"
+                size="small"
+                placeholder="your_facebook_ID"
+                error={!!errors.facebook}
+                helperText={errors.facebook?.message}
+                sx={{ maxWidth: 200 }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">@</InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="mb-4">
+          <div className="flex items-center font-soft font-bold mt-4">
+            <LinkIcon sx={{ fontSize: "20px" }} />
+            <div className="ml-2 ">Link</div>
+          </div>
+          <TextField
+            {...register("link")}
+            variant="outlined"
+            multiline
+            fullWidth
+            size="small"
+            placeholder="https://example.com"
+            margin="dense"
+            error={!!errors.link}
+            helperText={errors.link?.message}
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+        </div>
         <Button
           type="submit"
           variant="contained"

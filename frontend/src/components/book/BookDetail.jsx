@@ -300,7 +300,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                           },
                         }}
                       >
-                        add bookshelf
+                        Add bookshelf
                       </Button>
                     </div>
                     <div className="text-sm text-zinc-700 font-soft">
@@ -329,7 +329,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <BookmarkBorderIcon fontSize="small" />
                       </ListItemIcon>
-                      Next in Line
+                      To Read
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -467,7 +467,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <BookmarkBorderIcon fontSize="small" />
                       </ListItemIcon>
-                      Next in Line
+                      To Read
                     </MenuItem>
                     <MenuItem
                       onClick={() => {

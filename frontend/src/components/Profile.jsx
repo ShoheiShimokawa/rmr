@@ -12,10 +12,19 @@ import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
 import { ProfileChange } from "./ProfileChange";
 import { ContributionMap } from "./ContributionMap";
-import { Avatar, Button, CircularProgress } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import { useContext, useEffect, useState, useCallback } from "react";
 import UserContext from "./UserProvider";
 import { useRequireLogin } from "../hooks/useRequireLogin";
+import XIcon from "@mui/icons-material/X";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkIcon from "@mui/icons-material/Link";
 
 export const Profile = ({ userId }) => {
   const { user, setUser } = useContext(UserContext);
@@ -114,7 +123,7 @@ export const Profile = ({ userId }) => {
           {showLoginDialog && <LoginDialog />}
           <CustomDialog
             open={open}
-            title="profile setting"
+            title="Profile setting"
             onClose={handleChangeClose}
           >
             <ProfileChange
@@ -224,8 +233,7 @@ export const Profile = ({ userId }) => {
                   @{account.handle}
                 </div>
               </div>
-              <div className="mb-2 mt-2 ml-2 font-soft  break-words">
-                {" "}
+              <div className=" mt-2  mb-2 ml-2 font-soft  break-words">
                 {account.description}
               </div>
               <div className="flex mb-2">
@@ -254,6 +262,55 @@ export const Profile = ({ userId }) => {
                   </div>
                 </div>
               </div>
+              {(account.x || account.facebook || account.link) && (
+                <div className="ml-1 mb-2 flex">
+                  {account.x && (
+                    <Tooltip title={`${account.x}`} arrow>
+                      <IconButton
+                        component="a"
+                        href={`https://x.com/${account.x}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        color="inherit"
+                      >
+                        <XIcon
+                          sx={{ fontSize: "20px", color: "rgba(0,0,0,0.4)" }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {account.facebook && (
+                    <Tooltip title={`${account.facebook}`} arrow>
+                      <IconButton
+                        component="a"
+                        href={`https://www.facebook.com/${account.facebook}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        color="inherit"
+                      >
+                        <FacebookIcon
+                          sx={{ fontSize: "20px", color: "rgba(0,0,0,0.4)" }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {account.link && (
+                    <Tooltip title={`${account.link}`} arrow>
+                      <IconButton
+                        component="a"
+                        href={`${account.link}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        color="inherit"
+                      >
+                        <LinkIcon
+                          sx={{ fontSize: "20px", color: "rgba(0,0,0,0.4)" }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </div>
+              )}
               <div className="w-full overflow-x-auto">
                 <div className="min-w-[600px]">
                   <ContributionMap userId={userId && userId} />
