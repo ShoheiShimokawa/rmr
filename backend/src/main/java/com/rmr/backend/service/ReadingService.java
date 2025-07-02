@@ -52,7 +52,7 @@ public class ReadingService {
 	public Reading register(RegisterReading param) {
 		var reading =Reading.register(rep, bRep,aRep, param);
 		var readingId = reading.getReadingId();
-		if(reading.getStatusType()==BookStatusType.DONE && (reading.getRate()!=0 || !reading.getThoughts().equals("")) || param.isRecommended()  ){
+		if(reading.getStatusType()==BookStatusType.DONE && (!reading.getThoughts().equals("")) || param.isRecommended()  ){
 			Post.registerPost(pRep,rep,readingId,param.isRecommended());
 		}
 		return reading;

@@ -119,7 +119,7 @@ export const Memo = () => {
       <div>
         {memos.length >= 1 ? (
           <>
-            <div className="mb-2 flex justify-end">
+            <div className="mb-2 mt-3 flex justify-end">
               <Button
                 variant="outlined"
                 size="small"
@@ -136,7 +136,7 @@ export const Memo = () => {
                   },
                 }}
               >
-                add Highlight
+                New Highlight
               </Button>
             </div>
             {formatted.map((entry, i) => (
@@ -208,7 +208,6 @@ export const Memo = () => {
                     </Typography>
                   </Box>
 
-                  {/* 右カラム */}
                   <Box sx={{ minWidth: 100, maxWidth: 120 }}>
                     <Book book={entry.reading.book} />
                   </Box>
@@ -223,19 +222,24 @@ export const Memo = () => {
               p: 4,
               textAlign: "center",
               borderRadius: 2,
-              my: 8,
+              my: 16,
+              backgroundColor: "#F5F5F5",
             }}
           >
             <MenuBookIcon sx={{ fontSize: 40, mb: 1 }} />
-            <Typography variant="h6" gutterBottom>
+            <div className="font-soft font-bold text-xl mb-1">
               No highlights yet
-            </Typography>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Start by saving something you found interesting in a book you
-              read.
-              <br />
-              For example, “a memorable quote” or “something you learned.”
-            </Typography>
+            </div>
+            <div className="font-soft mt-4">
+              <div className="mb-2">
+                Start by saving something you found interesting in a book you
+                read.
+              </div>
+
+              <div>
+                For example, “a memorable quote” or “something you learned.”
+              </div>
+            </div>
             <div className="mt-5">
               <Button
                 variant="outlined"
@@ -252,7 +256,7 @@ export const Memo = () => {
                   },
                 }}
               >
-                add Highlight
+                New Highlight
               </Button>
             </div>
           </Paper>

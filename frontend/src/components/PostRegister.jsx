@@ -1,7 +1,7 @@
 import { findReadingByUser } from "../api/reading";
 import { registerBook } from "../api/book";
 import { useContext, useEffect, useState, useCallback } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Box } from "@mui/material";
 import { CustomDialog } from "../ui/CustomDialog";
 import { BookArray } from "./book/BookArray";
 import SearchIcon from "@mui/icons-material/Search";
@@ -75,44 +75,53 @@ export const PostRegister = () => {
       <CustomDialog open={open} title="search" onClose={handleClose}>
         <BookSearch fromPost={fromPost} />
       </CustomDialog>
-      <div className="flex">
-        <div className="w-full">
-          <div className="mr-3">
-            {recently.length >= 1 && (
-              <>
-                <div className="mb-2 font-soft font-bold">Recently</div>
-                <div className="w-full  overflow-x-auto">
-                  <BookArray
-                    books={recently && recently}
-                    handleSelect={handleSelect}
-                    width={"70px"}
-                    height={"100px"}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-          <div className="flex items-center mt-1">
-            <div className="font-soft">Select a book to review</div>
-            <IconButton onClick={handleSearch}>
-              <SearchIcon />
-            </IconButton>
-          </div>
-          <div className="mt-2">
-            {selectedBook && <BookWithDesc book={selectedBook} />}
-          </div>
-          <div className="mt-4 mb-5">
-            <ReadingRegister
-              book={selectedBook && selectedBook}
-              reading={selectedReading && selectedReading}
-              updated={() => {
-                find();
-                setSelectedBook(null);
-              }}
-            />
+      <Box
+        sx={{
+          backgroundColor: "white",
+          borderRadius: 2,
+          boxShadow: 1,
+          p: 2,
+        }}
+      >
+        <div className="flex">
+          <div className="w-full">
+            <div className="mr-3">
+              {recently.length >= 1 && (
+                <>
+                  <div className="mb-2 font-soft font-bold">Recently</div>
+                  <div className="w-full  overflow-x-auto">
+                    <BookArray
+                      books={recently && recently}
+                      handleSelect={handleSelect}
+                      width={"70px"}
+                      height={"100px"}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex items-center mt-1">
+              <div className="font-soft">Select a book to review</div>
+              <IconButton onClick={handleSearch}>
+                <SearchIcon />
+              </IconButton>
+            </div>
+            <div className="mt-2">
+              {selectedBook && <BookWithDesc book={selectedBook} />}
+            </div>
+            <div className="mt-4 mb-5">
+              <ReadingRegister
+                book={selectedBook && selectedBook}
+                reading={selectedReading && selectedReading}
+                updated={() => {
+                  find();
+                  setSelectedBook(null);
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </Box>
     </div>
   );
 };

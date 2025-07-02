@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rmr.backend.model.Good;
-import com.rmr.backend.model.Post;
 import com.rmr.backend.model.Post.PostWithGoodCount;
 import com.rmr.backend.model.Post.YearlyPostRecord;
 import com.rmr.backend.service.GoodService;
@@ -32,22 +31,22 @@ public class PostController {
 	}
 
 	@GetMapping("/post/book/id")
-	public List<Post> findPostByBookId(@RequestParam String id) {
+	public List<PostWithGoodCount> findPostByBookId(@RequestParam String id) {
 		return service.findById(id);
 	}
 
 	@GetMapping("/post/user")
-	public List<PostWithGoodCount> getPostAllByUser(Integer userId) {
+	public List<PostWithGoodCount> getPostAllByUser(@RequestParam Integer userId) {
 		return service.getPostAllByUser(userId);
 	}
 
 	@GetMapping("/post/good")
-	public List<Good> getGooder(Integer postId) {
+	public List<Good> getGooder(@RequestParam Integer postId) {
 		return goService.getGooder(postId);
 	}
 
 	@GetMapping("/post/good/user")
-	public List<Good> getGoodPostAll(Integer userId) {
+	public List<Good> getGoodPostAll(@RequestParam Integer userId) {
 		return goService.getGoodPostAll(userId);
 	}
 

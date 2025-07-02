@@ -159,7 +159,7 @@ public class Reading {
         return Reading.builder()
             .rate(this.rate)
             .statusType(this.statusType)
-				.thoughts(this.thoughts)
+			.thoughts(this.thoughts)
             .registerDate(Instant.now())
             .build();
     }

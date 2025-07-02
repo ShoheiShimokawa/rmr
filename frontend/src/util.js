@@ -268,3 +268,17 @@ export const formatDateTime = (dateString) => {
   const zonedDate = toZonedTime(date, timeZone);
   return format(zonedDate, "yyyy/MM/dd HH:mm");
 };
+
+export const timeAgo = (timestampzStr) => {
+  const now = new Date();
+  const past = new Date(timestampzStr);
+  const diffMs = now - past;
+
+  const minutes = Math.floor(diffMs / (1000 * 60));
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (minutes < 60) return `${minutes} minutes`;
+  if (hours < 24) return `${hours} hours`;
+  return `${days} days`;
+};

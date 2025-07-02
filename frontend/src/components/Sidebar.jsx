@@ -1,3 +1,4 @@
+import React from "react";
 import {
   List,
   ListItem,
@@ -6,30 +7,50 @@ import {
   ListItemIcon,
   Box,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import PeopleIcon from "@mui/icons-material/People";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
+import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 
 export const Sidebar = ({ mobile = false }) => {
+  const location = useLocation();
   const items = [
-    { text: "Community", path: "/", icon: <PeopleIcon /> },
-    { text: "Search", path: "/book", icon: <SearchIcon /> },
+    {
+      text: "Community",
+      path: "/",
+      icon: <PeopleAltRoundedIcon />,
+      outlineIcon: <PeopleAltOutlinedIcon />,
+    },
+    {
+      text: "Search",
+      path: "/book",
+      icon: <SearchIcon />,
+      outlineIcon: <SearchIcon />,
+    },
     {
       text: "Highlights",
       path: "/highlights",
       icon: <DescriptionRoundedIcon />,
+      outlineIcon: <DescriptionOutlinedIcon />,
     },
-    { text: "Analytics", path: "/analytics", icon: <AutoGraphIcon /> },
+    {
+      text: "Analytics",
+      path: "/analytics",
+      icon: <AutoGraphIcon />,
+      outlineIcon: <AutoGraphOutlinedIcon />,
+    },
   ];
 
   if (mobile) {
     return (
       <Box
-        className="flex justify-around items-center py-1 border-t"
+        className="flex justify-around items-center py-2 border-t"
         sx={{
-          backgroundColor: "white",
+          backgroundColor: "#f9fafb",
         }}
       >
         {items.map((item) => (
@@ -38,8 +59,20 @@ export const Sidebar = ({ mobile = false }) => {
             key={item.text}
             className="flex flex-col items-center text-xs text-zinc-700"
           >
-            <div>{item.icon}</div>
-            <div className="text-[0.65rem] mt-1 font-soft">{item.text}</div>
+            <div>
+              {React.cloneElement(
+                location.pathname === item.path ? item.icon : item.outlineIcon,
+                {
+                  sx: {
+                    color:
+                      location.pathname === item.path
+                        ? "#000"
+                        : "rgba(0,0,0,0.4)",
+                  },
+                }
+              )}
+            </div>
+            <div className="text-[0.64rem] mt-1 font-soft">{item.text}</div>
           </Link>
         ))}
       </Box>
@@ -54,6 +87,7 @@ export const Sidebar = ({ mobile = false }) => {
         top: "100px",
         bgcolor: "background.paper",
         alignSelf: "flex-start",
+        backgroundColor: "#F5F5F5",
         p: 4,
       }}
     >
@@ -88,7 +122,21 @@ export const Sidebar = ({ mobile = false }) => {
                 },
               }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemIcon>
+                {React.cloneElement(
+                  location.pathname === item.path
+                    ? item.icon
+                    : item.outlineIcon,
+                  {
+                    sx: {
+                      color:
+                        location.pathname === item.path
+                          ? "#000"
+                          : "rgba(0,0,0,0.4)",
+                    },
+                  }
+                )}
+              </ListItemIcon>
               <ListItemText
                 primary={item.text}
                 primaryTypographyProps={{
@@ -97,6 +145,10 @@ export const Sidebar = ({ mobile = false }) => {
                     fontWeight: "bold",
                     fontFamily: "'Nunito sans'",
                     fontSize: "1.1rem",
+                    color:
+                      location.pathname === item.path
+                        ? "inherit"
+                        : "rgba(0, 0, 0, 0.5)",
                   },
                 }}
               />

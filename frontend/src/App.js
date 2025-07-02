@@ -15,6 +15,7 @@ import { UserProvider } from "./components/UserProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Box, CssBaseline, Container, Divider } from "@mui/material";
 import { HandleRegister } from "./components/HandleRegister";
+import { Notification } from "./components/Notification";
 
 function App() {
   return (
@@ -24,59 +25,76 @@ function App() {
           <ScrollToTop />
           <NotifyProvider>
             <CssBaseline />
-            <Container maxWidth="lg" sx={{ px: 1, overflow: "visible" }}>
-              <Box
+            <Box
+              sx={{
+                mx: "auto",
+                backgroundColor: "white",
+              }}
+            >
+              <Header />
+            </Box>
+            <Box sx={{ backgroundColor: "#F5F5F5", minHeight: "100vh" }}>
+              <Container
+                maxWidth="lg"
                 sx={{
-                  position: "sticky",
-                  top: 0,
-                  zIndex: (theme) => theme.zIndex.appBar,
-                  backgroundColor: "white",
+                  px: 1,
+                  overflow: "visible",
+                  mt: "65px",
                 }}
               >
-                <Header />
-              </Box>
-              <Box>
-                <Box
-                  component="main"
-                  className="flex flex-col md:flex-row gap-2 pb-[50px] md:pb-0"
-                  sx={{
-                    flexGrow: 1,
-                    display: "flex",
-                    minHeight: "100vh",
-                    gap: 3,
-                  }}
-                >
-                  <div className="hidden md:block">
-                    <Sidebar />
-                  </div>
-                  <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-                    <Sidebar mobile />
-                  </div>
-                  <Divider
-                    orientation="vertical"
-                    className="hidden md:block"
-                    flexItem
-                    sx={{ borderColor: "#ddd", alignSelf: "stretch" }}
-                  />
-                  <Box sx={{ width: "100%", maxWidth: 650, mt: 2 }}>
-                    <Routes>
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/book" element={<BookSearch />} />
-                      <Route path="/" element={<Community />} />
-                      <Route path="/analytics" element={<ReadingAnalytics />} />
-                      <Route path="/information" element={<Information />} />
-                      <Route path="highlights" element={<Memo />} />
-                      <Route path="/postRegister" element={<PostRegister />} />
-                      <Route path="/:handle" element={<UserPage />} />
-                      <Route
-                        path="/handleRegister"
-                        element={<HandleRegister />}
-                      />
-                    </Routes>
+                <Box>
+                  <Box
+                    component="main"
+                    className="flex flex-col md:flex-row gap-2 pb-[50px] md:pb-0"
+                    sx={{
+                      flexGrow: 1,
+                      display: "flex",
+                      minHeight: "100vh",
+                      gap: 3,
+                    }}
+                  >
+                    <div className="hidden md:block">
+                      <Sidebar />
+                    </div>
+                    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+                      <Sidebar mobile />
+                    </div>
+                    <Divider
+                      orientation="vertical"
+                      className="hidden md:block"
+                      flexItem
+                      sx={{ borderColor: "#ddd", alignSelf: "stretch" }}
+                    />
+                    <Box sx={{ width: "100%", maxWidth: 650, mt: 2 }}>
+                      <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/book" element={<BookSearch />} />
+                        <Route path="/" element={<Community />} />
+                        <Route
+                          path="/analytics"
+                          element={<ReadingAnalytics />}
+                        />
+                        <Route path="/information" element={<Information />} />
+                        <Route path="highlights" element={<Memo />} />
+                        <Route
+                          path="/postRegister"
+                          element={<PostRegister />}
+                        />
+                        <Route path="/:handle" element={<UserPage />} />
+                        <Route
+                          path="/handleRegister"
+                          element={<HandleRegister />}
+                        />
+                        <Route
+                          path="/notifications"
+                          element={<Notification />}
+                        />
+                      </Routes>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            </Container>
+              </Container>
+            </Box>
           </NotifyProvider>
         </UserProvider>
       </div>

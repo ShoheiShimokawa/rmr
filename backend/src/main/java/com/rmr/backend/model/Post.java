@@ -53,8 +53,21 @@ public class Post {
 	private Instant updateDate;
 
 	/** ID(google)に紐付く投稿を全て返します。 */
-	public static List<Post> findById(PostRepository rep,String id) {
-		return rep.findById(id);
+	public static List<PostWithGoodCount> findById(PostRepository rep,GoodRepository gRep, String id) {
+		List<Post> posts = rep.findById(id);
+		Map<Integer, Long> goodCounts = gRep.countGroupByPostId();
+	return posts.stream().map(post -> {
+		long goodCount = goodCounts.getOrDefault(post.getPostId(), 0L);
+		return PostWithGoodCount.builder()
+			.postId(post.getPostId())
+			.user(post.getUser())
+			.reading(post.getReading())
+			.postType(post.getPostType())
+			.registerDate(post.getRegisterDate())
+			.updateDate(post.getUpdateDate())
+			.goodCount(goodCount)
+			.build();
+		}).toList();
 	}
 
 	/** 感想をポストします。すでに同じ状態のreadingに紐づくポストが存在していたら更新します。 */
@@ -68,11 +81,9 @@ public class Post {
 			var updatedPost = existPost.get();
 			if (recommended) {
 				updatedPost.setPostType(PostType.RECOMMENDED);
-			}else if(recommended==false && reading.getThoughts().equals("") && reading.getRate()==0){
-				updatedPost.setPostType(PostType.ONLY_STAR);
-			} else {
-				updatedPost.setPostType(PostType.WITH_THOUGHTS);
-			}
+			}else if(recommended==false && !reading.getThoughts().equals("") && reading.getRate()!=0){
+			updatedPost.setPostType(PostType.WITH_THOUGHTS);
+			} 
 			updatedPost.setReading(reading);
 			updatedPost.setUpdateDate(Instant.now());
 			return rep.save(updatedPost);
@@ -104,20 +115,20 @@ public class Post {
 	/** いいね数を含めたユーザに紐づくポストを全て返します。 */
 	public static List<PostWithGoodCount> getPostWithGoodCount(PostRepository rep, GoodRepository gRep, Integer userId) {
 	List<Post> posts = Post.getPostAllByUser(rep, userId);
-	Map<Integer, Long> goodCounts = gRep.countGroupByPostId(); 
+	Map<Integer, Long> goodCounts = gRep.countGroupByPostId();
 
 	return posts.stream().map(post -> {
 		long goodCount = goodCounts.getOrDefault(post.getPostId(), 0L);
 		return PostWithGoodCount.builder()
 			.postId(post.getPostId())
 			.user(post.getUser())
-				.reading(post.getReading())
+			.reading(post.getReading())
 			.postType(post.getPostType())
 			.registerDate(post.getRegisterDate())
 			.updateDate(post.getUpdateDate())
 			.goodCount(goodCount)
 			.build();
-	}).toList();
+		}).toList();
 }
 
 	/** ポストを返却します。（タイムライン用） */
@@ -138,17 +149,17 @@ public class Post {
 			.build();
 	}).toList();
 }
-
 	
 	/** 年間ポスト数を返します。 */
 	public static List<YearlyPostRecord> getPostRecord(PostRepository rep, Integer userId) {
 		List<Post> posts = rep.findByUserId(userId);
 		var a = posts.stream()
-    .collect(Collectors.groupingBy((Post post) ->
-        post.getRegisterDate()
-             .atZone(ZoneOffset.UTC)
-            .toLocalDate()
-    ));
+    			.collect(Collectors.groupingBy((Post post) ->
+        			post.getRegisterDate()
+             		.atZone(ZoneOffset.UTC)
+					.toLocalDate()
+				));
+	
 		Map<LocalDate, Integer> map = new HashMap<>();
 		for (var b : a.entrySet()) {
 			map.putIfAbsent(b.getKey(), b.getValue().toArray().length);
@@ -164,24 +175,27 @@ public class Post {
 
 	/** 年間ポスト数 */
 	@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public static class YearlyPostRecord {
-	private LocalDate date;
-	private Integer posts;
-}
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class YearlyPostRecord {
+		private LocalDate date;
+		private Integer posts;
+	}
+
+	/** いいね数付ポスト */
 	@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public static class PostWithGoodCount {
-	private Integer postId;
-	private Account user;
-	private Reading reading;
-	private PostType postType;
-	private Instant registerDate;
-	private Instant updateDate;
-	private long goodCount;
-}
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class PostWithGoodCount {
+		private Integer postId;
+		private Account user;
+		private Reading reading;
+		private PostType postType;
+		private Instant registerDate;
+		private Instant updateDate;
+		private long goodCount;
+	}
+	
 }

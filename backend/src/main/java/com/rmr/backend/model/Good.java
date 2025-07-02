@@ -6,10 +6,13 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.rmr.backend.context.AccountRepository;
 import com.rmr.backend.context.GoodRepository;
 import com.rmr.backend.context.PostRepository;
+import com.rmr.backend.type.GoodStatusType;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,36 +40,43 @@ public class Good {
 	@JoinColumn(name = "post_id")
 	private Post post;
 	/** いいねしたユーザID */
-	private Integer userId;
+	@ManyToOne
+    @JoinColumn(name = "user_id")
+	private Account user;
+	/** 状態 */
+	@Enumerated
+	@NotNull
+	private GoodStatusType statusType;
 
 	/** ポストにいいねします。 */
-	public static Good good(GoodRepository rep, PostRepository pRep,Integer postId, Integer userId) {
+	public static Good good(GoodRepository rep, PostRepository pRep,AccountRepository aRep,Integer postId, Integer userId) {
 		var post = pRep.findById(postId).get();
-		Optional<Good> good = rep.findByPostPostIdAndUserId(postId, userId);
-		if(good.isPresent()){
+		var account = aRep.findByUserId(userId).get();
+		Optional<Good> good = rep.findByPostPostIdAndUserUserId(postId, userId);
+		if(good.isPresent() && good.get().statusType.equals(GoodStatusType.VALID)){
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "Good already exists.");
 		}
-		return rep.save(Good.builder().post(post).userId(userId).build());
+		return rep.save(Good.builder().post(post).user(account).statusType(GoodStatusType.VALID).build());
 	}
 
 	/** いいねを取り消します。 */
 	public static void delete(GoodRepository rep, Integer postId,Integer userId) {
-		Optional<Good> good = rep.findByPostPostIdAndUserId(postId, userId);
-		if(good.isPresent()){
-		rep.delete(good.get());
+		Optional<Good> good = rep.findByPostPostIdAndUserUserId(postId, userId);
+		if (good.isPresent() && good.get().statusType.equals(GoodStatusType.VALID)) {
+			good.get().setStatusType(GoodStatusType.INVALID);
+			rep.save(good.get());
 		}
 	}
 	
 	/** ポストにいいねした人を返します。 */
 	public static List<Good> getGooder(GoodRepository rep, Integer postId) {
-		return rep.findByPostId(postId);
+		List<Good> allData = rep.findByPostId(postId);
+		return allData.stream().filter((v)->v.getStatusType().equals(GoodStatusType.VALID)).toList();
 	}
 
 	/** 自分がいいねしたポストを返します。 */
 	public static List<Good> getGoodPostAll(GoodRepository rep, Integer userId) {
-		return rep.findByUserId(userId);
+		List<Good> allData = rep.findByUserId(userId);
+		return allData.stream().filter((v)->v.getStatusType().equals(GoodStatusType.VALID)).toList();
 	}
-	
-
-
 }

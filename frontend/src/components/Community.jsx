@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import { getPostAll } from "../api/post";
 import { Post } from "./Post";
-import { Skeleton } from "@mui/material";
+import { Skeleton, Box } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
 import UserContext from "./UserProvider";
 import { getGoodPostAll } from "../api/post";
@@ -21,10 +21,16 @@ export const Community = () => {
       const sortedPosts = result.data.slice().sort((a, b) => {
         return new Date(b.registerDate) - new Date(a.registerDate);
       });
-      setPosts(sortedPosts);
-      const goodList = await getGoodPostAll(user && user.userId);
-      const likedIds = goodList.data.map((g) => g.post.postId);
-      setGoodPostIds(likedIds);
+      const sort = sortedPosts.filter(
+        (post) =>
+          post.postType === "WITH_THOUGHTS" || post.postType === "RECOMMENDED"
+      );
+      setPosts(sort);
+      if (user) {
+        const goodList = await getGoodPostAll(user && user.userId);
+        const likedIds = goodList.data.map((g) => g.post.postId);
+        setGoodPostIds(likedIds);
+      }
     } catch (error) {
       notify("Failed to load.Please try later.", "error");
     } finally {
@@ -37,39 +43,48 @@ export const Community = () => {
   }, [find]);
   return (
     <div>
-      <div className="container space-y-1 w-xl">
-        {loading
-          ? Array.from({ length: 7 }).map((_, i) => (
-              <div key={i} className="mb-6">
-                <div className="flex items-start gap-4">
-                  <Skeleton variant="circular" width={40} height={40} />
-                  <div className="flex-1 space-y-1 mb-2">
-                    <Skeleton variant="text" width="60%" height={20} />
-                    <Skeleton variant="text" width="40%" height={20} />
-                    <div className="flex ">
-                      <Skeleton variant="rounded" width={95} height={130} />
-                      <div className="flex-1 gap-3 ml-2 ">
-                        <Skeleton variant="text" width="70%" height={20} />
-                        <Skeleton variant="text" width="30%" height={20} />
+      <Box
+        sx={{
+          backgroundColor: "white",
+          borderRadius: 2,
+          boxShadow: 1,
+          p: 2,
+        }}
+      >
+        <div className="container space-y-1 w-xl">
+          {loading
+            ? Array.from({ length: 7 }).map((_, i) => (
+                <div key={i} className="mb-6">
+                  <div className="flex items-start gap-4">
+                    <Skeleton variant="circular" width={40} height={40} />
+                    <div className="flex-1 space-y-1 mb-2">
+                      <Skeleton variant="text" width="60%" height={20} />
+                      <Skeleton variant="text" width="40%" height={20} />
+                      <div className="flex ">
+                        <Skeleton variant="rounded" width={95} height={130} />
+                        <div className="flex-1 gap-3 ml-2 ">
+                          <Skeleton variant="text" width="70%" height={20} />
+                          <Skeleton variant="text" width="30%" height={20} />
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <Divider className="mt-4" />
                 </div>
-                <Divider className="mt-4" />
-              </div>
-            ))
-          : posts.length > 0 &&
-            posts.map((post) => (
-              <div key={post.postId}>
-                <Post
-                  post={post}
-                  visible={true}
-                  isInitiallyGooded={goodPostIds.includes(post.postId)}
-                />
-                <Divider />
-              </div>
-            ))}
-      </div>
+              ))
+            : posts.length > 0 &&
+              posts.map((post) => (
+                <div key={post.postId}>
+                  <Post
+                    post={post}
+                    visible={true}
+                    isInitiallyGooded={goodPostIds.includes(post.postId)}
+                  />
+                  <Divider />
+                </div>
+              ))}
+        </div>
+      </Box>
     </div>
   );
 };

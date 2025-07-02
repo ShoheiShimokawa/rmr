@@ -24,8 +24,8 @@ public class PostService {
 	}
 
 	/** ID(google)に紐付くポストを全て返します。 */
-	public List<Post> findById(String id) {
-		return Post.findById(rep,id);
+	public List<PostWithGoodCount>  findById(String id) {
+		return Post.findById(rep,gRep,id);
 	}
 
 	/** ポストを返却します。（タイムライン用） */

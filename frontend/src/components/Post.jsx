@@ -1,27 +1,19 @@
 import { useContext, useState } from "react";
-import {
-  Avatar,
-  Rating,
-  List,
-  IconButton,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+import { Avatar, List, IconButton, Menu, MenuItem } from "@mui/material";
+import { Review } from "./Review";
 import { formatDateTime } from "../util";
-import { CollapsibleText } from "./CollapsibleText";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { Link } from "react-router-dom";
-import { BookDetail } from "./book/BookDetail";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { good, deleteGood } from "../api/post";
 import UserContext from "./UserProvider";
-import { BookInfo } from "../components/book/BookInfo";
 import { CustomDialog } from "../ui/CustomDialog";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNotify } from "../hooks/NotifyProvider";
 import { judgePostLabel } from "../badge/index";
 import { ReadingRegister } from "./ReadingRegister";
+import { GoodDetail } from "./GoodDetail";
 
 export const Post = ({
   post,
@@ -32,9 +24,9 @@ export const Post = ({
   const { user } = useContext(UserContext);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedBook, setSelectedBook] = useState();
-  const [showBookDetail, setShowBookDetail] = useState(false);
   const [selectedPost, setSelectedPost] = useState();
+  const [selectedPostId, setSelectedPostId] = useState();
+  const [OpenGooder, setOpenGooder] = useState(false);
   const [open, setOpen] = useState(false);
   const [isGooded, setIsGooded] = useState(isInitiallyGooded);
   const [localGoodCount, setLocalGoodCount] = useState(post.goodCount || 0);
@@ -79,14 +71,6 @@ export const Post = ({
       }
     }
   };
-  const handleShowBookDetail = (selectedBook) => {
-    setSelectedBook(selectedBook);
-    setShowBookDetail(true);
-  };
-
-  const handleCloseBookDetail = () => {
-    setShowBookDetail(false);
-  };
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -107,16 +91,18 @@ export const Post = ({
     setOpenUpdate(false);
   };
 
+  const handleGetGooder = (selectedPostId) => {
+    setSelectedPostId(selectedPostId);
+    setOpenGooder(true);
+  };
+
+  const handleCloseGetGooder = () => {
+    setOpenGooder(false);
+  };
+
   return (
     <>
       {showLoginDialog && <LoginDialog />}
-      <CustomDialog
-        open={showBookDetail}
-        title="Detail"
-        onClose={handleCloseBookDetail}
-      >
-        <BookDetail book={selectedBook} />
-      </CustomDialog>
       <CustomDialog
         open={openUpdate}
         title="Edit Post"
@@ -129,6 +115,14 @@ export const Post = ({
             selectedPost && selectedPost.postType === "RECOMMENDED"
           }
         />
+      </CustomDialog>
+      <CustomDialog
+        open={OpenGooder}
+        title="Liked this post"
+        onClose={handleCloseGetGooder}
+        width="400px"
+      >
+        <GoodDetail postId={selectedPostId} />
       </CustomDialog>
       {post && post.user && (
         <List>
@@ -183,6 +177,7 @@ export const Post = ({
                         width: 22,
                         height: 22,
                         padding: 0.5,
+                        mr: 1,
                       }}
                     >
                       <MoreVertIcon sx={{ fontSize: 20 }} />
@@ -211,37 +206,7 @@ export const Post = ({
                 {post.reading && (
                   <>
                     <div>
-                      {post.reading.rate !== 0 && (
-                        <Rating
-                          className="mt-2"
-                          name="read-only"
-                          value={post.reading.rate}
-                          size="small"
-                          readOnly
-                          sx={{
-                            "& .MuiRating-icon": {
-                              fontSize: "14px",
-                            },
-                          }}
-                        />
-                      )}
-                      <div className="text-sm mt-1 font-soft ">
-                        <CollapsibleText
-                          text={post.reading.thoughts}
-                          maxLength={400}
-                        />
-                      </div>
-                      {visible && (
-                        <>
-                          <div className="mt-2"></div>
-                          <BookInfo
-                            book={post.reading.book}
-                            onClick={() => {
-                              handleShowBookDetail(post.reading.book);
-                            }}
-                          />
-                        </>
-                      )}
+                      <Review post={post} visible={fromDetail ? false : true} />
                       <div className="flex items-center mt-1 ">
                         <IconButton
                           onClick={() => {
@@ -266,8 +231,10 @@ export const Post = ({
                             />
                           )}
                         </IconButton>
-
-                        <div className="text-xs font-soft">
+                        <div
+                          className="text-xs font-soft hover:underline cursor-pointer"
+                          onClick={() => handleGetGooder(post.postId)}
+                        >
                           {localGoodCount}
                         </div>
                       </div>

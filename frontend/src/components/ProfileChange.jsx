@@ -68,43 +68,50 @@ export const ProfileChange = ({ account, update }) => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
-          {...register("handle")}
-          label="*user ID"
-          variant="standard"
-          multiline
-          fullWidth
-          margin="normal"
-          error={!!errors.handle}
-          helperText={errors.handle?.message}
-          sx={{ width: "35ch" }}
-          slotProps={{
-            inputLabel: {
-              shrink: true,
-            },
-          }}
-          InputProps={{
-            startAdornment: <InputAdornment position="start">@</InputAdornment>,
-          }}
-        />
-        <TextField
-          {...register("name")}
-          label="*name"
-          variant="standard"
-          multiline
-          fullWidth
-          margin="normal"
-          error={!!errors.name}
-          helperText={errors.name?.message}
-          slotProps={{
-            inputLabel: {
-              shrink: true,
-            },
-          }}
-        />
+        <div>
+          <TextField
+            {...register("handle")}
+            label="user ID*"
+            variant="standard"
+            multiline
+            fullWidth
+            margin="normal"
+            error={!!errors.handle}
+            helperText={errors.handle?.message}
+            sx={{ maxWidth: 280 }}
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">@</InputAdornment>
+              ),
+            }}
+          />
+        </div>
+        <div>
+          <TextField
+            {...register("name")}
+            label="name*"
+            variant="standard"
+            multiline
+            fullWidth
+            margin="normal"
+            sx={{ maxWidth: 280 }}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+        </div>
         <TextField
           {...register("description")}
-          label=" introduction"
+          label="introduction"
           variant="standard"
           multiline
           rows={6}

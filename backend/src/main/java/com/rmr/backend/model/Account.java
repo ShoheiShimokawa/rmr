@@ -88,7 +88,7 @@ public class Account {
 	
 	/** プロフィールを変更します。*/
 	public static Account update(AccountRepository rep,UpdateProfile params) {
-		var user = rep.findByUserId(params.userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
+		Account user = rep.findByUserId(params.userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
 		rep.findByHandle(params.handle).ifPresent(existing -> {
        if (!existing.getUserId().equals(params.userId)) {
     throw new BadRequestException("This handle is already taken.");

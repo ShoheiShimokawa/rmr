@@ -1,7 +1,9 @@
 import { Profile } from "./Profile";
-import { getPostAllByUser } from "../api/post";
+import { getPostAllByUser, getGoodPostAll } from "../api/post";
 import { BookShelf } from "./book/BookShelf";
 import { Post } from "./Post";
+import { useContext } from "react";
+import UserContext from "./UserProvider";
 import { getByHandle } from "../api/account";
 import { useState, useEffect, useCallback } from "react";
 import { Divider, Tabs, Tab, Box, CircularProgress } from "@mui/material";
@@ -10,16 +12,18 @@ import { useNotify } from "../hooks/NotifyProvider";
 
 export const UserPage = () => {
   const { handle } = useParams();
-  const [user, setUser] = useState();
+  const [account, setAccount] = useState();
+  const { user } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [goodPostIds, setGoodPostIds] = useState([]);
   const { notify } = useNotify();
 
   const find = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getByHandle(handle);
-      setUser(result.data);
+      setAccount(result.data);
       const postResult = await getPostAllByUser(
         result.data.userId && result.data.userId
       );
@@ -30,12 +34,17 @@ export const UserPage = () => {
         return dateB - dateA;
       });
       setPosts(sortedPosts);
+      if (user) {
+        const goodList = await getGoodPostAll(user.userId);
+        const likedIds = goodList.data.map((g) => g.post.postId);
+        setGoodPostIds(likedIds);
+      }
     } catch (error) {
       notify("Failed to Loading.", "error");
     } finally {
       setLoading(false);
     }
-  }, [handle, notify]);
+  }, [handle, notify, user]);
   useEffect(() => {
     find();
   }, [find]);
@@ -55,61 +64,74 @@ export const UserPage = () => {
   };
   return (
     <div>
-      {user && <Profile userId={user.userId} />}
-      <Divider />
-      <Tabs
-        value={tabIndex}
-        onChange={handleTabChange}
-        className="mb-4"
-        textColor="inherit"
-        TabIndicatorProps={{ style: { backgroundColor: "black" } }}
+      <Box
+        sx={{
+          backgroundColor: "white",
+          borderRadius: 2,
+          boxShadow: 1,
+          p: 2,
+        }}
       >
-        <Tab
-          label="BookShelf"
-          sx={{
-            textTransform: "none",
-            fontWeight: "bold",
-            fontFamily: "'Nunito sans'",
-          }}
-        />
-        <Tab
-          label="Posts"
-          sx={{
-            textTransform: "none",
-            fontWeight: "bold",
-            fontFamily: "'Nunito sans'",
-          }}
-        />
-      </Tabs>
-      <TabPanel value={tabIndex} index={0}>
-        {user && <BookShelf account={user && user} />}
-      </TabPanel>
-      <TabPanel value={tabIndex} index={1}>
-        {loading ? (
-          <div className="flex justify-center items-center min-h-[300px]">
-            <CircularProgress />
-          </div>
-        ) : (
-          <>
-            {posts.length !== 0 ? (
-              <div className="space-y-1">
-                <>
-                  {posts.map((post) => (
-                    <>
-                      <Post post={post} visible={true} />
-                      {posts.length > 1 && <Divider />}
-                    </>
-                  ))}
-                </>
-              </div>
-            ) : (
-              <div className="font-soft flex justify-center text-zinc-500">
-                No Posts yet.
-              </div>
-            )}
-          </>
-        )}
-      </TabPanel>
+        {account && <Profile userId={account.userId} />}
+        <Divider />
+        <Tabs
+          value={tabIndex}
+          onChange={handleTabChange}
+          className="mb-4"
+          textColor="inherit"
+          TabIndicatorProps={{ style: { backgroundColor: "black" } }}
+        >
+          <Tab
+            label="BookShelf"
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              fontFamily: "'Nunito sans'",
+            }}
+          />
+          <Tab
+            label="Posts"
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              fontFamily: "'Nunito sans'",
+            }}
+          />
+        </Tabs>
+        <TabPanel value={tabIndex} index={0}>
+          {account && <BookShelf account={account && account} />}
+        </TabPanel>
+        <TabPanel value={tabIndex} index={1}>
+          {loading ? (
+            <div className="flex justify-center items-center min-h-[300px]">
+              <CircularProgress />
+            </div>
+          ) : (
+            <>
+              {posts.length !== 0 ? (
+                <div className="space-y-1">
+                  <>
+                    {posts.map((post) => (
+                      <>
+                        <Post
+                          post={post}
+                          visible={true}
+                          isInitiallyGooded={goodPostIds.includes(post.postId)}
+                        />
+                        {posts.length > 1 && <Divider />}
+                      </>
+                    ))}
+                  </>
+                </div>
+              ) : (
+                <div className="font-soft flex justify-center text-zinc-500">
+                  No Posts yet.
+                </div>
+              )}
+            </>
+          )}
+        </TabPanel>
+      </Box>
     </div>
   );
 };

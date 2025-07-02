@@ -15,14 +15,14 @@ public interface GoodRepository extends JpaRepository<Good, Integer> {
     @Query("SELECT g FROM Good g WHERE g.post.postId = :postId")
     List<Good> findByPostId(@Param("postId") Integer postId);
 
-     @Query("SELECT g FROM Good g WHERE g.userId = :userId")
+     @Query("SELECT g FROM Good g WHERE g.user.userId = :userId")
      List<Good> findByUserId(@Param("userId") Integer userId);
     
-     Optional<Good> findByPostPostIdAndUserId(Integer postId, Integer userId);
+     Optional<Good> findByPostPostIdAndUserUserId(Integer postId, Integer userId);
 
-    @Query("SELECT g.post.postId, COUNT(g) FROM Good g GROUP BY g.post.postId")
+    @Query("SELECT g.post.postId, COUNT(g) FROM Good g WHERE g.statusType=1 GROUP BY g.post.postId")
     List<Object[]> countGroupByPostIdRaw();
-
+    /** PostId,いいね数をMapで返します。 */
     default Map<Integer, Long> countGroupByPostId() {
     List<Object[]> raw = countGroupByPostIdRaw();
     return raw.stream().collect(Collectors.toMap(

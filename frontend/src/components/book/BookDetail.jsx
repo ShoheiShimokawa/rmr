@@ -183,12 +183,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
     setOpen(false);
   };
 
-  const postsWithThoughts = posts.filter(
-    (post) =>
-      (post.reading && post.reading.thoughts) ||
-      (post.reading && post.reading.rate)
-  );
-
   const find = useCallback(async () => {
     setLoading(true);
     try {
@@ -557,15 +551,21 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       <div className="text-lg mb-2 mt-3 font-soft font-bold">
         Readers' comments
       </div>
-      {postsWithThoughts.length >= 1 ? (
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[150px]">
+          <CircularProgress size={20} />
+        </div>
+      ) : posts.length >= 1 ? (
         <>
-          {postsWithThoughts.map((post) => (
+          {posts.map((post) => (
             <>
               <Box key={post.postId} sx={{ width: "95%", margin: "0 auto" }}>
                 <Post
                   post={post}
                   fromDetail={true}
-                  isInitiallyGooded={goodPostIds.includes(post.postId)}
+                  isInitiallyGooded={
+                    goodPostIds.length >= 1 && goodPostIds.includes(post.postId)
+                  }
                 />
               </Box>
               <>

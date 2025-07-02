@@ -55,6 +55,9 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const isSkipped =
     !watchedRate && (!watchedThoughts || watchedThoughts.trim() === "");
 
+  const isReviewed =
+    watchedRate && (!watchedThoughts || watchedThoughts.trim() === "");
+
   const isSubmitDisabled =
     isDisabled ||
     (watchedRecommended && (!watchedThoughts || watchedThoughts.trim() === ""));
@@ -62,6 +65,8 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const onSubmit = async (values) => {
     setIsSubmitting(true);
     try {
+      const trimmedThoughts = values.thoughts.trim().replace(/\n/g, "");
+      values.thoughts = trimmedThoughts.length === 0 ? "" : values.thoughts;
       if (reading) {
         const updateParam = {
           ...values,
@@ -182,6 +187,8 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
               <CircularProgress size={20} sx={{ color: "#fff" }} />
             ) : isSkipped ? (
               "Skip Review"
+            ) : isReviewed ? (
+              "Submit"
             ) : (
               "Post"
             )}
