@@ -105,7 +105,12 @@ export const Header = () => {
         onClose={handleLoginClose}
         width="400px"
       >
-        <Login updated={handleLoginClose} />
+        <Login
+          updated={() => {
+            handleClose();
+            handleLoginClose();
+          }}
+        />
       </CustomDialog>
       {showLoginDialog && <LoginDialog />}
       <AppBar

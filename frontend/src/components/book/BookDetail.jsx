@@ -198,9 +198,11 @@ export const BookDetail = ({ book, updated, visible = true }) => {
         setDoing(iniReadings.data.filter((r) => r.statusType === "DOING"));
       iniReadings &&
         setDone(iniReadings.data.filter((r) => r.statusType === "DONE"));
-      const goodList = await getGoodPostAll(user && user.userId);
-      const likedIds = goodList.data.map((g) => g.post.postId);
-      setGoodPostIds(likedIds);
+      if (user) {
+        const goodList = await getGoodPostAll(user && user.userId);
+        const likedIds = goodList.data.map((g) => g.post.postId);
+        setGoodPostIds(likedIds);
+      }
     } catch (error) {
       notify("Failed to loading. Please try again.", "error");
     } finally {
