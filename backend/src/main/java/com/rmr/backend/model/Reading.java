@@ -209,29 +209,26 @@ public class Reading {
 	public static List<MonthlyReading> getMonthlyReadingData(ReadingRepository rep,Integer userId) {
         List<Object[]> results = rep.findMonthlyReadingDataByUser(userId);
 
-        // データを年月で正規化しながらグルーピング
         Map<String, Map<GenreType, Integer>> groupedData = new HashMap<>();
 
         for (Object[] record : results) {
-            // 年月、アイテム、カウントを取得
+
             String yearMonth = ((String) record[0]);
             GenreType item = (GenreType) record[1];
             Long count =  (Long)record[2];
             Integer intCount = count.intValue();
 
-            // 年月ごとのデータを処理
             groupedData.putIfAbsent(yearMonth, new HashMap<>());
             groupedData.get(yearMonth).merge(item, intCount, Integer::sum);
         }
 
-        // 結果を MonthlyData のリストに変換
-        return groupedData.entrySet().stream()
+		return groupedData.entrySet().stream()
+				.sorted(Map.Entry.comparingByKey())
                 .map(entry -> {
                     String yearMonth = entry.getKey();
                     Map<GenreType, Integer> details = entry.getValue();
                     int total = details.values().stream().mapToInt(Integer::intValue).sum();
 
-                    // MonthlyData オブジェクトを生成
                     return new MonthlyReading(yearMonth, total, details);
                 })
                 .collect(Collectors.toList());
@@ -239,13 +236,13 @@ public class Reading {
 	
 	/** 月間読書記録*/
 	@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public static class MonthlyReading {
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class MonthlyReading {
     private String month;
     private Integer total;
     private Map<GenreType, Integer> breakdown;
-}
+	}
 	
 }

@@ -239,11 +239,6 @@ export const ProfileChange = ({ account, update }) => {
                     shrink: true,
                   },
                 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">@</InputAdornment>
-                  ),
-                }}
               />
             </div>
           </div>
