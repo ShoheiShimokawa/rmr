@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Divider, Tabs, Tab, Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useNotify } from "../hooks/NotifyProvider";
+import { motion } from "framer-motion";
 
 export const UserPage = () => {
   const { handle } = useParams();
@@ -64,74 +65,90 @@ export const UserPage = () => {
   };
   return (
     <div>
-      <Box
-        sx={{
-          backgroundColor: "white",
-          borderRadius: 2,
-          boxShadow: 1,
-          p: 2,
-        }}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        {account && <Profile userId={account.userId} />}
-        <Divider />
-        <Tabs
-          value={tabIndex}
-          onChange={handleTabChange}
-          className="mb-4"
-          textColor="inherit"
-          TabIndicatorProps={{ style: { backgroundColor: "black" } }}
+        <Box
+          sx={{
+            backgroundColor: "white",
+            borderRadius: 2,
+            boxShadow: 1,
+            p: 2,
+          }}
         >
-          <Tab
-            label="BookShelf"
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              fontFamily: "'Nunito sans'",
-            }}
-          />
-          <Tab
-            label="Posts"
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              fontFamily: "'Nunito sans'",
-            }}
-          />
-        </Tabs>
-        <TabPanel value={tabIndex} index={0}>
-          {account && <BookShelf account={account && account} />}
-        </TabPanel>
-        <TabPanel value={tabIndex} index={1}>
           {loading ? (
             <div className="flex justify-center items-center min-h-[300px]">
-              <CircularProgress />
+              <CircularProgress size={28} />
             </div>
           ) : (
             <>
-              {posts.length !== 0 ? (
-                <div className="space-y-1">
+              {account && <Profile userId={account.userId} />}
+              <Divider />
+              <Tabs
+                value={tabIndex}
+                onChange={handleTabChange}
+                className="mb-4"
+                textColor="inherit"
+                TabIndicatorProps={{ style: { backgroundColor: "black" } }}
+              >
+                <Tab
+                  label="BookShelf"
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    fontFamily: "'Nunito sans'",
+                  }}
+                />
+                <Tab
+                  label="Posts"
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    fontFamily: "'Nunito sans'",
+                  }}
+                />
+              </Tabs>
+              <TabPanel value={tabIndex} index={0}>
+                {account && <BookShelf account={account && account} />}
+              </TabPanel>
+              <TabPanel value={tabIndex} index={1}>
+                {loading ? (
+                  <div className="flex justify-center items-center min-h-[300px]">
+                    <CircularProgress />
+                  </div>
+                ) : (
                   <>
-                    {posts.map((post) => (
-                      <>
-                        <Post
-                          post={post}
-                          visible={true}
-                          isInitiallyGooded={goodPostIds.includes(post.postId)}
-                        />
-                        {posts.length > 1 && <Divider />}
-                      </>
-                    ))}
+                    {posts.length !== 0 ? (
+                      <div className="space-y-1">
+                        <>
+                          {posts.map((post) => (
+                            <>
+                              <Post
+                                post={post}
+                                visible={true}
+                                isInitiallyGooded={goodPostIds.includes(
+                                  post.postId
+                                )}
+                              />
+                              {posts.length > 1 && <Divider />}
+                            </>
+                          ))}
+                        </>
+                      </div>
+                    ) : (
+                      <div className="font-soft flex justify-center text-zinc-500">
+                        No Posts yet.
+                      </div>
+                    )}
                   </>
-                </div>
-              ) : (
-                <div className="font-soft flex justify-center text-zinc-500">
-                  No Posts yet.
-                </div>
-              )}
+                )}
+              </TabPanel>
             </>
           )}
-        </TabPanel>
-      </Box>
+        </Box>
+      </motion.div>
     </div>
   );
 };
