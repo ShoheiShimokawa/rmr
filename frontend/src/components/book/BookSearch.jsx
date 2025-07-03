@@ -13,7 +13,7 @@ import { findReadingByUser } from "../../api/reading";
 import { genreToEnum } from "../../util";
 import { BookDetail } from "./BookDetail";
 import { CustomDialog } from "../../ui/CustomDialog";
-
+import { motion } from "framer-motion";
 import { Chip, Card, CardContent } from "@mui/material";
 
 export const BookSearch = ({ fromPost }) => {
@@ -159,40 +159,42 @@ export const BookSearch = ({ fromPost }) => {
             {books && books.length >= 1 ? (
               <div className="container mx-auto space-y-2">
                 {books.map((book) => (
-                  <Card
-                    className="cursor-pointer"
-                    key={book.id}
-                    sx={{
-                      maxWidth: 800,
-                      transition: "0.3s ease",
-                      "&:hover": {
-                        filter: "brightness(0.9)",
-                      },
-                    }}
-                    onClick={() =>
-                      !fromPost ? handleOpenDetail(book) : fromPost(book)
-                    }
-                  >
-                    <CardContent>
-                      <div className="flex gap-6">
-                        <Book src={book.volumeInfo?.imageLinks?.thumbnail} />
+                  <motion.div whileTap={{ scale: 0.98 }}>
+                    <Card
+                      className="cursor-pointer"
+                      key={book.id}
+                      sx={{
+                        maxWidth: 800,
+                        transition: "0.3s ease",
+                        "&:hover": {
+                          filter: "brightness(0.9)",
+                        },
+                      }}
+                      onClick={() =>
+                        !fromPost ? handleOpenDetail(book) : fromPost(book)
+                      }
+                    >
+                      <CardContent>
+                        <div className="flex gap-6">
+                          <Book src={book.volumeInfo?.imageLinks?.thumbnail} />
 
-                        <div className="ml-2 text-sm">
-                          <div className="font-soft">
-                            {book.volumeInfo.title}
-                          </div>
-                          <div className="text-zinc-500 mt-2 text-sm font-soft">
-                            {book.volumeInfo.authors
-                              ? book.volumeInfo.authors[0]
-                              : ""}
-                          </div>
-                          <div className="mt-3 font-soft">
-                            {judgeRead(book)}
+                          <div className="ml-2 text-sm">
+                            <div className="font-soft">
+                              {book.volumeInfo.title}
+                            </div>
+                            <div className="text-zinc-500 mt-2 text-sm font-soft">
+                              {book.volumeInfo.authors
+                                ? book.volumeInfo.authors[0]
+                                : ""}
+                            </div>
+                            <div className="mt-3 font-soft">
+                              {judgeRead(book)}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             ) : (

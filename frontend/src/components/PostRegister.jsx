@@ -65,6 +65,7 @@ export const PostRegister = () => {
     };
     const result = await registerBook(book);
     setSelectedBook(result.data);
+    setSelectedReading(null);
     setOpen(false);
   };
 
@@ -135,6 +136,7 @@ export const PostRegister = () => {
                   updated={() => {
                     find();
                     setSelectedBook(null);
+                    setSelectedReading(null);
                   }}
                 />
               </div>

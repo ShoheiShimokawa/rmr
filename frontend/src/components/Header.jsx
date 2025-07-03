@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import { useRequireLogin } from "../hooks/useRequireLogin";
+import { motion } from "framer-motion";
 import {
   ListItemIcon,
   Avatar,
@@ -162,25 +163,31 @@ export const Header = () => {
                   alignItems: "center",
                 }}
               >
-                <IconButton onClick={handlePostClick}>
-                  <FaPenNib size="24px" />
-                </IconButton>
-                <IconButton onClick={handleNotificationClick}>
-                  <Badge color="warning" variant="dot" invisible={!hasUnread}>
-                    <NotificationsRoundedIcon />
-                  </Badge>
-                </IconButton>
-                <IconButton
-                  aria-label="more"
-                  id="long-button"
-                  aria-haspopup="true"
-                  onClick={handleClick}
-                >
-                  <Avatar
-                    src={user && user.picture}
-                    sx={{ width: 34, height: 34 }}
-                  />
-                </IconButton>
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <IconButton onClick={handlePostClick}>
+                    <FaPenNib size="24px" />
+                  </IconButton>
+                </motion.div>
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <IconButton onClick={handleNotificationClick}>
+                    <Badge color="warning" variant="dot" invisible={!hasUnread}>
+                      <NotificationsRoundedIcon />
+                    </Badge>
+                  </IconButton>
+                </motion.div>
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                  >
+                    <Avatar
+                      src={user && user.picture}
+                      sx={{ width: 34, height: 34 }}
+                    />
+                  </IconButton>
+                </motion.div>
                 <Menu anchorEl={anchor} open={open} onClose={handleClose}>
                   <MenuItem
                     onClick={handleUserPage}

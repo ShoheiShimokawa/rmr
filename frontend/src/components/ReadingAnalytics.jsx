@@ -4,7 +4,7 @@ import {
   ChartsItemTooltipContent,
   ChartsTooltip,
 } from "@mui/x-charts";
-import { Card, CardContent, Grid } from "@mui/material";
+import { Card, CardContent, Grid, CircularProgress } from "@mui/material";
 import { findReadingByUser } from "../api/reading";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
@@ -69,22 +69,30 @@ export const ReadingAnalytics = () => {
             <div className="font-soft text-xl font-bold">
               Your Reading by Genre
             </div>
-            {data.length !== 0 && loading === false ? (
-              <div className="flex justify-start">
-                <PieChart
-                  series={[
-                    {
-                      data,
-                    },
-                  ]}
-                  width={200}
-                  height={250}
-                />
+            {loading ? (
+              <div className="flex justify-center items-center min-h-[250px]">
+                <CircularProgress size={20} />
               </div>
             ) : (
-              <div className="flex justify-center items-center min-h-[200px] text-zinc-500">
-                No data.
-              </div>
+              <>
+                {data.length !== 0 && loading === false ? (
+                  <div className="flex justify-start">
+                    <PieChart
+                      series={[
+                        {
+                          data,
+                        },
+                      ]}
+                      width={200}
+                      height={250}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center min-h-[200px] text-zinc-500">
+                    No data.
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
@@ -103,68 +111,78 @@ export const ReadingAnalytics = () => {
               margin: "0 auto",
             }}
           >
-            <div className="font-soft text-xl font-bold">
-              Monthly Reading Volume
-            </div>
-            {monthlyData.length !== 0 ? (
-              <LineChart
-                xAxis={[
-                  {
-                    scaleType: "band",
-                    data: monthlyData.map((item) => item.month),
-                  },
-                ]}
-                yAxis={[
-                  {
-                    min: 0,
-                    tickMinStep: 1,
-                    max: maxValue < 5 ? 5 : undefined,
-                  },
-                ]}
-                series={[
-                  {
-                    data: monthlyData.map((item) => item.total),
-                  },
-                ]}
-                width={500}
-                height={300}
-                slotProps={{
-                  tooltip: {
-                    content: ({ dataIndex, series }) => {
-                      const pointData = monthlyData[dataIndex];
-                      return (
-                        <ChartsTooltip>
-                          <ChartsItemTooltipContent
-                            label={`Month: ${pointData.month}`}
-                            value={pointData.total}
-                            valueFormatter={`Breakdown: ${pointData.breakdown}`}
-                          />
-                        </ChartsTooltip>
-                      );
-                    },
-                  },
-                }}
-              />
-            ) : (
-              // tooltip={{
-              //   trigger: "item", // 各データポイントでツールチップを表示
-              //   formatter: (params) => {
-              //     const pointData = monthlyData[params.dataIndex];
-              //     return `
-              //                 <div>
-              //                   <b>Month:</b> ${pointData.month}<br />
-              //                   <b>Total:</b> ${pointData.total}<br />
-              //                   <b>Breakdown:</b><br />
-              //                   - Apples: ${pointData.breakdown}<br />
-              //                   - Oranges: ${pointData.breakdown}
-              //                 </div>
-              //               `;
-              //   },
-              // }}
-              <div className="flex justify-center items-center min-h-[200px] text-zinc-500">
-                No data.
+            <CardContent>
+              <div className="font-soft text-xl font-bold">
+                Monthly Reading Volume
               </div>
-            )}
+              {loading ? (
+                <div className="flex justify-center items-center min-h-[250px]">
+                  <CircularProgress size={20} />
+                </div>
+              ) : (
+                <>
+                  {monthlyData.length !== 0 ? (
+                    <LineChart
+                      xAxis={[
+                        {
+                          scaleType: "band",
+                          data: monthlyData.map((item) => item.month),
+                        },
+                      ]}
+                      yAxis={[
+                        {
+                          min: 0,
+                          tickMinStep: 1,
+                          max: maxValue < 5 ? 5 : undefined,
+                        },
+                      ]}
+                      series={[
+                        {
+                          data: monthlyData.map((item) => item.total),
+                        },
+                      ]}
+                      width={500}
+                      height={250}
+                      slotProps={{
+                        tooltip: {
+                          content: ({ dataIndex, series }) => {
+                            const pointData = monthlyData[dataIndex];
+                            return (
+                              <ChartsTooltip>
+                                <ChartsItemTooltipContent
+                                  label={`Month: ${pointData.month}`}
+                                  value={pointData.total}
+                                  valueFormatter={`Breakdown: ${pointData.breakdown}`}
+                                />
+                              </ChartsTooltip>
+                            );
+                          },
+                        },
+                      }}
+                    />
+                  ) : (
+                    // tooltip={{
+                    //   trigger: "item",
+                    //   formatter: (params) => {
+                    //     const pointData = monthlyData[params.dataIndex];
+                    //     return `
+                    //                 <div>
+                    //                   <b>Month:</b> ${pointData.month}<br />
+                    //                   <b>Total:</b> ${pointData.total}<br />
+                    //                   <b>Breakdown:</b><br />
+                    //                   - Apples: ${pointData.breakdown}<br />
+                    //                   - Oranges: ${pointData.breakdown}
+                    //                 </div>
+                    //               `;
+                    //   },
+                    // }}
+                    <div className="flex justify-center items-center min-h-[200px] text-zinc-500">
+                      No data.
+                    </div>
+                  )}
+                </>
+              )}
+            </CardContent>
           </Card>
         </Grid>
       </div>

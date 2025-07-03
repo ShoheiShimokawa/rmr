@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Avatar, List, IconButton, Menu, MenuItem } from "@mui/material";
 import { Review } from "./Review";
 import { formatDateTime } from "../util";
+import { motion } from "framer-motion";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { Link } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -129,21 +130,23 @@ export const Post = ({
           <div key={post.postId} className="w-full mx-auto flex group ">
             <div className="flex">
               <div className="mr-1">
-                {!fromDetail ? (
-                  <Link
-                    to={`/${post.user.handle}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Avatar src={post.user.picture} />
-                  </Link>
-                ) : (
-                  <Avatar
-                    src={post.user && post.user.picture}
-                    onClick={() => {
-                      handleClick(post.user.handle && post.user.handle);
-                    }}
-                  />
-                )}
+                <motion.div whileTap={{ scale: 0.95 }}>
+                  {!fromDetail ? (
+                    <Link
+                      to={`/${post.user.handle}`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Avatar src={post.user.picture} />
+                    </Link>
+                  ) : (
+                    <Avatar
+                      src={post.user && post.user.picture}
+                      onClick={() => {
+                        handleClick(post.user.handle && post.user.handle);
+                      }}
+                    />
+                  )}
+                </motion.div>
               </div>
             </div>
             <div className="w-full">
@@ -208,29 +211,31 @@ export const Post = ({
                     <div>
                       <Review post={post} visible={fromDetail ? false : true} />
                       <div className="flex items-center mt-1 ">
-                        <IconButton
-                          onClick={() => {
-                            if (isGooded) {
-                              handleDelete();
-                            } else {
-                              handleGood();
-                            }
-                          }}
-                        >
-                          {!isGooded ? (
-                            <FavoriteBorderIcon
-                              sx={{ fontSize: "15px" }}
-                              className="text-zinc-600 hover:text-red-500 transition-colors duration-200"
-                              fontSize="small"
-                            />
-                          ) : (
-                            <FavoriteIcon
-                              sx={{ fontSize: "15px" }}
-                              className="text-red-500"
-                              fontSize="small"
-                            />
-                          )}
-                        </IconButton>
+                        <motion.div whileTap={{ scale: 0.9 }}>
+                          <IconButton
+                            onClick={() => {
+                              if (isGooded) {
+                                handleDelete();
+                              } else {
+                                handleGood();
+                              }
+                            }}
+                          >
+                            {!isGooded ? (
+                              <FavoriteBorderIcon
+                                sx={{ fontSize: "15px" }}
+                                className="text-zinc-600 hover:text-red-500 transition-colors duration-200"
+                                fontSize="small"
+                              />
+                            ) : (
+                              <FavoriteIcon
+                                sx={{ fontSize: "15px" }}
+                                className="text-red-500"
+                                fontSize="small"
+                              />
+                            )}
+                          </IconButton>
+                        </motion.div>
                         <div
                           className="text-xs font-soft hover:underline cursor-pointer"
                           onClick={() => handleGetGooder(post.postId)}

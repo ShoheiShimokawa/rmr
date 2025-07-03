@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "../hooks/NotifyProvider";
 import { TextField, Button, Rating, FormControlLabel } from "@mui/material";
 import { IOSSwitch } from "../ui/IOSSwitch";
+import { motion } from "framer-motion";
 
 export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const { user } = useContext(UserContext);
@@ -40,6 +41,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -77,6 +79,11 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
         };
         await updateReading(updateParam);
         updated && updated();
+        reset({
+          rate: 0,
+          thoughts: "",
+          recommended: false,
+        });
         notify("Congrats!", "success");
       } else {
         const param = {
@@ -87,6 +94,11 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
         };
         await registerReading(param);
         updated && updated();
+        reset({
+          rate: 0,
+          thoughts: "",
+          recommended: false,
+        });
         notify("Congrats!", "success");
       }
     } catch (error) {
@@ -168,31 +180,33 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
         </div>
 
         <div className="flex justify-end mt-4">
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isSubmitDisabled}
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#000",
-              color: "#fff",
-              width: "150px",
-              fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "#333",
-              },
-            }}
-          >
-            {isSubmitting ? (
-              <CircularProgress size={20} sx={{ color: "#fff" }} />
-            ) : isSkipped ? (
-              "Skip Review"
-            ) : isReviewed ? (
-              "Submit"
-            ) : (
-              "Post"
-            )}
-          </Button>
+          <motion.div whileTap={{ scale: 0.9 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitDisabled}
+              sx={{
+                textTransform: "none",
+                backgroundColor: "#000",
+                color: "#fff",
+                width: "150px",
+                fontWeight: "bold",
+                "&:hover": {
+                  backgroundColor: "#333",
+                },
+              }}
+            >
+              {isSubmitting ? (
+                <CircularProgress size={20} sx={{ color: "#fff" }} />
+              ) : isSkipped ? (
+                "Skip Review"
+              ) : isReviewed ? (
+                "Submit"
+              ) : (
+                "Post"
+              )}
+            </Button>
+          </motion.div>
         </div>
       </form>
     </div>

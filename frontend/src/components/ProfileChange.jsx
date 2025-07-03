@@ -8,6 +8,7 @@ import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkIcon from "@mui/icons-material/Link";
 import { useTheme, useMediaQuery } from "@mui/material";
+import { motion } from "framer-motion";
 
 export const ProfileChange = ({ account, update }) => {
   const { notify } = useNotify();
@@ -272,23 +273,24 @@ export const ProfileChange = ({ account, update }) => {
             }}
           />
         </div>
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{
-            textTransform: "none",
-            backgroundColor: "#000",
-            color: "#fff",
-            fontWeight: "bold",
-            "&:hover": {
-              backgroundColor: "#333",
-            },
-          }}
-          // endIcon={<SendIcon />}
-        >
-          Edit
-        </Button>
+        <motion.div whileTap={{ scale: 0.95 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              textTransform: "none",
+              backgroundColor: "#000",
+              color: "#fff",
+              fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "#333",
+              },
+            }}
+          >
+            Edit
+          </Button>
+        </motion.div>
       </form>
     </div>
   );

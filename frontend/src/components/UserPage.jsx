@@ -68,7 +68,7 @@ export const UserPage = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
       >
         <Box
           sx={{
@@ -78,75 +78,67 @@ export const UserPage = () => {
             p: 2,
           }}
         >
-          {loading ? (
-            <div className="flex justify-center items-center min-h-[300px]">
-              <CircularProgress size={28} />
-            </div>
-          ) : (
-            <>
-              {account && <Profile userId={account.userId} />}
-              <Divider />
-              <Tabs
-                value={tabIndex}
-                onChange={handleTabChange}
-                className="mb-4"
-                textColor="inherit"
-                TabIndicatorProps={{ style: { backgroundColor: "black" } }}
-              >
-                <Tab
-                  label="BookShelf"
-                  sx={{
-                    textTransform: "none",
-                    fontWeight: "bold",
-                    fontFamily: "'Nunito sans'",
-                  }}
-                />
-                <Tab
-                  label="Posts"
-                  sx={{
-                    textTransform: "none",
-                    fontWeight: "bold",
-                    fontFamily: "'Nunito sans'",
-                  }}
-                />
-              </Tabs>
-              <TabPanel value={tabIndex} index={0}>
-                {account && <BookShelf account={account && account} />}
-              </TabPanel>
-              <TabPanel value={tabIndex} index={1}>
-                {loading ? (
-                  <div className="flex justify-center items-center min-h-[300px]">
-                    <CircularProgress />
+          {account && <Profile userId={account.userId} />}
+          <Divider />
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabChange}
+            className="mb-4"
+            textColor="inherit"
+            TabIndicatorProps={{ style: { backgroundColor: "black" } }}
+          >
+            <Tab
+              label="BookShelf"
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                fontFamily: "'Nunito sans'",
+              }}
+            />
+            <Tab
+              label="Posts"
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                fontFamily: "'Nunito sans'",
+              }}
+            />
+          </Tabs>
+          <TabPanel value={tabIndex} index={0}>
+            {account && <BookShelf account={account && account} />}
+          </TabPanel>
+          <TabPanel value={tabIndex} index={1}>
+            {loading ? (
+              <div className="flex justify-center items-center min-h-[300px]">
+                <CircularProgress />
+              </div>
+            ) : (
+              <>
+                {posts.length !== 0 ? (
+                  <div className="space-y-1">
+                    <>
+                      {posts.map((post) => (
+                        <>
+                          <Post
+                            post={post}
+                            visible={true}
+                            isInitiallyGooded={goodPostIds.includes(
+                              post.postId
+                            )}
+                          />
+                          {posts.length > 1 && <Divider />}
+                        </>
+                      ))}
+                    </>
                   </div>
                 ) : (
-                  <>
-                    {posts.length !== 0 ? (
-                      <div className="space-y-1">
-                        <>
-                          {posts.map((post) => (
-                            <>
-                              <Post
-                                post={post}
-                                visible={true}
-                                isInitiallyGooded={goodPostIds.includes(
-                                  post.postId
-                                )}
-                              />
-                              {posts.length > 1 && <Divider />}
-                            </>
-                          ))}
-                        </>
-                      </div>
-                    ) : (
-                      <div className="font-soft flex justify-center text-zinc-500">
-                        No Posts yet.
-                      </div>
-                    )}
-                  </>
+                  <div className="font-soft flex justify-center text-zinc-500">
+                    No Posts yet.
+                  </div>
                 )}
-              </TabPanel>
-            </>
-          )}
+              </>
+            )}
+          </TabPanel>
         </Box>
       </motion.div>
     </div>

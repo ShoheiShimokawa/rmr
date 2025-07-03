@@ -12,6 +12,7 @@ import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
 import { ProfileChange } from "./ProfileChange";
 import { ContributionMap } from "./ContributionMap";
+import { motion } from "framer-motion";
 import {
   Avatar,
   Button,
@@ -157,72 +158,73 @@ export const Profile = ({ userId }) => {
             <>
               <div className="relative w-full flex items-start ml-2">
                 <Avatar src={account.picture} sx={{ width: 90, height: 90 }} />
-
                 <div className="absolute right-10 top-10">
-                  {user && userId === user.userId ? (
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<SettingsIcon />}
-                      onClick={handleChangeOpen}
-                      sx={{
-                        textTransform: "none",
-                        color: "#444",
-                        borderColor: "#444",
-                        fontFamily: "'Nunito sans'",
-                        fontWeight: "bold",
-                        "&:hover": {
-                          backgroundColor: "#eee",
+                  <motion.div whileTap={{ scale: 0.95 }}>
+                    {user && userId === user.userId ? (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<SettingsIcon />}
+                        onClick={handleChangeOpen}
+                        sx={{
+                          textTransform: "none",
+                          color: "#444",
                           borderColor: "#444",
-                        },
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  ) : !isFollowed ? (
-                    <Button
-                      size="small"
-                      variant="contained"
-                      sx={{
-                        textTransform: "none",
-                        color: "#fff",
-                        backgroundColor: "#000",
-                        borderColor: "#444",
-                        fontWeight: "bold",
-                        fontFamily: "'Nunito sans'",
-                        "&:hover": {
-                          backgroundColor: "#333",
+                          fontFamily: "'Nunito sans'",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            backgroundColor: "#eee",
+                            borderColor: "#444",
+                          },
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    ) : !isFollowed ? (
+                      <Button
+                        size="small"
+                        variant="contained"
+                        sx={{
+                          textTransform: "none",
+                          color: "#fff",
+                          backgroundColor: "#000",
                           borderColor: "#444",
-                        },
-                      }}
-                      onClick={() => handleFollow(account.userId)}
-                    >
-                      follow
-                    </Button>
-                  ) : (
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="primary"
-                      sx={{
-                        textTransform: "none",
-                        borderColor: "#444",
-                        fontWeight: "bold",
-                        fontFamily: "'Nunito sans'",
-                        color: "#444",
-                        "&:hover": {
-                          backgroundColor: "#eee",
+                          fontWeight: "bold",
+                          fontFamily: "'Nunito sans'",
+                          "&:hover": {
+                            backgroundColor: "#333",
+                            borderColor: "#444",
+                          },
+                        }}
+                        onClick={() => handleFollow(account.userId)}
+                      >
+                        follow
+                      </Button>
+                    ) : (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        sx={{
+                          textTransform: "none",
                           borderColor: "#444",
-                        },
-                      }}
-                      onClick={() =>
-                        handleCancelFollow(followed && followed.id)
-                      }
-                    >
-                      followed
-                    </Button>
-                  )}
+                          fontWeight: "bold",
+                          fontFamily: "'Nunito sans'",
+                          color: "#444",
+                          "&:hover": {
+                            backgroundColor: "#eee",
+                            borderColor: "#444",
+                          },
+                        }}
+                        onClick={() =>
+                          handleCancelFollow(followed && followed.id)
+                        }
+                      >
+                        followed
+                      </Button>
+                    )}
+                  </motion.div>
                 </div>
               </div>
               <div className="ml-2 ">
@@ -237,29 +239,34 @@ export const Profile = ({ userId }) => {
                 {account.description}
               </div>
               <div className="flex mb-2">
-                <div className="flex hover:underline cursor-pointer ml-2">
-                  <div
-                    className="mr-1 font-soft text-sm flex"
-                    onClick={handleSelectFollow}
-                  >
-                    <div className="font-bold mr-1">
-                      {follows.length !== 0 ? follows.length : 0}{" "}
-                    </div>
-                    follows
-                  </div>
-                </div>
-                <div className="flex ml-2">
-                  <div
-                    className="flex hover:underline cursor-pointer"
-                    onClick={handleSelectFollower}
-                  >
-                    <div className="mr-1 font-soft text-sm flex">
+                {" "}
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <div className="flex hover:text-zinc-500  cursor-pointer ml-2">
+                    <div
+                      className="mr-1 font-soft text-sm flex"
+                      onClick={handleSelectFollow}
+                    >
                       <div className="font-bold mr-1">
-                        {followers.length !== 0 ? followers.length : 0}
-                      </div>{" "}
-                      followers
+                        {follows.length !== 0 ? follows.length : 0}{" "}
+                      </div>
+                      follows
                     </div>
                   </div>
+                </motion.div>
+                <div className="flex ml-2">
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <div
+                      className="flex hover:text-zinc-500 cursor-pointer"
+                      onClick={handleSelectFollower}
+                    >
+                      <div className="mr-1 font-soft text-sm flex">
+                        <div className="font-bold mr-1">
+                          {followers.length !== 0 ? followers.length : 0}
+                        </div>{" "}
+                        followers
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
               {(account.x || account.facebook || account.link) && (

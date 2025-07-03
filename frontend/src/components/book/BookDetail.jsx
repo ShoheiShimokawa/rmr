@@ -19,6 +19,7 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { enumToGenre } from "../../util";
+import { motion } from "framer-motion";
 import { useRequireLogin } from "../../hooks/useRequireLogin";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -274,9 +275,15 @@ export const BookDetail = ({ book, updated, visible = true }) => {
             <div className="flex justify-between items-start w-full font-soft font-bold">
               <div className="ml-1">Your Reading Timeline</div>
               {myReading && visible && (
-                <IconButton aria-label="more" size="small" onClick={handleOpen}>
-                  <ChangeCircleIcon />
-                </IconButton>
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <IconButton
+                    aria-label="more"
+                    size="small"
+                    onClick={handleOpen}
+                  >
+                    <ChangeCircleIcon />
+                  </IconButton>
+                </motion.div>
               )}
             </div>
             <div className="mt-2  w-full flex justify-center">
@@ -285,24 +292,26 @@ export const BookDetail = ({ book, updated, visible = true }) => {
               ) : (
                 visible && (
                   <div>
-                    <div className="mt-1">
-                      <Button
-                        variant="contained"
-                        endIcon={<GiBookshelf />}
-                        onClick={handleOpenAdd}
-                        sx={{
-                          textTransform: "none",
-                          backgroundColor: "#000",
-                          color: "#fff",
-                          fontWeight: "bold",
-                          "&:hover": {
-                            backgroundColor: "#333",
-                          },
-                        }}
-                      >
-                        Add bookshelf
-                      </Button>
-                    </div>
+                    <motion.div whileTap={{ scale: 0.95 }}>
+                      <div className="mt-1">
+                        <Button
+                          variant="contained"
+                          endIcon={<GiBookshelf />}
+                          onClick={handleOpenAdd}
+                          sx={{
+                            textTransform: "none",
+                            backgroundColor: "#000",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            "&:hover": {
+                              backgroundColor: "#333",
+                            },
+                          }}
+                        >
+                          Add bookshelf
+                        </Button>
+                      </div>
+                    </motion.div>
                     <div className="text-sm text-zinc-700 font-soft">
                       Not on your Bookshelf yet.
                     </div>
