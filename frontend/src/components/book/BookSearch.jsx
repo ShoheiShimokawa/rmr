@@ -113,6 +113,9 @@ export const BookSearch = ({ fromPost }) => {
       <CustomDialog open={open} title="detail" onClose={handleCloseDetail}>
         <BookDetail reading={myReading} book={selectedBook} />
       </CustomDialog>
+      <div className="text-2xl font-soft font-bold ml-4 mt-4 mb-4 flex justify-center">
+        Explore Books📚
+      </div>
       <div className="my-1">
         <form style={{ maxWidth: "400px", margin: "0 auto" }}>
           <Paper
@@ -120,11 +123,12 @@ export const BookSearch = ({ fromPost }) => {
             sx={{
               p: "2px 4px",
               display: "flex",
+              mb: 2,
             }}
           >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Search by title or author"
+              placeholder="Search by Title or Author"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}

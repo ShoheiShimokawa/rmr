@@ -7,6 +7,7 @@ import { useNotify } from "../hooks/NotifyProvider";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkIcon from "@mui/icons-material/Link";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 export const ProfileChange = ({ account, update }) => {
   const { notify } = useNotify();
@@ -120,6 +121,8 @@ export const ProfileChange = ({ account, update }) => {
       }
     }
   };
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -186,7 +189,11 @@ export const ProfileChange = ({ account, update }) => {
             }}
           />
         </div>
-        <div className="flex justify-around">
+        <div
+          className={`mt-4 flex ${
+            isMobile ? "flex-col gap-2" : "justify-around"
+          }`}
+        >
           <div>
             <div className="flex items-center font-soft font-bold mt-4">
               <XIcon sx={{ fontSize: "20px" }} />
@@ -203,7 +210,7 @@ export const ProfileChange = ({ account, update }) => {
                 placeholder="your_X_ID"
                 error={!!errors.x}
                 helperText={errors.x?.message}
-                sx={{ maxWidth: 200 }}
+                sx={{ maxWidth: 240 }}
                 slotProps={{
                   inputLabel: {
                     shrink: true,
@@ -233,7 +240,7 @@ export const ProfileChange = ({ account, update }) => {
                 placeholder="your_facebook_ID"
                 error={!!errors.facebook}
                 helperText={errors.facebook?.message}
-                sx={{ maxWidth: 200 }}
+                sx={{ maxWidth: 240 }}
                 slotProps={{
                   inputLabel: {
                     shrink: true,
