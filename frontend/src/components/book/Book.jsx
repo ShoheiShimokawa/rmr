@@ -8,6 +8,7 @@ export const Book = ({ book, onClick, src, width, height }) => {
         src={!src ? book?.thumbnail && book?.thumbnail : src}
         sx={{
           width: width ? width : "85px",
+          aspectRatio: "85 / 127",
           height: height ? height : "127px",
           cursor: "pointer",
           boxShadow: 1,

@@ -1,4 +1,3 @@
-import { Book } from "./Book";
 import { Post } from "../Post";
 import { getGoodPostAll } from "../../api/post";
 import { CustomDialog } from "../../ui/CustomDialog";
@@ -35,6 +34,7 @@ import {
 } from "@mui/material";
 import { ReadingRegister } from "../ReadingRegister";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import { BookWithDesc } from "./BookWithDesc";
 
 export const BookDetail = ({ book, updated, visible = true }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -233,18 +233,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           reading={myReading && myReading}
         />
       </CustomDialog>
-      <div className="flex">
-        <Book book={book} width={"95px"} height={"137px"} />
-        <div className="ml-2 text-lg text-zinc-800 font-bold font-soft">
-          <div>{book.title}</div>
-          <div className="text-zinc-500 mt-2 text-sm font-soft">
-            {book.author}
-          </div>
-        </div>
-      </div>
-      <div className="text-sm font-sans mt-5 ml-1 font-soft">
-        <CollapsibleText text={book.description} />
-      </div>
+      <BookWithDesc book={book} maxLength={100} />
       <div className="flex place-items-center  mt-2 ml-1 mb-1">
         <div className="text-xs mr-1 text-stone-600">Genre: </div>
         <Chip
