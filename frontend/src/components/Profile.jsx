@@ -272,7 +272,7 @@ export const Profile = ({ userId }) => {
               {(account.x || account.facebook || account.link) && (
                 <div className="ml-1 mb-2 flex">
                   {account.x && (
-                    <Tooltip title={`${account.x}`} arrow>
+                    <Tooltip title={`@${account.x}`} arrow>
                       <IconButton
                         component="a"
                         href={`https://x.com/${account.x}`}

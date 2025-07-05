@@ -147,9 +147,10 @@ export const Header = () => {
                 <img
                   src="/rmr_logo.png"
                   alt="rmr Logo"
+                  className="select-none"
                   style={{
-                    width: "125px",
-                    height: "125px",
+                    width: "auto",
+                    height: "120px",
                     objectFit: "contain",
                   }}
                 />
