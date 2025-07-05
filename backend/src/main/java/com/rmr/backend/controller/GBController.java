@@ -23,7 +23,7 @@ public class GBController {
     public ResponseEntity<?> searchBooks(@RequestParam String query, @RequestParam String country) {
         String url = googleBooksApiUrl + "?q=" + query
             + "&maxResults=40"
-            + "&country=" + country
+            + "&country=JP&langRestrict=ja" 
             + "&key=" + apiKey;
 
         RestTemplate restTemplate = new RestTemplate();
