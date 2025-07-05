@@ -15,9 +15,11 @@ import { BookDetail } from "./BookDetail";
 import { CustomDialog } from "../../ui/CustomDialog";
 import { motion } from "framer-motion";
 import { Chip, Card, CardContent } from "@mui/material";
+import { useNotify } from "../../hooks/NotifyProvider";
 
 export const BookSearch = ({ fromPost }) => {
   const [query, setQuery] = useState("");
+  const { notify } = useNotify();
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const [loading, setLoading] = useState(false);
@@ -26,6 +28,7 @@ export const BookSearch = ({ fromPost }) => {
   const [myReading, setMyReading] = useState();
   const [open, setOpen] = useState(false);
   const [iniSearch, setIniSearch] = useState(false);
+  const [country, setCountry] = useState();
 
   const handleOpenDetail = (selectedBook) => {
     const isbn = selectedBook.volumeInfo.industryIdentifiers
@@ -74,15 +77,25 @@ export const BookSearch = ({ fromPost }) => {
     }
   };
 
+  const getCountryCodeFromLanguage = (lang) => {
+    lang = lang || navigator.language;
+    const parts = lang.split("-");
+    if (parts.length === 2 && parts[1].length === 2) {
+      return parts[1].toUpperCase();
+    }
+    return "JP";
+  };
+
   const searchBooks = async () => {
     try {
       setLoading(true);
-      const result = await findBooks(query);
+      const result = await findBooks(query, country);
       setBooks(result.data.items);
       setIniSearch(true);
-      setLoading(false);
     } catch (error) {
-      console.error("Error fetching books:", error);
+      notify("Failed to search books.", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,6 +114,8 @@ export const BookSearch = ({ fromPost }) => {
     if (user) {
       const myR = await findReadingByUser(user && user.userId);
       setMyReadings(myR.data);
+      const guessedCountry = getCountryCodeFromLanguage();
+      setCountry(guessedCountry);
     }
   }, [user]);
 
@@ -176,8 +191,11 @@ export const BookSearch = ({ fromPost }) => {
                     >
                       <CardContent>
                         <div className="flex gap-6">
-                          <Book src={book.volumeInfo?.imageLinks?.thumbnail} />
-
+                          <div className="flex-shrink-0">
+                            <Book
+                              src={book.volumeInfo?.imageLinks?.thumbnail}
+                            />
+                          </div>
                           <div className="ml-2 text-sm">
                             <div className="font-soft">
                               {book.volumeInfo.title}

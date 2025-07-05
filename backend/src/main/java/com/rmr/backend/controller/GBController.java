@@ -20,8 +20,11 @@ public class GBController {
 
 
     @GetMapping
-    public ResponseEntity<?> searchBooks(@RequestParam String query) {
-        String url = googleBooksApiUrl + "?q=" + query + "&maxResults=40&key=" + apiKey;
+    public ResponseEntity<?> searchBooks(@RequestParam String query, @RequestParam String country) {
+        String url = googleBooksApiUrl + "?q=" + query
+            + "&maxResults=40"
+            + "&country=" + country
+            + "&key=" + apiKey;
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
