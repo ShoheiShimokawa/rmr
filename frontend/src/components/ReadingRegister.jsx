@@ -1,4 +1,4 @@
-import { registerReading, updateReading } from "../api/reading";
+import { useReading } from "../hooks/useReading";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 
 export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const { user } = useContext(UserContext);
+  const { registerReading, updateReading } = useReading();
   const { notify } = useNotify();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDisabled = book || reading ? false : true;

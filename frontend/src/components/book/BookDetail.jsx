@@ -7,13 +7,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ReadingTimeline } from "../ReadingTimeline";
 import { useContext } from "react";
 import UserContext from "../UserProvider";
+import { useReading } from "../../hooks/useReading";
 import { GiBookshelf } from "react-icons/gi";
-import { CollapsibleText } from "../CollapsibleText";
-import { registerReading, findReadingById } from "../../api/reading";
 import { Menu, MenuItem } from "@mui/material";
 import { registerBook } from "../../api/book";
 import { findPostByBookId } from "../../api/post";
-import { deleteReading, toDoing } from "../../api/reading";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -52,6 +50,8 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const [goodPostIds, setGoodPostIds] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { registerReading, findReadingById, deleteReading, toDoing } =
+    useReading();
 
   const handleOpenAdd = (event) => {
     if (!isLoggedIn()) return;
@@ -209,7 +209,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
     } finally {
       setLoading(false);
     }
-  }, [book.id, notify, user]);
+  }, [book.id, notify, user, findReadingById]);
 
   useEffect(() => {
     find();
@@ -501,6 +501,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           {doing.length !== 0 ? (
             <AvatarGroup
               max={3}
+              spacing="small"
               sx={{
                 "& .MuiAvatar-root": {
                   width: 34,
@@ -528,6 +529,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
             {done.length !== 0 ? (
               <AvatarGroup
                 max={3}
+                spacing="small"
                 sx={{
                   "& .MuiAvatar-root": {
                     width: 34,

@@ -1,46 +1,45 @@
-import { useContext, useEffect, useState, useCallback } from "react";
-import { getPostAll } from "../api/post";
+import { useContext } from "react";
+import { getPostAll, getGoodPostAll } from "../api/post";
 import { Post } from "./Post";
 import { Skeleton, Box } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
 import UserContext from "./UserProvider";
-import { getGoodPostAll } from "../api/post";
 import { Divider } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 
 export const Community = () => {
-  const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
   const { user } = useContext(UserContext);
   const { notify } = useNotify();
-  const [goodPostIds, setGoodPostIds] = useState([]);
 
-  const find = useCallback(async () => {
-    try {
-      setLoading(true);
+  const { data: posts, isLoading: loadingPosts } = useQuery({
+    queryKey: ["posts"],
+    queryFn: async () => {
       const result = await getPostAll();
-      const sortedPosts = result.data.slice().sort((a, b) => {
-        return new Date(b.registerDate) - new Date(a.registerDate);
-      });
-      const sort = sortedPosts.filter(
+      const sorted = result.data
+        .slice()
+        .sort((a, b) => new Date(b.registerDate) - new Date(a.registerDate));
+      return sorted.filter(
         (post) =>
           post.postType === "WITH_THOUGHTS" || post.postType === "RECOMMENDED"
       );
-      setPosts(sort);
-      if (user) {
-        const goodList = await getGoodPostAll(user && user.userId);
-        const likedIds = goodList.data.map((g) => g.post.postId);
-        setGoodPostIds(likedIds);
-      }
-    } catch (error) {
-      notify("Failed to load.Please try later.", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [notify, user]);
+    },
+    staleTime: 1000 * 60 * 5,
+    onError: () => notify("Failed to load.Please try later.", "error"),
+  });
 
-  useEffect(() => {
-    find();
-  }, [find]);
+  const { data: goodPostIds = [], isLoading: loadingGood } = useQuery({
+    queryKey: ["goodPosts", user?.userId],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await getGoodPostAll(user.userId);
+      return res.data.map((g) => g.post.postId);
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+    onError: () => notify("Failed to load.Please try later.", "error"),
+  });
+
+  const isLoading = loadingPosts || (user && loadingGood);
   return (
     <div>
       <Box
@@ -52,7 +51,7 @@ export const Community = () => {
         }}
       >
         <div className="container space-y-1 w-xl">
-          {loading
+          {isLoading
             ? Array.from({ length: 7 }).map((_, i) => (
                 <div key={i} className="mb-6">
                   <div className="flex items-start gap-4">
