@@ -1,11 +1,10 @@
-import axios from "axios";
+import http from "./http";
 
-const url = process.env.REACT_APP_API_URL;
-
-export const getNotificationAll = (userId) => {
-  return axios.get(url + "notification", { params: { userId } });
+// 通知は本人専用。userIdは認証トークンからサーバ側で復元される。
+export const getNotificationAll = () => {
+  return http.get("notification");
 };
 
-export const markAllAsDone = (userId) => {
-  return axios.post(url + "notification", { userId });
+export const markAllAsDone = () => {
+  return http.post("notification");
 };

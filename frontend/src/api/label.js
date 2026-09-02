@@ -1,7 +1,5 @@
-import axios from "axios";
-
-const url = process.env.REACT_APP_API_URL;
+import http from "./http";
 
 export const getLabels = (userId) => {
-  return axios.get(url + "label", { params: { userId } });
+  return http.get("label", { params: { userId } });
 };

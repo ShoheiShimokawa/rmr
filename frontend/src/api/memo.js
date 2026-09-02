@@ -1,15 +1,13 @@
-import axios from "axios";
-
-const url = process.env.REACT_APP_API_URL;
+import http from "./http";
 
 export const getById = (memoId) => {
-  return axios.get(url + "memo/id", { params: { memoId } });
+  return http.get("memo/id", { params: { memoId } });
 };
 
 export const getMemos = (userId) => {
-  return axios.get(url + "memo", { params: { userId } });
+  return http.get("memo", { params: { userId } });
 };
 
 export const registerMemo = (params) => {
-  return axios.post(url + "memo", params);
+  return http.post("memo", params);
 };

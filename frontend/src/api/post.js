@@ -1,35 +1,34 @@
-import axios from "axios";
-
-const url = process.env.REACT_APP_API_URL;
+import http from "./http";
 
 export const getPostAll = () => {
-  return axios.get(url + "post");
+  return http.get("post");
 };
 
 export const findPostByBookId = (id) => {
-  return axios.get(url + "post/book/id", { params: { id } });
+  return http.get("post/book/id", { params: { id } });
 };
 
 export const getPostAllByUser = (userId) => {
-  return axios.get(url + "post/user", { params: { userId } });
+  return http.get("post/user", { params: { userId } });
 };
 
 export const getPostRecord = (userId) => {
-  return axios.get(url + "post/record", { params: { userId } });
+  return http.get("post/record", { params: { userId } });
 };
 
 export const getGooder = (postId) => {
-  return axios.get(url + "post/good", { params: { postId } });
+  return http.get("post/good", { params: { postId } });
 };
 
 export const getGoodPostAll = (userId) => {
-  return axios.get(url + "post/good/user", { params: { userId } });
+  return http.get("post/good/user", { params: { userId } });
 };
 
-export const good = (params) => {
-  return axios.post(url + "post/good", params);
+// いいねした本人(userId)は認証トークンからサーバ側で復元されるため、postIdだけを送る
+export const good = (postId) => {
+  return http.post("post/good", { postId });
 };
 
-export const deleteGood = (goodId) => {
-  return axios.post(url + "post/good/delete", goodId);
+export const deleteGood = (postId) => {
+  return http.post("post/good/delete", { postId });
 };

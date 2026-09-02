@@ -8,7 +8,7 @@ import { TextField, Button, InputAdornment } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
 export const HandleRegister = ({ account, updated }) => {
   const { notify } = useNotify();
-  const { setUser } = useContext(UserContext);
+  const { setUser, setToken } = useContext(UserContext);
   const allowedChars = /^[a-zA-Z0-9_-]+$/;
   const formSchema = z.object({
     handle: z
@@ -18,7 +18,6 @@ export const HandleRegister = ({ account, updated }) => {
       .regex(allowedChars, {
         message: "Only letters, numbers, and -._~ are allowed.",
       }),
-    name: z.string().min(1, "name is required.").max(30),
   });
   const {
     register,
@@ -29,19 +28,18 @@ export const HandleRegister = ({ account, updated }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       handle: "",
-      name: account.name && account.name,
     },
   });
   const onSubmit = async (values) => {
     try {
       const params = {
-        ...values,
-        googleSub: account.googleSub,
-        picture: account.picture,
+        handle: values.handle,
+        registrationToken: account.registrationToken,
       };
       const result = await registerAccount(params);
 
-      setUser(result.data);
+      setUser(result.data.user);
+      setToken(result.data.sessionToken);
       notify("You've successfully created your account!", "success");
       updated && updated();
     } catch (error) {
@@ -79,19 +77,8 @@ export const HandleRegister = ({ account, updated }) => {
             startAdornment: <InputAdornment position="start">@</InputAdornment>,
           }}
         />
-        <TextField
-          {...register("name")}
-          label="name"
-          variant="standard"
-          multiline
-          fullWidth
-          margin="normal"
-          error={!!errors.name}
-          helperText={errors.name?.message}
-          focused
-        />
         <div className="font-soft text-sm mt-3">
-          You can change these later.
+          You can change your display name later in your profile settings.
         </div>
         <div className="flex justify-end mr-6 mt-3">
           <Button

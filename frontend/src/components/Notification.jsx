@@ -23,9 +23,10 @@ export const Notification = () => {
   const [loading, setLoading] = useState(false);
   const { notify } = useNotify();
   const find = useCallback(async () => {
+    if (!user) return;
     setLoading(true);
     try {
-      const result = await getNotificationAll(user && user.userId);
+      const result = await getNotificationAll();
       const sortedNotifications = result.data.slice().sort((a, b) => {
         return new Date(b.registerDate) - new Date(a.registerDate);
       });
