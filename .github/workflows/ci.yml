@@ -38,6 +38,7 @@ jobs:
       GOOGLE_BOOKS_API_URL: https://www.googleapis.com/books/v1/volumes
       GOOGLE_BOOKS_API_KEY: ci-dummy-books-key
       FRONTEND_ORIGIN: http://localhost:3000
+      JWT_SECRET: ci-dummy-jwt-secret-please-change-me-1234567890
     steps:
       - uses: actions/checkout@v4
 

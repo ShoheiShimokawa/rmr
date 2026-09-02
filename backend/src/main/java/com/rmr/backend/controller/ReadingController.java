@@ -3,6 +3,7 @@ package com.rmr.backend.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,23 +47,24 @@ public class ReadingController {
 	}
 	
 	@PostMapping("/reading")
-	public Reading register(@RequestBody RegisterReading params) {
+	public Reading register(@AuthenticationPrincipal Integer currentUserId, @RequestBody RegisterReading params) {
+		params.setUserId(currentUserId);
 		return this.service.register(params);
 	}
-	
+
 	@PostMapping("/reading/update")
-	public Reading update(@RequestBody UpdateReading params) {
-		return this.service.update(params);
+	public Reading update(@AuthenticationPrincipal Integer currentUserId, @RequestBody UpdateReading params) {
+		return this.service.update(currentUserId, params);
 	}
-	
+
 	@PostMapping("/reading/doing")
-	public Reading toDoing(@RequestBody SpecifyReadingId params) {
-		return this.service.toDoing(params.readingId);
+	public Reading toDoing(@AuthenticationPrincipal Integer currentUserId, @RequestBody SpecifyReadingId params) {
+		return this.service.toDoing(params.readingId, currentUserId);
 	}
-	
+
 	@PostMapping("/reading/delete")
-	public ResponseEntity<Void> delete(@RequestBody SpecifyReadingId params) {
-		this.service.delete(params.readingId);
+	public ResponseEntity<Void> delete(@AuthenticationPrincipal Integer currentUserId, @RequestBody SpecifyReadingId params) {
+		this.service.delete(params.readingId, currentUserId);
 		return ResponseEntity.ok().build();
 	}
 	//POSTはDTO作る必要あり

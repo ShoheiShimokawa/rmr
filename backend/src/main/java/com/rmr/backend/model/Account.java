@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rmr.backend.context.AccountRepository;
 import com.rmr.backend.util.BadRequestException;
 
@@ -27,7 +28,8 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Integer userId;
-	/**  googleのsub*/
+	/**  googleのsub(本人特定用の内部情報のためレスポンスには含めない) */
+	@JsonIgnore
 	private String googleSub;
 	/** ユーザ発行ハンドル */
 	@NotNull
@@ -36,7 +38,8 @@ public class Account {
 	private String name;
 	/** サムネイル */
 	private String picture;
-	/** メール */
+	/** メール(PIIのためレスポンスには含めない) */
+	@JsonIgnore
 	private String email;
 	/** 自己紹介文 */
 	private String description;
@@ -72,19 +75,19 @@ public class Account {
 		return rep.save(account);
 	}
 	
+		/** 登録パラメタ。googleSub/name/pictureはクライアント入力を信用せず、
+		 * registrationToken(署名付き・短命)を検証して復元する。 */
 		public static record RegisterAccount(
-			String googleSub,
-			String handle,
-			String name,
-			String picture
+			String registrationToken,
+			String handle
 			) {
     }
 	
-	/** プロフィールを変更します。*/
-	public static Account update(AccountRepository rep,UpdateProfile params) {
-		Account user = rep.findByUserId(params.userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
+	/** プロフィールを変更します。(currentUserIdは認証済みトークンから復元した本人ID) */
+	public static Account update(AccountRepository rep, Integer currentUserId, UpdateProfile params) {
+		Account user = rep.findByUserId(currentUserId).orElseThrow(() -> new EntityNotFoundException("user not found"));
 		rep.findByHandle(params.handle).ifPresent(existing -> {
-       if (!existing.getUserId().equals(params.userId)) {
+       if (!existing.getUserId().equals(currentUserId)) {
     throw new BadRequestException("This handle is already taken.");
 }
     });

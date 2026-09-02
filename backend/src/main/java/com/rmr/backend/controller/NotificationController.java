@@ -3,11 +3,10 @@ package com.rmr.backend.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rmr.backend.model.Notification;
@@ -22,16 +21,14 @@ public class NotificationController {
     private final NotificationService service;
 
     @GetMapping("/notification")
-    public List<Notification> getPostAll(@RequestParam Integer userId) {
-        return service.getAll(userId);
+    public List<Notification> getPostAll(@AuthenticationPrincipal Integer currentUserId) {
+        return service.getAll(currentUserId);
     }
 
     @PostMapping("/notification")
-    public ResponseEntity<Void> markAllAsDone(@RequestBody SpecifyUserId params) {
-        service.markAllAsDone(params.userId);
+    public ResponseEntity<Void> markAllAsDone(@AuthenticationPrincipal Integer currentUserId) {
+        service.markAllAsDone(currentUserId);
         return ResponseEntity.ok().build();
-    }
-    public static record SpecifyUserId(Integer userId) {
     }
 
 }
