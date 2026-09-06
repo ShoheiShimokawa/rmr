@@ -45,11 +45,7 @@ export const Profile = ({ userId }) => {
     try {
       if (!isLoggedIn()) return;
       setIsFollowed(true);
-      const param = {
-        userId: selectedUserId,
-        followerId: user && user.userId,
-      };
-      const result = await follow(param);
+      const result = await follow(selectedUserId);
       setFollowed(result.data);
       notify("You Followed.", "Success");
     } catch (error) {

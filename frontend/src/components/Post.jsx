@@ -46,11 +46,7 @@ export const Post = ({
         setIsGooded(true);
         setLocalGoodCount((prev) => prev + 1);
         if (user) {
-          const param = {
-            postId: post.postId,
-            userId: user.userId,
-          };
-          await good(param);
+          await good(post.postId);
         }
       } catch (error) {
         notify("You already good for this post.", "error");
@@ -64,11 +60,7 @@ export const Post = ({
       setIsGooded(false);
       setLocalGoodCount((prev) => prev - 1);
       if (user) {
-        const param = {
-          postId: post.postId,
-          userId: user.userId,
-        };
-        await deleteGood(param);
+        await deleteGood(post.postId);
       }
     }
   };

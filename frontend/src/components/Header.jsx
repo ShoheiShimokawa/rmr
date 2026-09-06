@@ -29,7 +29,7 @@ import {
 } from "@mui/material";
 
 export const Header = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const [anchor, setAnchor] = useState(null);
   const [open, setOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -41,7 +41,7 @@ export const Header = () => {
 
   const find = useCallback(async () => {
     if (user) {
-      const result = await getNotificationAll(user.userId);
+      const result = await getNotificationAll();
       if (result.data.length >= 1) {
         const unread = result.data.filter((n) => n.statusType === "NONE");
         setHasUnread(unread.length > 0);
@@ -77,7 +77,7 @@ export const Header = () => {
     setShowLogin(false);
   };
   const handleLogout = () => {
-    setUser(null);
+    logout();
     goToCommunity();
     handleClose();
     notify("Logged out successfully.", "success");
@@ -89,7 +89,7 @@ export const Header = () => {
     }
   };
   const handleMarkAsDone = async () => {
-    await markAllAsDone(user && user.userId);
+    await markAllAsDone();
   };
   const handleNotificationClick = () => {
     if (isLoggedIn()) {

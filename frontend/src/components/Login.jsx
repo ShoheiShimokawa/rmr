@@ -5,10 +5,11 @@ import { HandleRegister } from "./HandleRegister";
 import { useContext, useState } from "react";
 import { useNotify } from "../hooks/NotifyProvider";
 import { CustomDialog } from "../ui/CustomDialog";
+import { login } from "../api/auth";
 export const Login = ({ updated }) => {
   const navigate = useNavigate();
   const goToCommunity = () => navigate("/");
-  const { setUser } = useContext(UserContext);
+  const { setUser, setToken } = useContext(UserContext);
   const [kari, setKari] = useState(false);
   const [account, setAccount] = useState({});
   const { notify } = useNotify();
@@ -24,28 +25,20 @@ export const Login = ({ updated }) => {
   const handleLoginSuccess = async (response) => {
     const token = response.credential;
     try {
-      const result = await fetch(
-        process.env.REACT_APP_API_URL + "auth/google",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token }),
-        }
-      );
-      const userData = await result.json();
-      if (result.status === 200 && userData.registered === false) {
+      const result = await login(token);
+      const userData = result.data;
+      if (userData.registered === false) {
         const account = {
           name: userData.name,
           picture: userData.picture,
-          googleSub: userData.googleSub,
+          registrationToken: userData.registrationToken,
         };
         setAccount(account);
         handleKari();
       }
       if (userData.user && userData.user.handle) {
         setUser(userData.user);
+        setToken(userData.sessionToken);
         updated && updated();
         goToCommunity();
         notify("You've successfully logged in", "success");

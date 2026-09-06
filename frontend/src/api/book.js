@@ -1,11 +1,9 @@
-import axios from "axios";
-
-const url = process.env.REACT_APP_API_URL;
+import http from "./http";
 
 export const findBooks = (query, country) => {
-  return axios.get(url + "books", { params: { query, country } });
+  return http.get("books", { params: { query, country } });
 };
 
 export const registerBook = (params) => {
-  return axios.post(url + "book", params);
+  return http.post("book", params);
 };

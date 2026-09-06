@@ -2,7 +2,9 @@ package com.rmr.backend.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.rmr.backend.context.AccountRepository;
 import com.rmr.backend.context.BookRepository;
@@ -58,8 +60,9 @@ public class ReadingService {
 		return reading;
 	}
 
-	/** 読書を更新します。 */
-	public Reading update(UpdateReading params) {
+	/** 読書を更新します。(自分の読書のみ) */
+	public Reading update(Integer currentUserId, UpdateReading params) {
+		requireOwnership(params.readingId(), currentUserId);
 		Reading reading = Reading.update(rep, params);
 		if (reading.getStatusType().equals(BookStatusType.DONE) && (!reading.getThoughts().equals("") || reading.getRate()!=0)) {
 			Post.registerPost(pRep, rep, reading.getReadingId(),params.recommended());
@@ -67,14 +70,24 @@ public class ReadingService {
 		return reading;
 	}
 
-	/** 未読の読書を読書中にします。 */
-	public Reading toDoing(Integer readingId) {
+	/** 未読の読書を読書中にします。(自分の読書のみ) */
+	public Reading toDoing(Integer readingId, Integer currentUserId) {
+		requireOwnership(readingId, currentUserId);
 		return Reading.toDoing(rep, readingId);
 	}
 
-	/** 読書を削除します。 */
-	public void delete(Integer readingId) {
+	/** 読書を削除します。(自分の読書のみ) */
+	public void delete(Integer readingId, Integer currentUserId) {
+		requireOwnership(readingId, currentUserId);
 		Reading.delete(rep, readingId);
+	}
+
+	/** 読書の所有者が本人であることを確認します。所有者でなければ403を返します。 */
+	private void requireOwnership(Integer readingId, Integer currentUserId) {
+		Reading reading = Reading.get(rep, readingId);
+		if (!reading.getUser().getUserId().equals(currentUserId)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not own this reading.");
+		}
 	}
 	
 	/** 月間読書記録を返します。*/

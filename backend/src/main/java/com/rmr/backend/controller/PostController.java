@@ -3,6 +3,7 @@ package com.rmr.backend.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,16 +57,17 @@ public class PostController {
 	}
 
 	@PostMapping("/post/good")
-	public Good good(@RequestBody SpecifyGood params) {
-		return goService.good(params.postId, params.userId);
+	public Good good(@AuthenticationPrincipal Integer currentUserId, @RequestBody SpecifyGood params) {
+		return goService.good(params.postId, currentUserId);
 	}
 
 	@PostMapping("/post/good/delete")
-	public ResponseEntity<Void> delete(@RequestBody SpecifyGood params) {
-		goService.delete(params.postId, params.userId);
+	public ResponseEntity<Void> delete(@AuthenticationPrincipal Integer currentUserId, @RequestBody SpecifyGood params) {
+		goService.delete(params.postId, currentUserId);
 		return ResponseEntity.ok().build();
 	}
-	public static record SpecifyGood(Integer postId,Integer userId) {
+	/** いいね対象のポスト。いいねした本人(userId)は認証済みトークンから復元するためクライアント入力は使わない。 */
+	public static record SpecifyGood(Integer postId) {
     }
 
 }
