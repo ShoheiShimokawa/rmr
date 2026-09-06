@@ -1,4 +1,5 @@
-import { getGooder } from "../api/post";
+import { useEffect } from "react";
+import { usePostGooders } from "../hooks/usePost";
 import { useNotify } from "../hooks/NotifyProvider";
 import {
   Avatar,
@@ -8,35 +9,23 @@ import {
   ListItemAvatar,
   CircularProgress,
 } from "@mui/material";
-import { useEffect, useState, useCallback } from "react";
 
 export const GoodDetail = ({ postId }) => {
-  const [goods, setGoods] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { data: goods = [], isLoading, isError } = usePostGooders(postId);
   const { notify } = useNotify();
+
+  useEffect(() => {
+    if (isError) notify("Failed to loading.", "error");
+  }, [isError, notify]);
 
   const handleClick = (selectedHandle) => {
     const newUrl = `${window.location.origin}/${selectedHandle}`;
     window.open(newUrl, "_blank");
   };
 
-  const find = useCallback(async () => {
-    try {
-      setLoading(true);
-      const result = await getGooder(postId && postId);
-      setGoods(result.data);
-    } catch (error) {
-      notify("Failed to loading.", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [postId, notify]);
-  useEffect(() => {
-    find();
-  }, [find]);
   return (
     <div>
-      {loading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center ">
           <CircularProgress />
         </div>

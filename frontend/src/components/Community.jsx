@@ -1,18 +1,24 @@
-import { useContext } from "react";
-import { getPostAll, getGoodPostAll } from "../api/post";
+import { useContext, useEffect } from "react";
+import { getPostAll } from "../api/post";
 import { Post } from "./Post";
 import { Skeleton, Box } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
 import UserContext from "./UserProvider";
 import { Divider } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import { useGoodPostIds } from "../hooks/usePost";
+import { queryKeys } from "../api/queryKeys";
 
 export const Community = () => {
   const { user } = useContext(UserContext);
   const { notify } = useNotify();
 
-  const { data: posts, isLoading: loadingPosts } = useQuery({
-    queryKey: ["posts"],
+  const {
+    data: posts,
+    isLoading: loadingPosts,
+    isError: isPostsError,
+  } = useQuery({
+    queryKey: queryKeys.posts(),
     queryFn: async () => {
       const result = await getPostAll();
       const sorted = result.data
@@ -23,21 +29,17 @@ export const Community = () => {
           post.postType === "WITH_THOUGHTS" || post.postType === "RECOMMENDED"
       );
     },
-    staleTime: 1000 * 60 * 5,
-    onError: () => notify("Failed to load.Please try later.", "error"),
   });
 
-  const { data: goodPostIds = [], isLoading: loadingGood } = useQuery({
-    queryKey: ["goodPosts", user?.userId],
-    queryFn: async () => {
-      if (!user) return [];
-      const res = await getGoodPostAll(user.userId);
-      return res.data.map((g) => g.post.postId);
-    },
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5,
-    onError: () => notify("Failed to load.Please try later.", "error"),
-  });
+  const { isLoading: loadingGood, isError: isGoodError } = useGoodPostIds(
+    user?.userId
+  );
+
+  useEffect(() => {
+    if (isPostsError || isGoodError) {
+      notify("Failed to load.Please try later.", "error");
+    }
+  }, [isPostsError, isGoodError, notify]);
 
   const isLoading = loadingPosts || (user && loadingGood);
   return (
@@ -74,11 +76,7 @@ export const Community = () => {
             : posts.length > 0 &&
               posts.map((post) => (
                 <div key={post.postId}>
-                  <Post
-                    post={post}
-                    visible={true}
-                    isInitiallyGooded={goodPostIds.includes(post.postId)}
-                  />
+                  <Post post={post} visible={true} />
                   <Divider />
                 </div>
               ))}

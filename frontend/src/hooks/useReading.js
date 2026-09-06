@@ -1,6 +1,31 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "../api/reading";
 import { useCallback } from "react";
+import { queryKeys } from "../api/queryKeys";
+
+/** ある本に紐づく全ユーザの読書記録を返します。 */
+export const useReadingsByBook = (bookId) => {
+  return useQuery({
+    queryKey: queryKeys.readingsByBook(bookId),
+    queryFn: async () => {
+      const result = await api.findReadingById(bookId);
+      return result.data;
+    },
+    enabled: !!bookId,
+  });
+};
+
+/** ユーザに紐づく全ての読書記録を返します。 */
+export const useReadingsByUser = (userId) => {
+  return useQuery({
+    queryKey: queryKeys.readingsByUser(userId),
+    queryFn: async () => {
+      const result = await api.findReadingByUser(userId);
+      return result.data;
+    },
+    enabled: !!userId,
+  });
+};
 
 export const useReading = () => {
   const queryClient = useQueryClient();
@@ -22,7 +47,13 @@ export const useReading = () => {
   const registerReading = useCallback(
     async (params) => {
       const result = await api.registerReading(params);
-      queryClient.invalidateQueries(["posts"]);
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts() });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.readingsByBook(params.bookId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.readingsByUser(params.userId),
+      });
       return result;
     },
     [queryClient]
@@ -31,19 +62,36 @@ export const useReading = () => {
   const updateReading = useCallback(
     async (params) => {
       const result = await api.updateReading(params);
-      queryClient.invalidateQueries(["posts"]);
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts() });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.readingsByBook(params.bookId),
+      });
       return result;
     },
     [queryClient]
   );
 
-  const toDoing = useCallback(async (readingId) => {
-    return await api.toDoing(readingId);
-  }, []);
+  // readingId単体の操作は対象のbookId/userIdを呼び出し元から渡してもらい、
+  // 該当するキャッシュだけを無効化する(渡されなければキャッシュは無効化しない)。
+  const toDoing = useCallback(
+    async (readingId, { bookId, userId } = {}) => {
+      const result = await api.toDoing(readingId);
+      if (bookId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByBook(bookId) });
+      if (userId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByUser(userId) });
+      return result;
+    },
+    [queryClient]
+  );
 
-  const deleteReading = useCallback(async (readingId) => {
-    return await api.deleteReading(readingId);
-  }, []);
+  const deleteReading = useCallback(
+    async (readingId, { bookId, userId } = {}) => {
+      const result = await api.deleteReading(readingId);
+      if (bookId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByBook(bookId) });
+      if (userId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByUser(userId) });
+      return result;
+    },
+    [queryClient]
+  );
 
   const getMonthlyData = useCallback(async (userId) => {
     return await api.getMonthlyData(userId);

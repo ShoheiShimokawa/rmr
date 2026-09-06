@@ -14,7 +14,11 @@ import { motion } from "framer-motion";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { Link } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { good, deleteGood } from "../api/post";
+import {
+  useGoodMutation,
+  useUnGoodMutation,
+  useGoodPostIds,
+} from "../hooks/usePost";
 import UserContext from "./UserProvider";
 import { CustomDialog } from "../ui/CustomDialog";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -24,12 +28,7 @@ import { judgePostLabel } from "../badge/index";
 import { ReadingRegister } from "./ReadingRegister";
 import { GoodDetail } from "./GoodDetail";
 
-export const Post = ({
-  post,
-  visible,
-  fromDetail,
-  isInitiallyGooded = false,
-}) => {
+export const Post = ({ post, visible, fromDetail }) => {
   const { user } = useContext(UserContext);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -37,10 +36,14 @@ export const Post = ({
   const [selectedPostId, setSelectedPostId] = useState();
   const [OpenGooder, setOpenGooder] = useState(false);
   const [open, setOpen] = useState(false);
-  const [isGooded, setIsGooded] = useState(isInitiallyGooded);
   const [localGoodCount, setLocalGoodCount] = useState(post.goodCount || 0);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const { notify } = useNotify();
+  const goodMutation = useGoodMutation();
+  const unGoodMutation = useUnGoodMutation();
+  // 「いいね済みか」はキャッシュ由来で判定する。同じ投稿が別画面に同時表示されていても一致する。
+  const { data: goodPostIds = [] } = useGoodPostIds(user?.userId);
+  const isGooded = goodPostIds.includes(post.postId);
 
   const handleClick = (selectedHandle) => {
     const origin = window.location.origin;
@@ -51,24 +54,31 @@ export const Post = ({
   const handleGood = async () => {
     if (isLoggedIn()) {
       try {
-        setIsGooded(true);
         setLocalGoodCount((prev) => prev + 1);
         if (user) {
-          await good(post.postId);
+          await goodMutation.mutateAsync({
+            postId: post.postId,
+            userId: user.userId,
+          });
         }
       } catch (error) {
         notify("You already good for this post.", "error");
-        setIsGooded(false);
         setLocalGoodCount((prev) => prev - 1);
       }
     }
   };
   const handleDelete = async () => {
     if (isLoggedIn()) {
-      setIsGooded(false);
       setLocalGoodCount((prev) => prev - 1);
       if (user) {
-        await deleteGood(post.postId);
+        try {
+          await unGoodMutation.mutateAsync({
+            postId: post.postId,
+            userId: user.userId,
+          });
+        } catch (error) {
+          setLocalGoodCount((prev) => prev + 1);
+        }
       }
     }
   };

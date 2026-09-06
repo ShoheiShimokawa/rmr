@@ -18,7 +18,14 @@ import { HandleRegister } from "./components/HandleRegister";
 import { Notification } from "./components/Notification";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // データ種別ごとに短くしたい場合は各useQuery呼び出し側でstaleTimeを上書きする
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
 
 function App() {
   return (
