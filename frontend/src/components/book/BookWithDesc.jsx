@@ -1,5 +1,6 @@
 import { Book } from "./Book";
 import { CollapsibleText } from "../CollapsibleText";
+import { formatDescription } from "../../util";
 
 export const BookWithDesc = ({ book, width, height, maxLength }) => {
   return (
@@ -23,7 +24,7 @@ export const BookWithDesc = ({ book, width, height, maxLength }) => {
           </div>
           <div className="text-xs  mt-5 ml-1 font-soft">
             <CollapsibleText
-              text={book.description}
+              text={formatDescription(book.description)}
               maxLength={maxLength ? maxLength : 70}
             />
           </div>

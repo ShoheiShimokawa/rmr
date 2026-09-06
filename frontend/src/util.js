@@ -282,3 +282,32 @@ export const timeAgo = (timestampzStr) => {
   if (hours < 24) return `${hours}h`;
   return `${days}d`;
 };
+
+/**
+ * Google Books APIから取得する本の紹介文(description)は改行を一切含まない
+ * 単一の地の文で返ってくることが多く、そのまま表示すると読みにくい。
+ * 文末記号で文単位に分割し、2文ごとに段落として改行(\n\n)を挿入する。
+ * すでに改行を含むテキストや、文末記号を含まないテキストが来ても壊れないようにする。
+ */
+export const formatDescription = (text) => {
+  if (!text) return text;
+
+  const sentences = text
+    .split(/(?<=[。！？])|(?<=[.!?])(?=\s|$)/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const joinSentences = (arr) =>
+    arr.reduce((acc, sentence, idx) => {
+      if (idx === 0) return sentence;
+      // 日本語の文末記号の直後は空白を入れず、それ以外(英語など)は半角スペースで繋ぐ
+      const prevEndsWithJapanesePunctuation = /[。！？]$/.test(arr[idx - 1]);
+      return acc + (prevEndsWithJapanesePunctuation ? "" : " ") + sentence;
+    }, "");
+
+  const paragraphs = [];
+  for (let i = 0; i < sentences.length; i += 2) {
+    paragraphs.push(joinSentences(sentences.slice(i, i + 2)));
+  }
+  return paragraphs.join("\n\n");
+};
