@@ -12,9 +12,6 @@ import org.springframework.data.repository.query.Param;
 import com.rmr.backend.model.Good;
 
 public interface GoodRepository extends JpaRepository<Good, Integer>, GoodRepositoryCustom  {
-    // @Query("SELECT g FROM Good g WHERE g.post.postId = :postId")
-    // List<Good> findByPostId(@Param("postId") Integer postId);
-
      @Query("SELECT g FROM Good g WHERE g.user.userId = :userId")
      List<Good> findByUserId(@Param("userId") Integer userId);
     
