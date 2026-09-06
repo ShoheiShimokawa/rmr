@@ -83,11 +83,14 @@ export const Notification = () => {
                                 >
                                   <Avatar src={notification.notifier.picture} />
                                 </Link>
-                                <div className="ml-1  ml-4 flex items-center">
-                                  <div className="font-bold">
-                                    {notification.notifier.name}( @
-                                    {notification.notifier.handle}) liked your
-                                    post!
+                                <div className="ml-1 ml-4 flex items-center">
+                                  <div>
+                                    <div>
+                                      <span className="font-bold">
+                                        {notification.notifier.name}{" "}
+                                      </span>
+                                      liked your post!
+                                    </div>
                                   </div>
                                   <div className="ml-2  text-zinc-500 font-soft text-xs">
                                     {timeAgo(notification.registerDate)}
@@ -136,10 +139,14 @@ export const Notification = () => {
                                   <Avatar src={notification.notifier.picture} />
                                 </Link>
                                 <div className="ml-1  ml-4 flex items-center">
-                                  <div className="font-bold">
-                                    {notification.notifier.name}( @
-                                    {notification.notifier.handle}) followed
-                                    you!
+                                  <div>
+                                    <div>
+                                      <span className="font-bold">
+                                        {notification.notifier.name}{" "}
+                                      </span>
+                                      followed you!
+                                    </div>
+                                    <div></div>
                                   </div>
                                   <div className="ml-2 text-zinc-500 text-xs">
                                     {timeAgo(notification.registerDate)}

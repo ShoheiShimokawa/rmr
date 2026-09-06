@@ -1,5 +1,13 @@
 import { useContext, useState } from "react";
-import { Avatar, List, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Avatar,
+  List,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { Review } from "./Review";
 import { formatDateTime } from "../util";
 import { motion } from "framer-motion";
@@ -122,7 +130,10 @@ export const Post = ({
           <div key={post.postId} className="w-full mx-auto flex group ">
             <div className="flex">
               <div className="mr-1">
-                <motion.div whileTap={{ scale: 0.95 }}>
+                <motion.div
+                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ filter: "brightness(0.9)" }}
+                >
                   {!fromDetail ? (
                     <Link
                       to={`/${post.user.handle}`}
@@ -190,7 +201,10 @@ export const Post = ({
                             handleOpenUpdate(post);
                           }}
                         >
-                          edit
+                          <ListItemIcon>
+                            <EditIcon fontSize="small" />
+                          </ListItemIcon>
+                          <div className="font-soft">Edit</div>
                         </MenuItem>
                       </div>
                     </Menu>

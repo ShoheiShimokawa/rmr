@@ -195,7 +195,7 @@ export const Profile = ({ userId }) => {
                         }}
                         onClick={() => handleFollow(account.userId)}
                       >
-                        follow
+                        Follow
                       </Button>
                     ) : (
                       <Button
@@ -217,7 +217,7 @@ export const Profile = ({ userId }) => {
                           handleCancelFollow(followed && followed.id)
                         }
                       >
-                        followed
+                        Followed
                       </Button>
                     )}
                   </motion.div>
