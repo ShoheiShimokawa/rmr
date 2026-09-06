@@ -9,7 +9,7 @@ import { useContext } from "react";
 import UserContext from "../UserProvider";
 import { useReading } from "../../hooks/useReading";
 import { GiBookshelf } from "react-icons/gi";
-import { Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem, Tooltip } from "@mui/material";
 import { registerBook } from "../../api/book";
 import { findPostByBookId } from "../../api/post";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
@@ -47,6 +47,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   const [done, setDone] = useState([]);
   const { notify } = useNotify();
   const [openAdd, setOpenAdd] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const [goodPostIds, setGoodPostIds] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -109,6 +110,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   const handleRegisterWithNone = async () => {
     if (!isLoggedIn()) return;
     try {
+      setIsSubmitting(true);
       const result = await registerBook(book);
       if (result) {
         const rParam = {
@@ -125,12 +127,15 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       }
     } catch (error) {
       notify("Failed to add this book to your list.", "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleRegisterWithDoing = async () => {
     if (!isLoggedIn()) return;
     try {
+      setIsSubmitting(true);
       const result = await registerBook(book);
       if (result) {
         const rParam = {
@@ -147,17 +152,22 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       }
     } catch (error) {
       notify("Failed to add this book to your list.", "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleRegisterWithDone = async () => {
     if (!isLoggedIn()) return;
     try {
+      setIsSubmitting(true);
       const result = await registerBook(book);
       setBookForReading(result.data);
       handleRegister();
     } catch (error) {
       notify("Failed. Please try again.", "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -230,7 +240,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
             updated && updated();
             find();
           }}
-          reading={myReading && myReading}
+          reading={myReading && myReading} //ここreadingId引渡しに変えて、readingRegisterに検索させるようにする？
         />
       </CustomDialog>
       <BookWithDesc book={book} maxLength={100} />
@@ -265,13 +275,15 @@ export const BookDetail = ({ book, updated, visible = true }) => {
               <div className="ml-1">Your Reading Timeline</div>
               {myReading && visible && (
                 <motion.div whileTap={{ scale: 0.9 }}>
-                  <IconButton
-                    aria-label="more"
-                    size="small"
-                    onClick={handleOpen}
-                  >
-                    <ChangeCircleIcon />
-                  </IconButton>
+                  <Tooltip title="Update Reading Status" arrow placement="top">
+                    <IconButton
+                      aria-label="more"
+                      size="small"
+                      onClick={handleOpen}
+                    >
+                      <ChangeCircleIcon sx={{ fontSize: 25 }} />
+                    </IconButton>
+                  </Tooltip>
                 </motion.div>
               )}
             </div>
@@ -282,22 +294,28 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                 visible && (
                   <div>
                     <motion.div whileTap={{ scale: 0.95 }}>
-                      <div className="mt-1">
+                      <div className="mt-1 flex justify-center">
                         <Button
                           variant="contained"
-                          endIcon={<GiBookshelf />}
+                          endIcon={!isSubmitting && <GiBookshelf />}
+                          disabled={isSubmitting}
                           onClick={handleOpenAdd}
                           sx={{
                             textTransform: "none",
                             backgroundColor: "#000",
                             color: "#fff",
                             fontWeight: "bold",
+                            width: "160px",
                             "&:hover": {
                               backgroundColor: "#333",
                             },
                           }}
                         >
-                          Add bookshelf
+                          {isSubmitting ? (
+                            <CircularProgress size={20} sx={{ color: "#fff" }} />
+                          ) : (
+                            "Add bookshelf"
+                          )}
                         </Button>
                       </div>
                     </motion.div>
@@ -327,7 +345,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <BookmarkBorderIcon fontSize="small" />
                       </ListItemIcon>
-                      To Read
+                      <div className="font-soft">To Read</div>
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -338,7 +356,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <MenuBookIcon fontSize="small" />
                       </ListItemIcon>
-                      Reading
+                      <div className="font-soft">Reading</div>
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -348,7 +366,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <CheckCircleIcon fontSize="small" />
                       </ListItemIcon>
-                      Completed!
+                      <div className="font-soft">Completed!</div>
                     </MenuItem>
                   </>
                 ) : myReading.statusType === "DONE" ? (
@@ -393,7 +411,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <CheckCircleIcon fontSize="small" />
                       </ListItemIcon>
-                      Completed!
+                      <div className="font-soft">Completed!</div>
                     </MenuItem>
                     <Divider />
                     <MenuItem
@@ -405,7 +423,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <DeleteIcon fontSize="small" color="error" />
                       </ListItemIcon>
-                      Delete from bookshelf
+                      <div className="font-soft">Delete from bookshelf</div>
                     </MenuItem>
                   </>
                 ) : (
@@ -419,7 +437,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <MenuBookIcon fontSize="small" />
                       </ListItemIcon>
-                      Reading now
+                      <div className="font-soft">Reading now</div>
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -429,7 +447,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <CheckCircleIcon fontSize="small" />
                       </ListItemIcon>
-                      Completed!
+                      <div className="font-soft">Completed!</div>
                     </MenuItem>
                     <Divider />
                     <MenuItem
@@ -441,7 +459,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <DeleteIcon fontSize="small" color="error" />
                       </ListItemIcon>
-                      Delete from bookshelf
+                      <div className="font-soft">Delete from bookshelf</div>
                     </MenuItem>
                   </>
                 )}
@@ -465,7 +483,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <BookmarkBorderIcon fontSize="small" />
                       </ListItemIcon>
-                      To Read
+                      <div className="font-soft">To Read</div>
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -476,7 +494,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <MenuBookIcon fontSize="small" />
                       </ListItemIcon>
-                      Reading
+                      <div className="font-soft">Reading</div>
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -486,7 +504,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                       <ListItemIcon>
                         <CheckCircleIcon fontSize="small" />
                       </ListItemIcon>
-                      Completed!
+                      <div className="font-soft">Completed!</div>
                     </MenuItem>
                   </>
                 )}
@@ -519,7 +537,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
               ))}
             </AvatarGroup>
           ) : (
-            <div className="text-sm font-soft">no one</div>
+            <div className="text-sm font-soft">No one</div>
           )}
 
           <div className="ml-1 text-sm font-soft">reading now.</div>
@@ -543,7 +561,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                 ))}
               </AvatarGroup>
             ) : (
-              <div className="text-sm font-soft">no one</div>
+              <div className="text-sm font-soft">No one</div>
             )}
           </div>
           <div className="ml-1 text-sm font-soft">read it.</div>
