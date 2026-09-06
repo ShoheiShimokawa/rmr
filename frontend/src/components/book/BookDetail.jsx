@@ -1,17 +1,16 @@
 import { Post } from "../Post";
-import { getGoodPostAll } from "../../api/post";
 import { CustomDialog } from "../../ui/CustomDialog";
 import { useNotify } from "../../hooks/NotifyProvider";
 import { FaPenNib } from "react-icons/fa";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { ReadingTimeline } from "../ReadingTimeline";
 import { useContext } from "react";
 import UserContext from "../UserProvider";
-import { useReading } from "../../hooks/useReading";
+import { useReading, useReadingsByBook } from "../../hooks/useReading";
+import { usePostsByBook } from "../../hooks/usePost";
 import { GiBookshelf } from "react-icons/gi";
 import { Menu, MenuItem } from "@mui/material";
 import { registerBook } from "../../api/book";
-import { findPostByBookId } from "../../api/post";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -41,17 +40,45 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   const [openRegister, setOpenRegister] = useState(false);
   const { user } = useContext(UserContext);
   const [bookForReading, setBookForReading] = useState();
-  const [posts, setPosts] = useState([]);
-  const [myReading, setMyReading] = useState();
-  const [doing, setDoing] = useState([]);
-  const [done, setDone] = useState([]);
   const { notify } = useNotify();
   const [openAdd, setOpenAdd] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
-  const [goodPostIds, setGoodPostIds] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { registerReading, findReadingById, deleteReading, toDoing } =
-    useReading();
+  const { registerReading, deleteReading, toDoing } = useReading();
+
+  const {
+    data: posts = [],
+    isLoading: loadingPosts,
+    isError: isPostsError,
+  } = usePostsByBook(book?.id);
+  const {
+    data: readingsForBook = [],
+    isLoading: loadingReadings,
+    isError: isReadingsError,
+  } = useReadingsByBook(book?.id);
+
+  const loading = loadingPosts || loadingReadings;
+
+  const myReading = useMemo(
+    () =>
+      user
+        ? readingsForBook.find((r) => r.user.userId === user.userId)
+        : undefined,
+    [readingsForBook, user]
+  );
+  const doing = useMemo(
+    () => readingsForBook.filter((r) => r.statusType === "DOING"),
+    [readingsForBook]
+  );
+  const done = useMemo(
+    () => readingsForBook.filter((r) => r.statusType === "DONE"),
+    [readingsForBook]
+  );
+
+  useEffect(() => {
+    if (isPostsError || isReadingsError) {
+      notify("Failed to loading. Please try again.", "error");
+    }
+  }, [isPostsError, isReadingsError, notify]);
 
   const handleOpenAdd = (event) => {
     if (!isLoggedIn()) return;
@@ -68,10 +95,12 @@ export const BookDetail = ({ book, updated, visible = true }) => {
     if (!isLoggedIn()) return;
     try {
       if (myReading) {
-        await toDoing(myReading.readingId);
+        await toDoing(myReading.readingId, {
+          bookId: book.id,
+          userId: user.userId,
+        });
         updated && updated();
         notify("Start reading!", "success");
-        find();
       }
     } catch (error) {
       notify("Failure add this book to your bookshelf.", "error");
@@ -94,11 +123,13 @@ export const BookDetail = ({ book, updated, visible = true }) => {
     if (window.confirm("remove from bookshelf?")) {
       try {
         if (myReading) {
-          await deleteReading(myReading.readingId);
+          await deleteReading(myReading.readingId, {
+            bookId: book.id,
+            userId: user.userId,
+          });
           updated && updated();
         }
         notify("Success delete this from your bookshelf. ", "success");
-        find();
         updated && updated();
       } catch (error) {
         notify("Failed to delete this book.", "error");
@@ -121,7 +152,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
         };
         await registerReading(rParam);
         notify("Add want to read list.", "success");
-        find();
       }
     } catch (error) {
       notify("Failed to add this book to your list.", "error");
@@ -143,7 +173,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
         };
         await registerReading(rParam);
         notify("Start reading!", "success");
-        find();
       }
     } catch (error) {
       notify("Failed to add this book to your list.", "error");
@@ -172,7 +201,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
     } else if (anchorAddEl != null) {
       handleCloseAdd();
     }
-    find();
   };
 
   const handleOpen = (event) => {
@@ -183,37 +211,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const find = useCallback(async () => {
-    setLoading(true);
-    try {
-      var result = await findPostByBookId(book.id && book.id);
-      setPosts(result.data);
-      var iniReadings = await findReadingById(book.id && book.id);
-      iniReadings &&
-        user &&
-        setMyReading(
-          iniReadings.data.find((r) => r.user.userId === user.userId)
-        );
-      iniReadings &&
-        setDoing(iniReadings.data.filter((r) => r.statusType === "DOING"));
-      iniReadings &&
-        setDone(iniReadings.data.filter((r) => r.statusType === "DONE"));
-      if (user) {
-        const goodList = await getGoodPostAll(user && user.userId);
-        const likedIds = goodList.data.map((g) => g.post.postId);
-        setGoodPostIds(likedIds);
-      }
-    } catch (error) {
-      notify("Failed to loading. Please try again.", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [book.id, notify, user, findReadingById]);
-
-  useEffect(() => {
-    find();
-  }, [find]);
 
   return (
     <div>
@@ -228,7 +225,6 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           updated={() => {
             handleCloseRegister();
             updated && updated();
-            find();
           }}
           reading={myReading && myReading}
         />
@@ -562,13 +558,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           {posts.map((post) => (
             <>
               <Box key={post.postId} sx={{ width: "95%", margin: "0 auto" }}>
-                <Post
-                  post={post}
-                  fromDetail={true}
-                  isInitiallyGooded={
-                    goodPostIds.length >= 1 && goodPostIds.includes(post.postId)
-                  }
-                />
+                <Post post={post} fromDetail={true} />
               </Box>
               <>
                 {posts.length >= 2 && (

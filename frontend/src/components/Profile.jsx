@@ -1,10 +1,10 @@
+import { getProfile } from "../api/account";
 import {
-  getProfile,
-  getFollower,
-  getFollow,
-  follow,
-  deleteFollow,
-} from "../api/account";
+  useFollowers,
+  useFollows,
+  useFollowMutation,
+  useUnfollowMutation,
+} from "../hooks/useFollow";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useNotify } from "../hooks/NotifyProvider";
 import { CustomDialog } from "../ui/CustomDialog";
@@ -20,7 +20,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useMemo, useState, useCallback } from "react";
 import UserContext from "./UserProvider";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import XIcon from "@mui/icons-material/X";
@@ -31,34 +31,44 @@ export const Profile = ({ userId }) => {
   const { user, setUser } = useContext(UserContext);
   const [account, setAccount] = useState();
   const [open, setOpen] = useState(false);
-  const [followers, setFollowers] = useState([]);
-  const [follows, setFollows] = useState([]);
   const [showFollow, setShowFollow] = useState(false);
   const [showFollower, setShowFollower] = useState(false);
-  const [followed, setFollowed] = useState({});
-  const [isFollowed, setIsFollowed] = useState(false);
   const { notify } = useNotify();
   const [loading, setLoading] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
+  const { data: followers = [] } = useFollowers(userId);
+  const { data: follows = [] } = useFollows(userId);
+  const followMutation = useFollowMutation();
+  const unfollowMutation = useUnfollowMutation();
+
+  const followed = useMemo(
+    () => user && followers.find((f) => f.follower.userId === user.userId),
+    [followers, user]
+  );
+  const isFollowed = !!followed;
+
   const handleFollow = async (selectedUserId) => {
     try {
       if (!isLoggedIn()) return;
-      setIsFollowed(true);
-      const result = await follow(selectedUserId);
-      setFollowed(result.data);
+      await followMutation.mutateAsync({
+        targetUserId: selectedUserId,
+        currentUserId: user.userId,
+        currentUser: user,
+      });
       notify("You Followed.", "Success");
     } catch (error) {
-      setIsFollowed(false);
       notify("You've already followed", "error");
     }
   };
   const handleCancelFollow = async (selectedFollowId) => {
     if (!isLoggedIn()) return;
     try {
-      await deleteFollow(selectedFollowId);
-      setFollowed({});
-      setIsFollowed(false);
+      await unfollowMutation.mutateAsync({
+        id: selectedFollowId,
+        targetUserId: account.userId,
+        currentUserId: user.userId,
+      });
     } catch (error) {
       notify("Failed.", "error");
     }
@@ -95,20 +105,12 @@ export const Profile = ({ userId }) => {
     try {
       const userPageAccount = await getProfile(userId && userId);
       setAccount(userPageAccount.data);
-      const follow = await getFollow(userId && userId);
-      setFollows(follow.data);
-      const result = await getFollower(userId && userId);
-      setFollowers(result.data);
-      var isFollowed =
-        user && result.data.find((v) => v.follower.userId === user.userId);
-      isFollowed && setFollowed(isFollowed);
-      isFollowed && setIsFollowed(true);
     } catch (error) {
       notify("Failed to load. Please try later.", "error");
     } finally {
       setLoading(false);
     }
-  }, [userId, notify, user]);
+  }, [userId, notify]);
   useEffect(() => {
     find();
   }, [find]);

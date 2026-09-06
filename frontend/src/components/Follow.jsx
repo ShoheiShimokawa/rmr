@@ -1,4 +1,5 @@
-import { getFollow } from "../api/account";
+import { useEffect } from "react";
+import { useFollows } from "../hooks/useFollow";
 import { useNotify } from "../hooks/NotifyProvider";
 import {
   Avatar,
@@ -8,36 +9,23 @@ import {
   ListItemAvatar,
   CircularProgress,
 } from "@mui/material";
-import { useEffect, useState, useCallback } from "react";
 
 export const Follow = ({ followerId }) => {
-  const [follows, setFollow] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { data: follows = [], isLoading, isError } = useFollows(followerId);
   const { notify } = useNotify();
+
+  useEffect(() => {
+    if (isError) notify("Failed to loading.", "error");
+  }, [isError, notify]);
 
   const handleClick = (selectedHandle) => {
     const newUrl = `${window.location.origin}/${selectedHandle}`;
     window.open(newUrl, "_blank");
   };
 
-  const find = useCallback(async () => {
-    try {
-      setLoading(true);
-      const result = await getFollow(followerId);
-      setFollow(result.data);
-    } catch (error) {
-      notify("Failed to loading.", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [followerId, notify]);
-  useEffect(() => {
-    find();
-  }, [find]);
-
   return (
     <div>
-      {loading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center">
           <CircularProgress />
         </div>

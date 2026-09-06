@@ -1,13 +1,13 @@
 import { Box, Divider } from "@mui/material";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { CustomDialog } from "../../ui/CustomDialog";
 import React from "react";
 import { BookDetail } from "./BookDetail";
-import { findReadingByUser } from "../../api/reading";
+import { useReadingsByUser } from "../../hooks/useReading";
 import { BookArray } from "./BookArray";
 
 export const BookShelf = ({ account, onClick }) => {
-  const [readings, setReadings] = useState([]);
+  const { data: readings = [] } = useReadingsByUser(account.userId);
   const [open, setOpen] = useState(false);
   const [reading, setReading] = useState();
   const [book, setBook] = useState();
@@ -61,24 +61,11 @@ export const BookShelf = ({ account, onClick }) => {
     setOpen(false);
   };
 
-  const find = useCallback(async () => {
-    const result = await findReadingByUser(account.userId && account.userId);
-    setReadings(result.data);
-  }, [account.userId]);
-  useEffect(() => {
-    find();
-  }, [find]);
   return (
     <>
       {!onClick && (
         <CustomDialog open={open} title="Detail" onClose={handleClose}>
-          <BookDetail
-            book={book}
-            reading={reading}
-            updated={() => {
-              find();
-            }}
-          />
+          <BookDetail book={book} reading={reading} />
         </CustomDialog>
       )}
       <div className="text-lg font-medium font-soft">Want To Read</div>
