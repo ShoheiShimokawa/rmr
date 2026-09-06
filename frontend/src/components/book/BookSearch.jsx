@@ -168,13 +168,7 @@ export const BookSearch = ({ fromPost }) => {
       )}
       <>
         {!iniSearch ? (
-          <>
-            <div className="font-soft font-bold text-lg">
-              Readers' Favorites ✨
-            </div>
-
-            <div className="font-soft font-bold text-lg">Popular 🔥</div>
-          </>
+          <div></div>
         ) : (
           <>
             {books && books.length >= 1 ? (
