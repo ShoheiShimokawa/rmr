@@ -1,7 +1,7 @@
 import http from "./http";
 
-export const findBooks = (query, country) => {
-  return http.get("books", { params: { query, country } });
+export const findBooks = (query, country, langRestrict) => {
+  return http.get("books", { params: { query, country, langRestrict } });
 };
 
 export const registerBook = (params) => {
