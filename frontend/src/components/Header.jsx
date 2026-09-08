@@ -17,6 +17,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   ListItemIcon,
   Avatar,
@@ -38,6 +39,11 @@ export const Header = () => {
   const [hasUnread, setHasUnread] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const { notify } = useNotify();
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language?.startsWith("ja") ? "en" : "ja");
+  };
 
   const find = useCallback(async () => {
     if (user) {
@@ -80,7 +86,7 @@ export const Header = () => {
     logout();
     goToCommunity();
     handleClose();
-    notify("Logged out successfully.", "success");
+    notify(t("notify.logoutSuccess"), "success");
   };
   const handlePostClick = () => {
     if (isLoggedIn()) {
@@ -102,7 +108,7 @@ export const Header = () => {
     <div>
       <CustomDialog
         open={showLogin}
-        title="Login"
+        title={t("nav.logIn")}
         onClose={handleLoginClose}
         width="400px"
       >
@@ -165,6 +171,19 @@ export const Header = () => {
                 }}
               >
                 <motion.div whileTap={{ scale: 0.9 }}>
+                  <IconButton
+                    onClick={toggleLanguage}
+                    aria-label="toggle language"
+                  >
+                    <span
+                      className="font-soft font-bold"
+                      style={{ fontSize: "0.75rem" }}
+                    >
+                      {i18n.language?.startsWith("ja") ? "EN" : "JA"}
+                    </span>
+                  </IconButton>
+                </motion.div>
+                <motion.div whileTap={{ scale: 0.9 }}>
                   <IconButton onClick={handlePostClick}>
                     <FaPenNib size="24px" />
                   </IconButton>
@@ -203,7 +222,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <PersonRoundedIcon />
                     </ListItemIcon>
-                    <div className="font-soft font-bold">My Page</div>
+                    <div className="font-soft font-bold">{t("nav.myPage")}</div>
                   </MenuItem>
                   <MenuItem
                     onClick={handleInfo}
@@ -218,7 +237,7 @@ export const Header = () => {
                     <ListItemIcon>
                       <InfoIcon />
                     </ListItemIcon>
-                    <div className="font-soft">About</div>
+                    <div className="font-soft">{t("nav.about")}</div>
                   </MenuItem>
                   {user ? (
                     <MenuItem
@@ -234,7 +253,7 @@ export const Header = () => {
                       <ListItemIcon>
                         <LogoutRoundedIcon />
                       </ListItemIcon>
-                      <div className="font-soft">Log Out</div>
+                      <div className="font-soft">{t("nav.logOut")}</div>
                     </MenuItem>
                   ) : (
                     <MenuItem
@@ -250,7 +269,7 @@ export const Header = () => {
                       <ListItemIcon>
                         <LoginRoundedIcon />
                       </ListItemIcon>
-                      <div className="font-soft">Log In</div>
+                      <div className="font-soft">{t("nav.logIn")}</div>
                     </MenuItem>
                   )}
                 </Menu>

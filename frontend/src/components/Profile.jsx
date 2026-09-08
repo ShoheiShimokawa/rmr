@@ -7,6 +7,7 @@ import {
 } from "../hooks/useFollow";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import { CustomDialog } from "../ui/CustomDialog";
 import { Follower } from "../components/Follower";
 import { Follow } from "../components/Follow";
@@ -34,6 +35,7 @@ export const Profile = ({ userId }) => {
   const [showFollow, setShowFollow] = useState(false);
   const [showFollower, setShowFollower] = useState(false);
   const { notify } = useNotify();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
@@ -56,9 +58,9 @@ export const Profile = ({ userId }) => {
         currentUserId: user.userId,
         currentUser: user,
       });
-      notify("You Followed.", "Success");
+      notify(t("notify.followed"), "success");
     } catch (error) {
-      notify("You've already followed", "error");
+      notify(t("notify.alreadyFollowed"), "error");
     }
   };
   const handleCancelFollow = async (selectedFollowId) => {
@@ -70,7 +72,7 @@ export const Profile = ({ userId }) => {
         currentUserId: user.userId,
       });
     } catch (error) {
-      notify("Failed.", "error");
+      notify(t("notify.genericError"), "error");
     }
   };
 
@@ -106,11 +108,11 @@ export const Profile = ({ userId }) => {
       const userPageAccount = await getProfile(userId && userId);
       setAccount(userPageAccount.data);
     } catch (error) {
-      notify("Failed to load. Please try later.", "error");
+      notify(t("notify.loadFailed"), "error");
     } finally {
       setLoading(false);
     }
-  }, [userId, notify]);
+  }, [userId, notify, t]);
   useEffect(() => {
     find();
   }, [find]);

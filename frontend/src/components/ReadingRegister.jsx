@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import { TextField, Button, Rating, FormControlLabel } from "@mui/material";
 import { IOSSwitch } from "../ui/IOSSwitch";
 import { motion } from "framer-motion";
@@ -14,6 +15,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
   const { user } = useContext(UserContext);
   const { registerReading, updateReading } = useReading();
   const { notify } = useNotify();
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDisabled = book || reading ? false : true;
 
@@ -85,7 +87,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           thoughts: "",
           recommended: false,
         });
-        notify("Congrats!", "success");
+        notify(t("notify.congrats"), "success");
       } else {
         const param = {
           ...values,
@@ -100,10 +102,10 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           thoughts: "",
           recommended: false,
         });
-        notify("Congrats!", "success");
+        notify(t("notify.congrats"), "success");
       }
     } catch (error) {
-      notify("Something went wrong.", "error");
+      notify(t("notify.genericError"), "error");
     } finally {
       setIsSubmitting(false);
     }

@@ -6,8 +6,10 @@ import { registerAccount } from "../api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, InputAdornment } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 export const HandleRegister = ({ account, updated }) => {
   const { notify } = useNotify();
+  const { t } = useTranslation();
   const { setUser, setToken } = useContext(UserContext);
   const allowedChars = /^[a-zA-Z0-9_-]+$/;
   const formSchema = z.object({
@@ -40,7 +42,7 @@ export const HandleRegister = ({ account, updated }) => {
 
       setUser(result.data.user);
       setToken(result.data.sessionToken);
-      notify("You've successfully created your account!", "success");
+      notify(t("notify.accountCreated"), "success");
       updated && updated();
     } catch (error) {
       if (error.response?.status === 400 && error.response?.data?.message) {
@@ -51,10 +53,12 @@ export const HandleRegister = ({ account, updated }) => {
             message: errorMessage,
           });
         } else {
+          // バックエンドが返す生のエラーメッセージ。多言語化にはバックエンド側で
+          // エラーコードを返すよう変更する必要があり、今回のスコープ外
           notify(errorMessage, "error");
         }
       } else {
-        notify("Failed to change profile.", "error");
+        notify(t("notify.profileUpdateFailed"), "error");
       }
     }
   };

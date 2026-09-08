@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useFollows } from "../hooks/useFollow";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import {
   Avatar,
   List,
@@ -13,10 +14,11 @@ import {
 export const Follow = ({ followerId }) => {
   const { data: follows = [], isLoading, isError } = useFollows(followerId);
   const { notify } = useNotify();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    if (isError) notify("Failed to loading.", "error");
-  }, [isError, notify]);
+    if (isError) notify(t("notify.loadFailed"), "error");
+  }, [isError, notify, t]);
 
   const handleClick = (selectedHandle) => {
     const newUrl = `${window.location.origin}/${selectedHandle}`;

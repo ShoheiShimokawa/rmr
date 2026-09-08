@@ -1,4 +1,5 @@
 import "./App.css";
+import "./i18n";
 import { Community } from "./components/Community";
 import { BookSearch } from "./components/book/BookSearch";
 import { PostRegister } from "./components/PostRegister";

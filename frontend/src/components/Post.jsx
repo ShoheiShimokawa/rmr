@@ -24,6 +24,7 @@ import { CustomDialog } from "../ui/CustomDialog";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import { judgePostLabel } from "../badge/index";
 import { ReadingRegister } from "./ReadingRegister";
 import { GoodDetail } from "./GoodDetail";
@@ -39,6 +40,7 @@ export const Post = ({ post, visible, fromDetail }) => {
   const [localGoodCount, setLocalGoodCount] = useState(post.goodCount || 0);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const { notify } = useNotify();
+  const { t } = useTranslation();
   const goodMutation = useGoodMutation();
   const unGoodMutation = useUnGoodMutation();
   // 「いいね済みか」はキャッシュ由来で判定する。同じ投稿が別画面に同時表示されていても一致する。
@@ -62,7 +64,7 @@ export const Post = ({ post, visible, fromDetail }) => {
           });
         }
       } catch (error) {
-        notify("You already good for this post.", "error");
+        notify(t("notify.alreadyLiked"), "error");
         setLocalGoodCount((prev) => prev - 1);
       }
     }
@@ -171,7 +173,7 @@ export const Post = ({ post, visible, fromDetail }) => {
                     </div>
                     {visible && (
                       <div className="font-soft font-bold text-sm ml-2">
-                        {judgePostLabel(post)}
+                        {judgePostLabel(t, post)}
                       </div>
                     )}
                   </div>

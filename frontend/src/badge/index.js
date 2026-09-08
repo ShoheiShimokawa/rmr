@@ -3,13 +3,15 @@ import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import { Chip } from "@mui/material";
 
-export const statusTypeStr = (str) => {
+// tはコンポーネント側でuseTranslation()から取得したものを渡す
+// (このファイルはコンポーネントではないのでフックを直接呼べないため)
+export const statusTypeStr = (t, str) => {
   if (str === "NONE") {
-    return "To Read";
+    return t("badge.status.none");
   } else if (str === "DOING") {
-    return "Reading Now";
+    return t("badge.status.doing");
   } else if (str === "DONE") {
-    return "Completed";
+    return t("badge.status.done");
   }
 };
 
@@ -46,11 +48,11 @@ export const judgeRead = (str) => {
   }
 };
 
-export const judgePostLabel = (post) => {
+export const judgePostLabel = (t, post) => {
   if (post.postType === "ONLY_STAR") {
     return (
       <Chip
-        label="Rated!"
+        label={t("badge.post.rated")}
         size="small"
         color="success"
         sx={{
@@ -71,7 +73,7 @@ export const judgePostLabel = (post) => {
   } else if (post.postType === "WITH_THOUGHTS") {
     return (
       <Chip
-        label="Reviewed!"
+        label={t("badge.post.reviewed")}
         size="small"
         color="info"
         sx={{
@@ -90,7 +92,7 @@ export const judgePostLabel = (post) => {
   } else if (post.postType === "RECOMMENDED") {
     return (
       <Chip
-        label="Recommended!"
+        label={t("badge.post.recommended")}
         size="small"
         color="warning"
         sx={{

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Review } from "./Review";
 import { timeAgo } from "../util";
@@ -22,6 +23,7 @@ export const Notification = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const { notify } = useNotify();
+  const { t } = useTranslation();
   const find = useCallback(async () => {
     if (!user) return;
     setLoading(true);
@@ -32,11 +34,11 @@ export const Notification = () => {
       });
       setNotifications(sortedNotifications);
     } catch (error) {
-      notify("Failed to load.Please try later.", "error");
+      notify(t("notify.loadFailed"), "error");
     } finally {
       setLoading(false);
     }
-  }, [user, notify]);
+  }, [user, notify, t]);
 
   useEffect(() => {
     find();

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, InputAdornment } from "@mui/material";
 import { updateProfile } from "../api/account";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkIcon from "@mui/icons-material/Link";
@@ -12,6 +13,7 @@ import { motion } from "framer-motion";
 
 export const ProfileChange = ({ account, update }) => {
   const { notify } = useNotify();
+  const { t } = useTranslation();
   const allowedChars = /^[a-zA-Z0-9_-]+$/;
   const formSchema = z.object({
     handle: z
@@ -104,7 +106,7 @@ export const ProfileChange = ({ account, update }) => {
         };
       }
       await updateProfile(params);
-      notify("Success to change profile.", "success");
+      notify(t("notify.profileUpdated"), "success");
       update && update();
     } catch (error) {
       if (error.response?.status === 400 && error.response?.data?.message) {
@@ -115,10 +117,12 @@ export const ProfileChange = ({ account, update }) => {
             message: errorMessage,
           });
         } else {
+          // バックエンドが返す生のエラーメッセージ。多言語化にはバックエンド側で
+          // エラーコードを返すよう変更する必要があり、今回のスコープ外
           notify(errorMessage, "error");
         }
       } else {
-        notify("Failed to change profile.", "error");
+        notify(t("notify.profileUpdateFailed"), "error");
       }
     }
   };

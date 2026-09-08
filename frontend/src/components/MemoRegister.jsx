@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AutoComplete } from "../ui/AutoComplete";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import { getLabels } from "../api/label";
 import { BookInfo } from "../components/book/BookInfo";
 import { registerMemo } from "../api/memo";
@@ -15,6 +16,7 @@ export const MemoRegister = ({ updated, book, reading }) => {
   const { user } = useContext(UserContext);
   const [labels, setLabels] = useState([]);
   const { notify } = useNotify();
+  const { t } = useTranslation();
 
   const formSchema = z.object({
     memo: z.string().min(1, "highlight is required."),
@@ -45,11 +47,11 @@ export const MemoRegister = ({ updated, book, reading }) => {
         userId: user.userId,
       };
       await registerMemo(param);
-      notify("success create a highlight!", "success");
+      notify(t("notify.highlightCreated"), "success");
       updated && updated();
       reset();
     } catch (error) {
-      notify("Failed to create highlight.", "error");
+      notify(t("notify.highlightCreateFailed"), "error");
     }
   };
 

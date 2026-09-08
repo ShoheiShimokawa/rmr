@@ -4,6 +4,7 @@ import UserContext from "./UserProvider";
 import { HandleRegister } from "./HandleRegister";
 import { useContext, useState } from "react";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import { CustomDialog } from "../ui/CustomDialog";
 import { login } from "../api/auth";
 export const Login = ({ updated }) => {
@@ -13,6 +14,7 @@ export const Login = ({ updated }) => {
   const [kari, setKari] = useState(false);
   const [account, setAccount] = useState({});
   const { notify } = useNotify();
+  const { t } = useTranslation();
 
   const handleKari = () => {
     setKari(true);
@@ -41,10 +43,10 @@ export const Login = ({ updated }) => {
         setToken(userData.sessionToken);
         updated && updated();
         goToCommunity();
-        notify("You've successfully logged in", "success");
+        notify(t("notify.loginSuccess"), "success");
       }
     } catch (error) {
-      notify("Login Failed.", "error");
+      notify(t("notify.loginFailed"), "error");
     }
   };
   return (

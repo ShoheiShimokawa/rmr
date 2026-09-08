@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "community": "コミュニティ",
+    "search": "検索",
+    "highlights": "ハイライト",
+    "analytics": "分析",
+    "myPage": "マイページ",
+    "about": "アプリについて",
+    "logIn": "ログイン",
+    "logOut": "ログアウト"
+  },
+  "badge": {
+    "status": {
+      "none": "読みたい",
+      "doing": "読書中",
+      "done": "読了"
+    },
+    "post": {
+      "rated": "評価済み！",
+      "reviewed": "レビュー済み！",
+      "recommended": "おすすめ！"
+    }
+  },
+  "notify": {
+    "loadFailed": "読み込みに失敗しました。もう一度お試しください。",
+    "genericError": "問題が発生しました。もう一度お試しください。",
+    "logoutSuccess": "ログアウトしました。",
+    "loginSuccess": "ログインしました。",
+    "loginFailed": "ログインに失敗しました。",
+    "accountCreated": "アカウントを作成しました！",
+    "profileUpdated": "プロフィールを更新しました。",
+    "profileUpdateFailed": "プロフィールの更新に失敗しました。",
+    "followed": "フォローしました。",
+    "alreadyFollowed": "すでにフォローしています。",
+    "alreadyLiked": "すでにいいねしています。",
+    "highlightCreated": "ハイライトを保存しました！",
+    "highlightCreateFailed": "ハイライトの保存に失敗しました。",
+    "congrats": "おめでとうございます！",
+    "bookSearchFailed": "本の検索に失敗しました。もう一度お試しください。"
+  }
+}

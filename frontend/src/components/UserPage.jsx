@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Divider, Tabs, Tab, Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 
 export const UserPage = () => {
@@ -19,6 +20,7 @@ export const UserPage = () => {
   const [loading, setLoading] = useState(false);
   const [goodPostIds, setGoodPostIds] = useState([]);
   const { notify } = useNotify();
+  const { t } = useTranslation();
 
   const find = useCallback(async () => {
     try {
@@ -41,11 +43,11 @@ export const UserPage = () => {
         setGoodPostIds(likedIds);
       }
     } catch (error) {
-      notify("Failed to Loading.", "error");
+      notify(t("notify.loadFailed"), "error");
     } finally {
       setLoading(false);
     }
-  }, [handle, notify, user]);
+  }, [handle, notify, user, t]);
   useEffect(() => {
     find();
   }, [find]);

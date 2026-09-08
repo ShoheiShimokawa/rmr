@@ -16,30 +16,32 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
+import { useTranslation } from "react-i18next";
 
 export const Sidebar = ({ mobile = false }) => {
   const location = useLocation();
+  const { t } = useTranslation();
   const items = [
     {
-      text: "Community",
+      text: t("nav.community"),
       path: "/",
       icon: <PeopleAltRoundedIcon />,
       outlineIcon: <PeopleAltOutlinedIcon />,
     },
     {
-      text: "Search",
+      text: t("nav.search"),
       path: "/book",
       icon: <SearchIcon />,
       outlineIcon: <SearchIcon />,
     },
     {
-      text: "Highlights",
+      text: t("nav.highlights"),
       path: "/highlights",
       icon: <DescriptionRoundedIcon />,
       outlineIcon: <DescriptionOutlinedIcon />,
     },
     {
-      text: "Analytics",
+      text: t("nav.analytics"),
       path: "/analytics",
       icon: <AutoGraphIcon />,
       outlineIcon: <AutoGraphOutlinedIcon />,
@@ -55,10 +57,9 @@ export const Sidebar = ({ mobile = false }) => {
         }}
       >
         {items.map((item) => (
-          <motion.div whileTap={{ scale: 0.95 }}>
+          <motion.div key={item.path} whileTap={{ scale: 0.95 }}>
             <Link
               to={item.path}
-              key={item.text}
               className="flex flex-col items-center text-xs text-zinc-700"
             >
               <div>
@@ -98,8 +99,8 @@ export const Sidebar = ({ mobile = false }) => {
     >
       <List>
         {items.map((item) => (
-          <motion.div whileTap={{ scale: 0.95 }}>
-            <ListItem key={item.text} disablePadding>
+          <motion.div key={item.path} whileTap={{ scale: 0.95 }}>
+            <ListItem disablePadding>
               <ListItemButton
                 component={Link}
                 to={item.path}

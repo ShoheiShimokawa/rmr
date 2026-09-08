@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { usePostGooders } from "../hooks/usePost";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import {
   Avatar,
   List,
@@ -13,10 +14,11 @@ import {
 export const GoodDetail = ({ postId }) => {
   const { data: goods = [], isLoading, isError } = usePostGooders(postId);
   const { notify } = useNotify();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    if (isError) notify("Failed to loading.", "error");
-  }, [isError, notify]);
+    if (isError) notify(t("notify.loadFailed"), "error");
+  }, [isError, notify, t]);
 
   const handleClick = (selectedHandle) => {
     const newUrl = `${window.location.origin}/${selectedHandle}`;

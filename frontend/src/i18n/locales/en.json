@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "community": "Community",
+    "search": "Search",
+    "highlights": "Highlights",
+    "analytics": "Analytics",
+    "myPage": "My Page",
+    "about": "About",
+    "logIn": "Log In",
+    "logOut": "Log Out"
+  },
+  "badge": {
+    "status": {
+      "none": "To Read",
+      "doing": "Reading Now",
+      "done": "Completed"
+    },
+    "post": {
+      "rated": "Rated!",
+      "reviewed": "Reviewed!",
+      "recommended": "Recommended!"
+    }
+  },
+  "notify": {
+    "loadFailed": "Failed to load. Please try again.",
+    "genericError": "Something went wrong. Please try again.",
+    "logoutSuccess": "Logged out successfully.",
+    "loginSuccess": "You've successfully logged in.",
+    "loginFailed": "Login failed.",
+    "accountCreated": "Your account has been created successfully!",
+    "profileUpdated": "Your profile has been updated.",
+    "profileUpdateFailed": "Failed to update your profile.",
+    "followed": "You followed this user.",
+    "alreadyFollowed": "You're already following this user.",
+    "alreadyLiked": "You've already liked this post.",
+    "highlightCreated": "Your highlight has been saved!",
+    "highlightCreateFailed": "Failed to save your highlight.",
+    "congrats": "Congrats!",
+    "bookSearchFailed": "Failed to search books. Please try again."
+  }
+}

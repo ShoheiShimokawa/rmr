@@ -3,6 +3,7 @@ import { getPostAll } from "../api/post";
 import { Post } from "./Post";
 import { Skeleton, Box } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 import UserContext from "./UserProvider";
 import { Divider } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ import { queryKeys } from "../api/queryKeys";
 export const Community = () => {
   const { user } = useContext(UserContext);
   const { notify } = useNotify();
+  const { t } = useTranslation();
 
   const {
     data: posts,
@@ -37,9 +39,9 @@ export const Community = () => {
 
   useEffect(() => {
     if (isPostsError || isGoodError) {
-      notify("Failed to load.Please try later.", "error");
+      notify(t("notify.loadFailed"), "error");
     }
-  }, [isPostsError, isGoodError, notify]);
+  }, [isPostsError, isGoodError, notify, t]);
 
   const isLoading = loadingPosts || (user && loadingGood);
   return (

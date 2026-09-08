@@ -16,6 +16,7 @@ import { CustomDialog } from "../../ui/CustomDialog";
 import { motion } from "framer-motion";
 import { Chip, Card, CardContent } from "@mui/material";
 import { useNotify } from "../../hooks/NotifyProvider";
+import { useTranslation } from "react-i18next";
 
 /**
  * ブラウザのlocale(例: "ja-JP")から地域コード(例: "JP")を推定する。
@@ -56,6 +57,7 @@ export const sortByLanguagePreference = (items, preferredLanguage) => {
 export const BookSearch = ({ fromPost }) => {
   const [query, setQuery] = useState("");
   const { notify } = useNotify();
+  const { t } = useTranslation();
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const [loading, setLoading] = useState(false);
@@ -108,7 +110,7 @@ export const BookSearch = ({ fromPost }) => {
       return (
         <Chip
           icon={judgeIcon(a.statusType)}
-          label={statusTypeStr(a.statusType)}
+          label={statusTypeStr(t, a.statusType)}
           size="small"
         />
       );
@@ -125,7 +127,7 @@ export const BookSearch = ({ fromPost }) => {
       setBooks(sortByLanguagePreference(items, langRestrict));
       setIniSearch(true);
     } catch (error) {
-      notify("Failed to search books.", error);
+      notify(t("notify.bookSearchFailed"), "error");
     } finally {
       setLoading(false);
     }
