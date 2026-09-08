@@ -128,7 +128,7 @@ public class Reading {
 		Account user = Account.get(aRep, param.userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
 		Optional<Reading> existReading = rep.findByUserUserIdAndBookBookId(user.getUserId(), book.getBookId());
-		if (existReading.isPresent() && existReading.get().statusType==BookStatusType.INVALID) {
+		if (existReading.isPresent()) {
 			Reading reading = existReading.get();
 			if (param.rate!=0) reading.setRate(param.rate);
 			if (!param.thoughts.isBlank()) reading.setThoughts(param.thoughts);

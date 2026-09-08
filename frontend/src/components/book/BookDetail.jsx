@@ -152,7 +152,8 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           description: "",
           statusType: "NONE",
         };
-        await registerReading(rParam);
+        await registerReading(rParam, { sourceId: book.id });
+        updated && updated();
         notify("Add want to read list.", "success");
       }
     } catch (error) {
@@ -176,7 +177,8 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           description: "",
           statusType: "DOING",
         };
-        await registerReading(rParam);
+        await registerReading(rParam, { sourceId: book.id });
+        updated && updated();
         notify("Start reading!", "success");
       }
     } catch (error) {
