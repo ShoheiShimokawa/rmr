@@ -45,12 +45,20 @@ export const useReading = () => {
   }, []);
 
   const registerReading = useCallback(
-    async (params) => {
+    async (params, { sourceId } = {}) => {
       const result = await api.registerReading(params);
       queryClient.invalidateQueries({ queryKey: queryKeys.posts() });
       queryClient.invalidateQueries({
         queryKey: queryKeys.readingsByBook(params.bookId),
       });
+      if (sourceId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.readingsByBook(sourceId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.postsByBook(sourceId),
+        });
+      }
       queryClient.invalidateQueries({
         queryKey: queryKeys.readingsByUser(params.userId),
       });
@@ -60,11 +68,22 @@ export const useReading = () => {
   );
 
   const updateReading = useCallback(
-    async (params) => {
+    async (params, { sourceId } = {}) => {
       const result = await api.updateReading(params);
       queryClient.invalidateQueries({ queryKey: queryKeys.posts() });
       queryClient.invalidateQueries({
         queryKey: queryKeys.readingsByBook(params.bookId),
+      });
+      if (sourceId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.readingsByBook(sourceId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.postsByBook(sourceId),
+        });
+      }
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.readingsByUser(params.userId),
       });
       return result;
     },

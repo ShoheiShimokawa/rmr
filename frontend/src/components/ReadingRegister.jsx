@@ -78,7 +78,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           statusType: "DONE",
           readingId: reading.readingId,
         };
-        await updateReading(updateParam);
+        await updateReading(updateParam, { sourceId: reading.book.id });
         updated && updated();
         reset({
           rate: 0,
@@ -93,7 +93,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           userId: user.userId,
           statusType: "DONE",
         };
-        await registerReading(param);
+        await registerReading(param, { sourceId: book?.id });
         updated && updated();
         reset({
           rate: 0,

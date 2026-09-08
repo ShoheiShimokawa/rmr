@@ -13,7 +13,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerReading } from "../api/reading";
+import { useReading } from "../hooks/useReading";
 import { Button } from "@mui/material";
 import { getByUserIdAndBookId } from "../api/reading";
 import { RadioGroup, Radio, Typography, Sheet, Box } from "@mui/joy";
@@ -28,6 +28,7 @@ export const SelectBook = ({ onClick, onNext }) => {
   const [selectedReading, setSelectedReading] = useState(null);
   const { user } = useContext(UserContext);
   const [openBookSearch, setOpenBookSearch] = useState(false);
+  const { registerReading } = useReading();
 
   const schema = z.object({
     status: z.string().min(1, { message: "Please select a reading status." }),
@@ -75,7 +76,9 @@ export const SelectBook = ({ onClick, onNext }) => {
           rate: 0,
           thoughts: "",
         };
-        const response = await registerReading(param);
+        const response = await registerReading(param, {
+          sourceId: selectedBook.id,
+        });
         const reading = response.data;
         onNext && onNext(reading);
       }
