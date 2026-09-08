@@ -48,8 +48,7 @@ const getLanguageCodeFromLocale = (lang) => {
  * 同じ言語同士の本の中では保たれる(Array#sortは安定ソート)。
  */
 export const sortByLanguagePreference = (items, preferredLanguage) => {
-  const score = (item) =>
-    item?.volumeInfo?.language === preferredLanguage ? 0 : 1;
+  const score = (item) => (item?.language === preferredLanguage ? 0 : 1);
   return [...items].sort((a, b) => score(a) - score(b));
 };
 
@@ -71,26 +70,15 @@ export const BookSearch = ({ fromPost }) => {
   const [langRestrict] = useState(() => getLanguageCodeFromLocale());
 
   const handleOpenDetail = (selectedBook) => {
-    const isbn = selectedBook.volumeInfo.industryIdentifiers
-      ? selectedBook.volumeInfo.industryIdentifiers.filter(
-          (id) => id.type === "ISBN_13"
-        )
-      : "";
-    const author = selectedBook.volumeInfo.authors
-      ? selectedBook.volumeInfo.authors[0]
-      : "";
-    const genre = selectedBook.volumeInfo?.categories
-      ? selectedBook.volumeInfo.categories[0]
-      : "";
     const book = {
-      isbn: isbn.identifier ? isbn.identifier : "",
-      id: selectedBook.id,
-      title: selectedBook.volumeInfo.title,
-      author: author,
-      genre: genreToEnum(genre),
-      description: selectedBook.volumeInfo.description,
-      thumbnail: selectedBook?.volumeInfo?.imageLinks?.thumbnail,
-      publishedDate: selectedBook.volumeInfo.publishedDate,
+      id: selectedBook.sourceId,
+      isbn: selectedBook.isbn,
+      title: selectedBook.title,
+      author: selectedBook.author,
+      genre: genreToEnum(selectedBook.genre),
+      description: selectedBook.description,
+      thumbnail: selectedBook.thumbnail,
+      publishedDate: selectedBook.publishedDate,
     };
     setSelectedBook(book);
     const reading = judgeRead(selectedBook);
@@ -103,7 +91,12 @@ export const BookSearch = ({ fromPost }) => {
   };
 
   const judgeRead = (book) => {
-    const a = myReadings.find((b) => b.book.id === book.id);
+    const a = myReadings.find((b) => {
+      if (book.isbn && b.book.isbn) {
+        return b.book.isbn === book.isbn;
+      }
+      return b.book.id === book.sourceId;
+    });
     if (a) {
       return (
         <Chip
@@ -125,7 +118,7 @@ export const BookSearch = ({ fromPost }) => {
       setBooks(sortByLanguagePreference(items, langRestrict));
       setIniSearch(true);
     } catch (error) {
-      notify("Failed to search books.", error);
+      notify("Failed to search books.", "error");
     } finally {
       setLoading(false);
     }
@@ -204,7 +197,7 @@ export const BookSearch = ({ fromPost }) => {
             {books && books.length >= 1 ? (
               <div className="container mx-auto space-y-2">
                 {books.map((book) => (
-                  <motion.div key={book.id} whileTap={{ scale: 0.98 }}>
+                  <motion.div key={book.sourceId} whileTap={{ scale: 0.98 }}>
                     <Card
                       className="cursor-pointer"
                       sx={{
@@ -221,18 +214,12 @@ export const BookSearch = ({ fromPost }) => {
                       <CardContent>
                         <div className="flex gap-6">
                           <div className="flex-shrink-0">
-                            <Book
-                              src={book.volumeInfo?.imageLinks?.thumbnail}
-                            />
+                            <Book src={book.thumbnail} />
                           </div>
                           <div className="ml-2 text-sm">
-                            <div className="font-soft">
-                              {book.volumeInfo.title}
-                            </div>
+                            <div className="font-soft">{book.title}</div>
                             <div className="text-zinc-500 mt-2 text-sm font-soft">
-                              {book.volumeInfo.authors
-                                ? book.volumeInfo.authors[0]
-                                : ""}
+                              {book.author || ""}
                             </div>
                             <div className="mt-3 font-soft">
                               {judgeRead(book)}
@@ -245,8 +232,9 @@ export const BookSearch = ({ fromPost }) => {
                 ))}
               </div>
             ) : (
-              <div className="font-soft">
-                No results were found for your search.
+              <div className="font-soft text-center text-sm text-zinc-600">
+                No results were found. Try fewer keywords, check for typos,
+                or search using the original title.
               </div>
             )}
           </>

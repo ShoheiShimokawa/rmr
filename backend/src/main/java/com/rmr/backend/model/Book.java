@@ -60,7 +60,8 @@ public class Book {
 	public static Book register(BookRepository rep, RegisterBook param) {
 		return rep.save(RegisterBook.builder().id(param.id).isbn(param.isbn)
 				.title(param.title).author(param.author).description(param.description)
-				.genre(param.genre).thumbnail(param.thumbnail).build().create());
+				.genre(param.genre).thumbnail(param.thumbnail).publishedDate(param.publishedDate)
+				.build().create());
 	}
 
 	/** 登録パラメタ*/

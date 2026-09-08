@@ -20,20 +20,21 @@ import com.rmr.backend.service.AccountService;
 public class AuthController {
 	private  final AccountService service;
 	private final JwtService jwtService;
+	private final RestTemplate restTemplate;
 
 	@Value("${google.token.info.url}")
     private String googleTokenInfoUrl;
 
 
-    public AuthController(AccountService service, JwtService jwtService) {
+    public AuthController(AccountService service, JwtService jwtService, RestTemplate restTemplate) {
         this.service = service;
         this.jwtService = jwtService;
+        this.restTemplate = restTemplate;
     }
 
 	@PostMapping("/google")
  public ResponseEntity<Map<String, Object>> googleLogin(@RequestBody Map<String, String> requestBody) {
      String token = requestBody.get("token");
-     RestTemplate restTemplate = new RestTemplate();
 
      String url = googleTokenInfoUrl + token;
      Map<String, Object> userInfo = restTemplate.getForObject(url, Map.class);
