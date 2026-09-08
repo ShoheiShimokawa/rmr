@@ -108,32 +108,15 @@ export const SelectBook = ({ onClick, onNext }) => {
   };
 
   const fromPost = (selectedBook) => {
-    const isbn = selectedBook.volumeInfo.industryIdentifiers
-      ? selectedBook.volumeInfo.industryIdentifiers.filter(
-          (id) => id.type === "ISBN_13"
-        )
-      : "";
-    const author = selectedBook.volumeInfo.authors
-      ? selectedBook.volumeInfo.authors[0]
-      : "";
-    const genre = selectedBook.volumeInfo?.categories
-      ? selectedBook.volumeInfo.categories[0]
-      : "";
     const book = {
-      isbn: isbn.identifier ? isbn.identifier : "",
-      id: selectedBook.id,
-      title: selectedBook.volumeInfo.title && selectedBook.volumeInfo.title,
-      author: author,
-      genre: genreToEnum(genre),
-      description:
-        selectedBook.volumeInfo.description &&
-        selectedBook.volumeInfo.description,
-      thumbnail:
-        selectedBook.volumeInfo.imageLinks.thumbnail &&
-        selectedBook.volumeInfo.imageLinks.thumbnail,
-      publishedDate:
-        selectedBook.volumeInfo.publishedDate &&
-        selectedBook.volumeInfo.publishedDate,
+      id: selectedBook.sourceId,
+      isbn: selectedBook.isbn,
+      title: selectedBook.title,
+      author: selectedBook.author,
+      genre: genreToEnum(selectedBook.genre),
+      description: selectedBook.description,
+      thumbnail: selectedBook.thumbnail,
+      publishedDate: selectedBook.publishedDate,
     };
     setSelectedReading(null);
     setValue("status", "");

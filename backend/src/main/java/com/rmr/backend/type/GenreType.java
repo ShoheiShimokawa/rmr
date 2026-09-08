@@ -53,6 +53,9 @@ public enum GenreType {
 	UNKNOWN;
 	
 	public static LargeGenreType classify(GenreType genre) {
+            if (genre == null) {
+                return LargeGenreType.UNKNOWN;
+            }
             return switch (genre) {
                 case FICTION, JUVENILE_FICTION, POETRY -> LargeGenreType.FICTION;
                 case BIOGRAPHY_AUTOBIOGRAPHY, HISTORY, TRUE_CRIME, RELIGION, JUVENILE_NONFICTION -> LargeGenreType.NON_FICTION;

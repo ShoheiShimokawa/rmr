@@ -1,6 +1,6 @@
 import { sortByLanguagePreference } from "./BookSearch";
 
-const book = (id, language) => ({ id, volumeInfo: { language } });
+const book = (sourceId, language) => ({ sourceId, language });
 
 describe("sortByLanguagePreference", () => {
   test("優先言語の本を先頭に、それ以外は元の順序を保ったまま並べる", () => {
@@ -13,7 +13,7 @@ describe("sortByLanguagePreference", () => {
 
     const sorted = sortByLanguagePreference(items, "ja");
 
-    expect(sorted.map((b) => b.id)).toEqual([
+    expect(sorted.map((b) => b.sourceId)).toEqual([
       "ja-1",
       "ja-2",
       "en-1",
@@ -26,7 +26,7 @@ describe("sortByLanguagePreference", () => {
 
     const sorted = sortByLanguagePreference(items, "ja");
 
-    expect(sorted.map((b) => b.id)).toEqual(["en-1", "fr-1"]);
+    expect(sorted.map((b) => b.sourceId)).toEqual(["en-1", "fr-1"]);
   });
 
   test("元の配列を破壊しない", () => {
@@ -34,7 +34,7 @@ describe("sortByLanguagePreference", () => {
 
     sortByLanguagePreference(items, "ja");
 
-    expect(items.map((b) => b.id)).toEqual(["en-1", "ja-1"]);
+    expect(items.map((b) => b.sourceId)).toEqual(["en-1", "ja-1"]);
   });
 
   test("空配列を渡してもエラーにならない", () => {
