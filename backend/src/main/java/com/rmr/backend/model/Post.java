@@ -52,9 +52,9 @@ public class Post {
 	/** 更新日 */
 	private Instant updateDate;
 
-	/** ID(google)に紐付く投稿を全て返します。 */
-	public static List<PostWithGoodCount> findById(PostRepository rep,GoodRepository gRep, String id) {
-		List<Post> posts = rep.findById(id);
+	/** 本のIDまたはISBNに紐付く投稿を全て返します。 */
+	public static List<PostWithGoodCount> findByBookIdOrIsbn(PostRepository rep, GoodRepository gRep, String id, String isbn) {
+		List<Post> posts = rep.findByBookIdOrIsbn(id, isbn);
 		Map<Integer, Long> goodCounts = gRep.countGroupByPostId();
 	return posts.stream().map(post -> {
 		long goodCount = goodCounts.getOrDefault(post.getPostId(), 0L);

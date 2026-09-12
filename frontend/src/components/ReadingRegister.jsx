@@ -10,12 +10,20 @@ import { TextField, Button, Rating, FormControlLabel } from "@mui/material";
 import { IOSSwitch } from "../ui/IOSSwitch";
 import { motion } from "framer-motion";
 
-export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
+export const ReadingRegister = ({
+  book,
+  reading,
+  updated,
+  isRecommended,
+  sourceId,
+}) => {
   const { user } = useContext(UserContext);
   const { registerReading, updateReading } = useReading();
   const { notify } = useNotify();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDisabled = book || reading ? false : true;
+  // 未指定ならbookプロパティのIDにフォールバックする。
+  const resolvedSourceId = sourceId ?? book?.id;
 
   const formSchema = z
     .object({
@@ -78,7 +86,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           statusType: "DONE",
           readingId: reading.readingId,
         };
-        await updateReading(updateParam, { sourceId: reading.book.id });
+        await updateReading(updateParam, { sourceId: resolvedSourceId });
         updated && updated();
         reset({
           rate: 0,
@@ -93,7 +101,7 @@ export const ReadingRegister = ({ book, reading, updated, isRecommended }) => {
           userId: user.userId,
           statusType: "DONE",
         };
-        await registerReading(param, { sourceId: book?.id });
+        await registerReading(param, { sourceId: resolvedSourceId });
         updated && updated();
         reset({
           rate: 0,

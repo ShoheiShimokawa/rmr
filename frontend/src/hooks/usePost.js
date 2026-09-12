@@ -37,12 +37,12 @@ export const usePostGooders = (postId) => {
   });
 };
 
-/** ある本に紐づく投稿(感想)を返します。 */
-export const usePostsByBook = (bookId) => {
+/** ある本に紐づく投稿(感想)を返します。isbnを渡すとISBN一致でも検索する。 */
+export const usePostsByBook = (bookId, isbn) => {
   return useQuery({
     queryKey: queryKeys.postsByBook(bookId),
     queryFn: async () => {
-      const result = await findPostByBookId(bookId);
+      const result = await findPostByBookId(bookId, isbn);
       return result.data;
     },
     enabled: !!bookId,

@@ -4,8 +4,8 @@ export const getPostAll = () => {
   return http.get("post");
 };
 
-export const findPostByBookId = (id) => {
-  return http.get("post/book/id", { params: { id } });
+export const findPostByBookId = (id, isbn) => {
+  return http.get("post/book/id", { params: { id, isbn } });
 };
 
 export const getPostAllByUser = (userId) => {

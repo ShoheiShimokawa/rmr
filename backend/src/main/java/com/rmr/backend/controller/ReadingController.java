@@ -37,8 +37,8 @@ public class ReadingController {
 		return service.getByUserIdAndBookId(userId,bookId);
 	}
 	@GetMapping("/reading/id/book")
-	public List<Reading> findById(@RequestParam String id) {
-		return service.findById(id);
+	public List<Reading> findById(@RequestParam String id, @RequestParam(required = false) String isbn) {
+		return service.findByBookIdOrIsbn(id, isbn);
 	}
 	
 	@GetMapping("/reading")

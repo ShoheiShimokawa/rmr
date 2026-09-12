@@ -98,9 +98,9 @@ public class Reading {
 		return rep.findAll();
 	}
 
-	/** ID(google)に紐付く有効な読書を全て返します。 */
-	public static List<Reading> findById(ReadingRepository rep, String id) {
-		return rep.findById(id).stream()
+	/** 本のIDまたはISBNに紐付く有効な読書を全て返します。 */
+	public static List<Reading> findByBookIdOrIsbn(ReadingRepository rep, String id, String isbn) {
+		return rep.findByBookIdOrIsbn(id, isbn).stream()
 				.filter(r -> r.getStatusType() != BookStatusType.INVALID)
 				.collect(Collectors.toList());
 	}

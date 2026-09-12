@@ -50,12 +50,12 @@ export const BookDetail = ({ book, updated, visible = true }) => {
     data: posts = [],
     isLoading: loadingPosts,
     isError: isPostsError,
-  } = usePostsByBook(book?.id);
+  } = usePostsByBook(book?.id, book?.isbn);
   const {
     data: readingsForBook = [],
     isLoading: loadingReadings,
     isError: isReadingsError,
-  } = useReadingsByBook(book?.id);
+  } = useReadingsByBook(book?.id, book?.isbn);
 
   const loading = loadingPosts || loadingReadings;
 
@@ -234,6 +234,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       >
         <ReadingRegister
           book={bookForReading}
+          sourceId={book.id}
           updated={() => {
             handleCloseRegister();
             updated && updated();

@@ -13,8 +13,8 @@ public interface ReadingRepository extends JpaRepository<Reading, Integer> {
     @Query("SELECT r FROM Reading r WHERE r.book.bookId = :bookId")
     List<Reading> findByBookId(@Param("bookId") Integer bookId);
 
-    @Query("SELECT r FROM Reading r WHERE r.book.id = :id")
-    List<Reading> findById(@Param("id") String id);
+    @Query("SELECT r FROM Reading r WHERE r.book.id = :id OR (:isbn IS NOT NULL AND r.book.isbn = :isbn)")
+    List<Reading> findByBookIdOrIsbn(@Param("id") String id, @Param("isbn") String isbn);
    
     @Query("SELECT r FROM Reading r WHERE r.user.userId = :userId")
     List<Reading> findReadingsByUserId(@Param("userId") Integer userId);
