@@ -10,6 +10,7 @@ import { Divider, Tabs, Tab, Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useNotify } from "../hooks/NotifyProvider";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 export const UserPage = () => {
   const { handle } = useParams();
@@ -63,8 +64,33 @@ export const UserPage = () => {
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
   };
+  const displayName = account?.name || account?.handle;
+  const bio = account?.description || `${displayName}さんの読書記録`;
+  // SNSでシェアされた際の説明文にのみ公式ハッシュタグを付ける
+  const shareBio = `${bio} #ReadMyReads`;
+
   return (
     <div>
+      {account && (
+        <Helmet>
+          <title>{`${displayName}(@${account.handle})の本棚 | ReadMyReads`}</title>
+          <meta name="description" content={bio} />
+          <meta
+            property="og:title"
+            content={`${displayName}(@${account.handle})の本棚`}
+          />
+          <meta property="og:description" content={shareBio} />
+          <meta
+            property="og:image"
+            content={`${window.location.origin}/api/og?handle=${encodeURIComponent(
+              account.handle
+            )}`}
+          />
+          <meta property="og:url" content={window.location.href} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:description" content={shareBio} />
+        </Helmet>
+      )}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
