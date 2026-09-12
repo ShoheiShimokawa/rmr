@@ -6,6 +6,7 @@ import com.rmr.backend.context.BookRepository;
 import com.rmr.backend.type.GenreType;
 import com.rmr.backend.type.LargeGenreType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +28,8 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Integer bookId;
-	/** googleのId*/
+	/** プロバイダ内でのID(GoogleBooksのvolume ID、NDLの書誌URI等) */
+	@Column(length = 500)
 	private String id;
 	/** ISBNコード(13) */
 	private String isbn;

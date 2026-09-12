@@ -23,9 +23,9 @@ public class PostService {
 		return Post.getPostWithGoodCount(rep, gRep,userId);
 	}
 
-	/** ID(google)に紐付くポストを全て返します。 */
-	public List<PostWithGoodCount>  findById(String id) {
-		return Post.findById(rep,gRep,id);
+	/** 本のID(プロバイダのsourceId)またはISBNに紐付くポストを全て返します。 */
+	public List<PostWithGoodCount> findByBookIdOrIsbn(String id, String isbn) {
+		return Post.findByBookIdOrIsbn(rep, gRep, id, isbn);
 	}
 
 	/** ポストを返却します。（タイムライン用） */

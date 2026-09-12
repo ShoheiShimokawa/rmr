@@ -32,8 +32,8 @@ public class PostController {
 	}
 
 	@GetMapping("/post/book/id")
-	public List<PostWithGoodCount> findPostByBookId(@RequestParam String id) {
-		return service.findById(id);
+	public List<PostWithGoodCount> findPostByBookId(@RequestParam String id, @RequestParam(required = false) String isbn) {
+		return service.findByBookIdOrIsbn(id, isbn);
 	}
 
 	@GetMapping("/post/user")

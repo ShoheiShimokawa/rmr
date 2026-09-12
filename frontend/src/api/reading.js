@@ -3,8 +3,8 @@ import http from "./http";
 export const getByUserIdAndBookId = (userId, bookId) => {
   return http.get("reading/book/user", { params: { userId, bookId } });
 };
-export const findReadingById = (id) => {
-  return http.get("reading/id/book", { params: { id } });
+export const findReadingById = (id, isbn) => {
+  return http.get("reading/id/book", { params: { id, isbn } });
 };
 export const findReadingByUser = (userId) => {
   return http.get("reading", { params: { userId } });

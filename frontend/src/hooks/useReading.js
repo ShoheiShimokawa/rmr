@@ -3,12 +3,15 @@ import * as api from "../api/reading";
 import { useCallback } from "react";
 import { queryKeys } from "../api/queryKeys";
 
-/** ある本に紐づく全ユーザの読書記録を返します。 */
-export const useReadingsByBook = (bookId) => {
+/** ある本に紐づく全ユーザの読書記録を返します。
+ * isbnを渡すと、bookIdでの一致に加えてISBN一致でも検索する
+ * (同じ本が別のsourceIdで既に登録されているケースを拾うため)。
+ */
+export const useReadingsByBook = (bookId, isbn) => {
   return useQuery({
     queryKey: queryKeys.readingsByBook(bookId),
     queryFn: async () => {
-      const result = await api.findReadingById(bookId);
+      const result = await api.findReadingById(bookId, isbn);
       return result.data;
     },
     enabled: !!bookId,

@@ -36,9 +36,9 @@ public class ReadingService {
 		return Reading.findAll(rep);
 	}
 
-	/** ID(google)に紐付く読書を全て返します。 */
-	public List<Reading> findById(String id) {
-		return Reading.findById(rep,id);
+	/** 本のID(プロバイダのsourceId)またはISBNに紐付く読書を全て返します。 */
+	public List<Reading> findByBookIdOrIsbn(String id, String isbn) {
+		return Reading.findByBookIdOrIsbn(rep, id, isbn);
 	}
 
 	/** ユーザに紐づく全ての読書を返します */
