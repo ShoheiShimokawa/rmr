@@ -29,4 +29,18 @@ class PostServiceTest {
 
 		assertThat(result).extracting(PostWithGoodCount::getPostId).containsExactly(1);
 	}
+
+	@Test
+	void findByBookIdOrIsbnTreatsBlankIsbnAsUnspecifiedToAvoidMatchingUnrelatedBooks() {
+		PostRepository rep = mock(PostRepository.class);
+		GoodRepository gRep = mock(GoodRepository.class);
+		Post post = Post.builder().postId(1).build();
+		when(rep.findByBookIdOrIsbn("new-source-id", null)).thenReturn(List.of(post));
+		when(gRep.countGroupByPostIdRaw()).thenReturn(Collections.emptyList());
+
+		PostService service = new PostService(rep, gRep);
+		List<PostWithGoodCount> result = service.findByBookIdOrIsbn("new-source-id", "");
+
+		assertThat(result).extracting(PostWithGoodCount::getPostId).containsExactly(1);
+	}
 }
