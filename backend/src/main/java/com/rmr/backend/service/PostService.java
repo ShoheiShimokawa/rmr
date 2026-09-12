@@ -23,7 +23,7 @@ public class PostService {
 		return Post.getPostWithGoodCount(rep, gRep,userId);
 	}
 
-	/** 本のID(プロバイダのsourceId)またはISBNに紐付くポストを全て返します。 */
+	/** 本のIDまたはISBNに紐付くポストを全て返します。 */
 	public List<PostWithGoodCount> findByBookIdOrIsbn(String id, String isbn) {
 		return Post.findByBookIdOrIsbn(rep, gRep, id, isbn);
 	}

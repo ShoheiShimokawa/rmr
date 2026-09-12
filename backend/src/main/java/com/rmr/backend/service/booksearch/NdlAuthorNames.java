@@ -37,7 +37,7 @@ final class NdlAuthorNames {
         return String.join("", parts);
     }
 
-    /** 典拠形の読み("セトウチ, ハルミ, 1922-2021")から生没年を除き、空白区切りで返す。 */
+    /** 典拠形の読みから生没年を除き、空白区切りで返す。 */
     static String readingFromTranscription(String transcription) {
         List<String> parts = nameParts(transcription);
         return parts.isEmpty() ? null : String.join(" ", parts);

@@ -98,7 +98,7 @@ public class Reading {
 		return rep.findAll();
 	}
 
-	/** 本のID(プロバイダのsourceId)またはISBNに紐付く有効な読書を全て返します。 */
+	/** 本のIDまたはISBNに紐付く有効な読書を全て返します。 */
 	public static List<Reading> findByBookIdOrIsbn(ReadingRepository rep, String id, String isbn) {
 		return rep.findByBookIdOrIsbn(id, isbn).stream()
 				.filter(r -> r.getStatusType() != BookStatusType.INVALID)

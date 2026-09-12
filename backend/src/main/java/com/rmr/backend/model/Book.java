@@ -28,7 +28,7 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Integer bookId;
-	/** プロバイダ内でのID(GoogleBooksのvolume ID、NDLの書誌URI等) */
+	/** プロバイダ内でのID */
 	@Column(length = 500)
 	private String id;
 	/** ISBNコード(13) */

@@ -22,8 +22,7 @@ export const ReadingRegister = ({
   const { notify } = useNotify();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDisabled = book || reading ? false : true;
-  // 呼び出し元(BookDetail等)が今表示している本のIDを優先する。
-  // 渡されなければbookプロパティのIDにフォールバックする。
+  // 未指定ならbookプロパティのIDにフォールバックする。
   const resolvedSourceId = sourceId ?? book?.id;
 
   const formSchema = z

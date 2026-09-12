@@ -12,10 +12,7 @@ import com.rmr.backend.model.Book;
 import com.rmr.backend.model.Reading;
 import com.rmr.backend.type.BookStatusType;
 
-/**
- * 同じ本が別のsourceId(プロバイダを跨いだ再検索等)で登録し直された場合でも、
- * ISBN一致で読書記録を見つけられることを実データベースで検証する。
- */
+/** 本のsourceIdが一致しなくても、ISBN一致で読書記録を見つけられることを実データベースで検証する。 */
 @SpringBootTest
 @Transactional
 class ReadingRepositoryIsbnFallbackTest {

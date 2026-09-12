@@ -37,10 +37,7 @@ export const usePostGooders = (postId) => {
   });
 };
 
-/** ある本に紐づく投稿(感想)を返します。
- * isbnを渡すと、bookIdでの一致に加えてISBN一致でも検索する
- * (同じ本が別のsourceIdで既に登録されているケースを拾うため)。
- */
+/** ある本に紐づく投稿(感想)を返します。isbnを渡すとISBN一致でも検索する。 */
 export const usePostsByBook = (bookId, isbn) => {
   return useQuery({
     queryKey: queryKeys.postsByBook(bookId),

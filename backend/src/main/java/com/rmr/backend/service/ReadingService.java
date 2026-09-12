@@ -36,7 +36,7 @@ public class ReadingService {
 		return Reading.findAll(rep);
 	}
 
-	/** 本のID(プロバイダのsourceId)またはISBNに紐付く読書を全て返します。 */
+	/** 本のIDまたはISBNに紐付く読書を全て返します。 */
 	public List<Reading> findByBookIdOrIsbn(String id, String isbn) {
 		return Reading.findByBookIdOrIsbn(rep, id, isbn);
 	}

@@ -52,7 +52,7 @@ public class Post {
 	/** 更新日 */
 	private Instant updateDate;
 
-	/** 本のID(プロバイダのsourceId)またはISBNに紐付く投稿を全て返します。 */
+	/** 本のIDまたはISBNに紐付く投稿を全て返します。 */
 	public static List<PostWithGoodCount> findByBookIdOrIsbn(PostRepository rep, GoodRepository gRep, String id, String isbn) {
 		List<Post> posts = rep.findByBookIdOrIsbn(id, isbn);
 		Map<Integer, Long> goodCounts = gRep.countGroupByPostId();
