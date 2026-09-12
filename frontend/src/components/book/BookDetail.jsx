@@ -234,6 +234,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       >
         <ReadingRegister
           book={bookForReading}
+          sourceId={book.id}
           updated={() => {
             handleCloseRegister();
             updated && updated();
