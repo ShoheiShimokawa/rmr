@@ -3,6 +3,7 @@ package com.rmr.backend.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.rmr.backend.context.GoodRepository;
 import com.rmr.backend.context.PostRepository;
@@ -23,9 +24,9 @@ public class PostService {
 		return Post.getPostWithGoodCount(rep, gRep,userId);
 	}
 
-	/** 本のIDまたはISBNに紐付くポストを全て返します。 */
+	/** 本のIDまたはISBNに紐付くポストを全て返します。ISBNが空文字列の場合は未指定として扱う。 */
 	public List<PostWithGoodCount> findByBookIdOrIsbn(String id, String isbn) {
-		return Post.findByBookIdOrIsbn(rep, gRep, id, isbn);
+		return Post.findByBookIdOrIsbn(rep, gRep, id, StringUtils.hasText(isbn) ? isbn : null);
 	}
 
 	/** ポストを返却します。（タイムライン用） */

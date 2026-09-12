@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.rmr.backend.context.AccountRepository;
@@ -36,9 +37,9 @@ public class ReadingService {
 		return Reading.findAll(rep);
 	}
 
-	/** 本のIDまたはISBNに紐付く読書を全て返します。 */
+	/** 本のIDまたはISBNに紐付く読書を全て返します。ISBNが空文字列の場合は未指定として扱う。 */
 	public List<Reading> findByBookIdOrIsbn(String id, String isbn) {
-		return Reading.findByBookIdOrIsbn(rep, id, isbn);
+		return Reading.findByBookIdOrIsbn(rep, id, StringUtils.hasText(isbn) ? isbn : null);
 	}
 
 	/** ユーザに紐づく全ての読書を返します */

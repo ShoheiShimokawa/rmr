@@ -29,4 +29,17 @@ class ReadingServiceTest {
 
 		assertThat(result).containsExactly(active);
 	}
+
+	@Test
+	void findByBookIdOrIsbnTreatsBlankIsbnAsUnspecifiedToAvoidMatchingUnrelatedBooks() {
+		ReadingRepository rep = mock(ReadingRepository.class);
+		Reading reading = Reading.builder().readingId(1).statusType(BookStatusType.DOING)
+				.book(Book.builder().bookId(1).build()).build();
+		when(rep.findByBookIdOrIsbn("new-source-id", null)).thenReturn(List.of(reading));
+
+		ReadingService service = new ReadingService(rep, null, null, null);
+		List<Reading> result = service.findByBookIdOrIsbn("new-source-id", "");
+
+		assertThat(result).containsExactly(reading);
+	}
 }
