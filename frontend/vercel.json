@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/:handle",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(bot|facebookexternalhit|WhatsApp|Slack-ImgProxy|vkShare|SkypeUriPreview|ia_archiver|Line/|LINE).*"
+        }
+      ],
+      "destination": "/api/prerender?handle=:handle"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
