@@ -29,4 +29,16 @@ public record BookSearchResult(
         String publishedDate,
         String genre,
         String language) {
+
+    /** サムネイルだけを差し替えた新しいインスタンスを返す(書影補完で使用)。 */
+    public BookSearchResult withThumbnail(String newThumbnail) {
+        return new BookSearchResult(provider, sourceId, isbn, title, titleKana, author, authorKana,
+                description, newThumbnail, publishedDate, genre, language);
+    }
+
+    /** 概要だけを差し替えた新しいインスタンスを返す(内容紹介の補完で使用)。 */
+    public BookSearchResult withDescription(String newDescription) {
+        return new BookSearchResult(provider, sourceId, isbn, title, titleKana, author, authorKana,
+                newDescription, thumbnail, publishedDate, genre, language);
+    }
 }
