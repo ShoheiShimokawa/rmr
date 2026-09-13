@@ -1,6 +1,7 @@
 package com.rmr.backend.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +13,7 @@ import com.rmr.backend.context.ReadingRepository;
 import com.rmr.backend.model.Book;
 import com.rmr.backend.model.Reading;
 import com.rmr.backend.type.BookStatusType;
+import com.rmr.backend.util.BadRequestException;
 
 class ReadingServiceTest {
 
@@ -41,5 +43,14 @@ class ReadingServiceTest {
 		List<Reading> result = service.findByBookIdOrIsbn("new-source-id", "");
 
 		assertThat(result).containsExactly(reading);
+	}
+
+	@Test
+	void getAnalyticsRejectsInvalidZone() {
+		ReadingRepository rep = mock(ReadingRepository.class);
+		ReadingService service = new ReadingService(rep, null, null, null);
+
+		assertThatThrownBy(() -> service.getAnalytics(1, "Not/AZone"))
+				.isInstanceOf(BadRequestException.class);
 	}
 }

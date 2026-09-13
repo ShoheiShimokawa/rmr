@@ -2,7 +2,7 @@ import "./App.css";
 import { Community } from "./components/Community";
 import { BookSearch } from "./components/book/BookSearch";
 import { PostRegister } from "./components/PostRegister";
-import { ReadingAnalytics } from "./components/ReadingAnalytics";
+import { ReadingAnalytics } from "./components/analytics/ReadingAnalytics";
 import { Information } from "./components/Information";
 import { UserPage } from "./components/UserPage";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -12,12 +12,37 @@ import { Login } from "./components/Login";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { UserProvider } from "./components/UserProvider";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { Box, CssBaseline, Container, Divider } from "@mui/material";
 import { HandleRegister } from "./components/HandleRegister";
 import { Notification } from "./components/Notification";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// analyticsはグラフを横に並べるため、他ページより広い最大幅を使う
+const MAIN_MAX_WIDTH = { "/analytics": 900, default: 650 };
+
+const MainContent = () => {
+  const { pathname } = useLocation();
+  const maxWidth = MAIN_MAX_WIDTH[pathname] || MAIN_MAX_WIDTH.default;
+
+  return (
+    <Box sx={{ width: "100%", maxWidth, mt: 2 }}>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/book" element={<BookSearch />} />
+        <Route path="/" element={<Community />} />
+        <Route path="/analytics" element={<ReadingAnalytics />} />
+        <Route path="/information" element={<Information />} />
+        <Route path="highlights" element={<Memo />} />
+        <Route path="/postRegister" element={<PostRegister />} />
+        <Route path="/:handle" element={<UserPage />} />
+        <Route path="/handleRegister" element={<HandleRegister />} />
+        <Route path="/notifications" element={<Notification />} />
+      </Routes>
+    </Box>
+  );
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,35 +103,7 @@ function App() {
                           flexItem
                           sx={{ borderColor: "#ddd", alignSelf: "stretch" }}
                         />
-                        <Box sx={{ width: "100%", maxWidth: 650, mt: 2 }}>
-                          <Routes>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/book" element={<BookSearch />} />
-                            <Route path="/" element={<Community />} />
-                            <Route
-                              path="/analytics"
-                              element={<ReadingAnalytics />}
-                            />
-                            <Route
-                              path="/information"
-                              element={<Information />}
-                            />
-                            <Route path="highlights" element={<Memo />} />
-                            <Route
-                              path="/postRegister"
-                              element={<PostRegister />}
-                            />
-                            <Route path="/:handle" element={<UserPage />} />
-                            <Route
-                              path="/handleRegister"
-                              element={<HandleRegister />}
-                            />
-                            <Route
-                              path="/notifications"
-                              element={<Notification />}
-                            />
-                          </Routes>
-                        </Box>
+                        <MainContent />
                       </Box>
                     </Box>
                   </Container>

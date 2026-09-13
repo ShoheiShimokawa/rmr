@@ -19,18 +19,6 @@ public interface ReadingRepository extends JpaRepository<Reading, Integer> {
     @Query("SELECT r FROM Reading r WHERE r.user.userId = :userId")
     List<Reading> findReadingsByUserId(@Param("userId") Integer userId);
 
-    @Query("""
-                SELECT TO_CHAR(DATE_TRUNC('month', r.readDate), 'YYYY-MM') AS month,
-                       r.book.genre AS genre,
-                       COUNT(r.book.genre) AS genre_count
-                FROM Reading r
-                JOIN r.book b
-                WHERE r.user.userId = :userId AND r.statusType = BookStatusType.DONE
-                GROUP BY TO_CHAR(DATE_TRUNC('month', r.readDate), 'YYYY-MM'), r.book.genre
-                ORDER BY TO_CHAR(DATE_TRUNC('month', r.readDate), 'YYYY-MM')
-            """)
-    List<Object[]> findMonthlyReadingDataByUser(@Param("userId") Integer userId);
-
     Optional<Reading> findByUserUserIdAndBookBookId(Integer userId, Integer bookId);
 
 }

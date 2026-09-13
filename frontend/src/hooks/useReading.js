@@ -27,6 +27,19 @@ export const useReadingsByUser = (userId) => {
   });
 };
 
+/** ユーザの読書統計を返します。 */
+export const useAnalytics = (userId) => {
+  return useQuery({
+    queryKey: queryKeys.analytics(userId),
+    queryFn: async () => {
+      const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const result = await api.getAnalytics(userId, zone);
+      return result.data;
+    },
+    enabled: !!userId,
+  });
+};
+
 export const useReading = () => {
   const queryClient = useQueryClient();
 
@@ -62,6 +75,9 @@ export const useReading = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.readingsByUser(params.userId),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.analytics(params.userId),
+      });
       return result;
     },
     [queryClient]
@@ -85,6 +101,9 @@ export const useReading = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.readingsByUser(params.userId),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.analytics(params.userId),
+      });
       return result;
     },
     [queryClient]
@@ -96,7 +115,10 @@ export const useReading = () => {
     async (readingId, { bookId, userId } = {}) => {
       const result = await api.toDoing(readingId);
       if (bookId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByBook(bookId) });
-      if (userId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByUser(userId) });
+      if (userId) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.readingsByUser(userId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.analytics(userId) });
+      }
       return result;
     },
     [queryClient]
@@ -106,15 +128,15 @@ export const useReading = () => {
     async (readingId, { bookId, userId } = {}) => {
       const result = await api.deleteReading(readingId);
       if (bookId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByBook(bookId) });
-      if (userId) queryClient.invalidateQueries({ queryKey: queryKeys.readingsByUser(userId) });
+      if (userId) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.readingsByUser(userId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.analytics(userId) });
+      }
       return result;
     },
     [queryClient]
   );
 
-  const getMonthlyData = useCallback(async (userId) => {
-    return await api.getMonthlyData(userId);
-  }, []);
   return {
     registerReading,
     getByUserIdAndBookId,
@@ -124,6 +146,5 @@ export const useReading = () => {
     updateReading,
     toDoing,
     deleteReading,
-    getMonthlyData,
   };
 };
