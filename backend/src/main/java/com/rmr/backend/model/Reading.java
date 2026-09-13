@@ -1,6 +1,9 @@
 package com.rmr.backend.model;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +14,7 @@ import com.rmr.backend.context.AccountRepository;
 import com.rmr.backend.context.BookRepository;
 import com.rmr.backend.context.ReadingRepository;
 import com.rmr.backend.type.BookStatusType;
-import com.rmr.backend.type.GenreType;
+import com.rmr.backend.type.LargeGenreType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
@@ -224,50 +227,116 @@ public class Reading {
 		rep.save(reading);
 	}
 
-	/** 月間読書記録を返します。*/
-	public static List<MonthlyReading> getMonthlyReadingData(ReadingRepository rep, Integer userId) {
-		List<Object[]> results = rep.findMonthlyReadingDataByUser(userId);
+	/** 読書統計 */
+	public record Analytics(Summary summary, StatusCounts status, List<MonthlyPoint> monthly,
+			List<YearlyPoint> yearly, List<GenreCount> genres, List<AuthorCount> topAuthors) {
 
-		Map<String, Map<GenreType, Integer>> groupedData = new HashMap<>();
-
-		for (Object[] record : results) {
-
-			String yearMonth = ((String) record[0]);
-			GenreType item = (GenreType) record[1];
-			Long count = (Long) record[2];
-			Integer intCount = count.intValue();
-
-			groupedData.putIfAbsent(yearMonth, new HashMap<>());
-			groupedData.get(yearMonth).merge(item, intCount, Integer::sum);
+		/** 概況 */
+		public record Summary(int done, int doneThisYear, int doneThisMonth, int doing, int toRead, Double avgRate) {
 		}
 
-		return groupedData.entrySet().stream()
-				.sorted(Map.Entry.comparingByKey())
-				.map(entry -> {
-					String yearMonth = entry.getKey();
-					Map<GenreType, Integer> details = entry.getValue();
-					int total = details.values().stream().mapToInt(Integer::intValue).sum();
+		/** ステータス別件数 */
+		public record StatusCounts(int toRead, int doing, int done) {
+		}
 
-					return new MonthlyReading(yearMonth, total, details);
-				})
-				.collect(Collectors.toList());
+		/** 月別の読了記録 */
+		public record MonthlyPoint(String month, int total, Map<LargeGenreType, Integer> byLargeGenre) {
+		}
+
+		/** 年別の読了記録 */
+		public record YearlyPoint(int year, int total) {
+		}
+
+		/** ジャンル別件数 */
+		public record GenreCount(LargeGenreType largeGenre, int count) {
+		}
+
+		/** 著者別件数 */
+		public record AuthorCount(String author, int count) {
+		}
+
+		/** 読書一覧から統計を組み立てます。(readingsはINVALIDを除いた状態で渡すこと) */
+		public static Analytics of(List<Reading> readings, ZoneId zone, LocalDate today) {
+			int toRead = 0;
+			int doing = 0;
+			int done = 0;
+			int doneThisYear = 0;
+			int doneThisMonth = 0;
+			int rateSum = 0;
+			int rateCount = 0;
+
+			Map<String, Map<LargeGenreType, Integer>> monthlyByKey = new HashMap<>();
+			Map<Integer, Integer> yearlyByYear = new HashMap<>();
+			Map<LargeGenreType, Integer> genreCounts = new HashMap<>();
+			Map<String, Integer> authorCounts = new HashMap<>();
+
+			for (Reading reading : readings) {
+				LargeGenreType largeGenre = reading.getBook() != null && reading.getBook().getLargeGenre() != null
+						? reading.getBook().getLargeGenre() : LargeGenreType.UNKNOWN;
+				genreCounts.merge(largeGenre, 1, Integer::sum);
+				String author = reading.getBook() != null ? reading.getBook().getAuthor() : null;
+				if (author != null && !author.isBlank()) {
+					authorCounts.merge(author, 1, Integer::sum);
+				}
+
+				switch (reading.getStatusType()) {
+					case NONE -> toRead++;
+					case DOING -> doing++;
+					case DONE -> {
+						done++;
+						if (reading.getRate() != null && reading.getRate() > 0) {
+							rateSum += reading.getRate();
+							rateCount++;
+						}
+						if (reading.getReadDate() != null) {
+							LocalDate readLocalDate = reading.getReadDate().atZone(zone).toLocalDate();
+							String monthKey = readLocalDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+							int year = readLocalDate.getYear();
+							monthlyByKey.computeIfAbsent(monthKey, k -> new HashMap<>())
+									.merge(largeGenre, 1, Integer::sum);
+							yearlyByYear.merge(year, 1, Integer::sum);
+							if (year == today.getYear()) {
+								doneThisYear++;
+								if (readLocalDate.getMonthValue() == today.getMonthValue()) {
+									doneThisMonth++;
+								}
+							}
+						}
+					}
+					case INVALID -> {
+					}
+					default -> throw new IllegalStateException("Unexpected value: " + reading.getStatusType());
+				}
+			}
+
+			List<MonthlyPoint> monthly = monthlyByKey.entrySet().stream()
+					.sorted(Map.Entry.comparingByKey())
+					.map(entry -> new MonthlyPoint(entry.getKey(),
+							entry.getValue().values().stream().mapToInt(Integer::intValue).sum(), entry.getValue()))
+					.collect(Collectors.toList());
+
+			List<YearlyPoint> yearly = yearlyByYear.entrySet().stream()
+					.sorted(Map.Entry.comparingByKey())
+					.map(entry -> new YearlyPoint(entry.getKey(), entry.getValue()))
+					.collect(Collectors.toList());
+
+			List<GenreCount> genres = genreCounts.entrySet().stream()
+					.sorted(Map.Entry.<LargeGenreType, Integer>comparingByValue().reversed()
+							.thenComparing(Map.Entry.comparingByKey()))
+					.map(entry -> new GenreCount(entry.getKey(), entry.getValue()))
+					.collect(Collectors.toList());
+
+			List<AuthorCount> topAuthors = authorCounts.entrySet().stream()
+					.sorted(Map.Entry.<String, Integer>comparingByValue().reversed()
+							.thenComparing(Map.Entry.comparingByKey()))
+					.limit(5)
+					.map(entry -> new AuthorCount(entry.getKey(), entry.getValue()))
+					.collect(Collectors.toList());
+
+			Double avgRate = rateCount > 0 ? (double) rateSum / rateCount : null;
+
+			return new Analytics(new Summary(done, doneThisYear, doneThisMonth, doing, toRead, avgRate),
+					new StatusCounts(toRead, doing, done), monthly, yearly, genres, topAuthors);
+		}
 	}
-
-	/** 月間読書記録*/
-	@Data
-	@Builder
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class MonthlyReading {
-		private String month;
-		private Integer total;
-		private Map<GenreType, Integer> breakdown;
-	}
-
-	// 	public static List<Reading> getPopularBooks(ReadingRepository rep)
-	// 	{
-	// }
-
-	// public static List<Reading> getRecommendedBooks(ReadingRepository rep){
-	// }
 }

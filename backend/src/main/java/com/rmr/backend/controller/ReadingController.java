@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rmr.backend.model.Reading;
-import com.rmr.backend.model.Reading.MonthlyReading;
 import com.rmr.backend.model.Reading.RegisterReading;
 import com.rmr.backend.model.Reading.UpdateReading;
 import com.rmr.backend.service.ReadingService;
@@ -72,7 +71,8 @@ public class ReadingController {
     }
 	
 	@GetMapping("/analytics")
-	public List<MonthlyReading> getMonthlyReading(@RequestParam Integer userId){
-		return this.service.getMonthlyReading(userId);
+	public Reading.Analytics getAnalytics(@RequestParam Integer userId,
+			@RequestParam(defaultValue = "UTC") String zone) {
+		return this.service.getAnalytics(userId, zone);
 	}
 }

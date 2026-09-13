@@ -1,5 +1,8 @@
 package com.rmr.backend.service;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,10 +16,10 @@ import com.rmr.backend.context.PostRepository;
 import com.rmr.backend.context.ReadingRepository;
 import com.rmr.backend.model.Post;
 import com.rmr.backend.model.Reading;
-import com.rmr.backend.model.Reading.MonthlyReading;
 import com.rmr.backend.model.Reading.RegisterReading;
 import com.rmr.backend.model.Reading.UpdateReading;
 import com.rmr.backend.type.BookStatusType;
+import com.rmr.backend.util.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -91,8 +94,14 @@ public class ReadingService {
 		}
 	}
 	
-	/** 月間読書記録を返します。*/
-	public List<MonthlyReading> getMonthlyReading(Integer userId){
-		return Reading.getMonthlyReadingData(rep,userId);
+	/** 読書統計を返します。*/
+	public Reading.Analytics getAnalytics(Integer userId, String zone) {
+		ZoneId zoneId;
+		try {
+			zoneId = ZoneId.of(zone);
+		} catch (DateTimeException e) {
+			throw new BadRequestException("Invalid zone: " + zone);
+		}
+		return Reading.Analytics.of(findReadingsByUserId(userId), zoneId, LocalDate.now(zoneId));
 	}
 }

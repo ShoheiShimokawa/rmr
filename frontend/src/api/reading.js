@@ -30,6 +30,6 @@ export const deleteReading = (readingId) => {
   return http.post("reading/delete", { readingId });
 };
 
-export const getMonthlyData = (userId) => {
-  return http.get("analytics", { params: { userId } });
+export const getAnalytics = (userId, zone) => {
+  return http.get("analytics", { params: { userId, zone } });
 };

@@ -1,0 +1,79 @@
+// チャート共通のテーマ設定。
+// カテゴリ配色は8色を固定順で使い、値の大小によって色を入れ替えない
+// (同じジャンルは常に同じ色になる)。OTHER/UNKNOWNは追加の色を割り当てず
+// 共通のグレーに畳み込む。
+
+// 「古い図書館」(革張りの本、真鍮、琥珀色の灯り、深緑の布装丁)をイメージした配色。
+// 暖色だけでは8色分のCVD(色弱)安全性を満たせないため、革の赤褐色・真鍮・オリーブ・
+// 深緑を主体にしつつ、インクの青緑・紺・プラムを差し色として挟んでいる。
+// dataviz skillのvalidate_palette.jsで検証済み(この並び順がCVD安全性の要)。
+/** 大分類ジャンル → 固定カテゴリ配色(8色, 順不同ではない) */
+export const GENRE_COLORS = {
+  FICTION: "#d86353", // テラコッタ
+  NON_FICTION: "#00a5b0", // インクの青緑
+  PROFESSIONAL_TECHNICAL: "#cf6f19", // 真鍮
+  ACADEMICS_RESEARCH: "#538ae6", // 紺
+  ARTS_CULTURE: "#af8600", // オリーブ/マスタード
+  PRACTICAL_HOBBIES: "#9b74d9", // プラム
+  EDUCATION_STUDYAIDS: "#55a144", // 深緑(布装丁)
+  ENTERTAINMENT: "#cd6199", // バーガンディ
+};
+
+/** 分類に収まらないジャンル、および表示上"Other"に畳み込んだ分の色(暖かみのあるグレー) */
+export const OTHER_GENRE_COLOR = "#9c8f7c";
+
+export const CHART_INK = {
+  primary: "#0b0b0b",
+  secondary: "#52514e",
+  muted: "#898781",
+  grid: "#e1e0d9",
+};
+
+export const CHART_FONT_FAMILY = "Nunito Sans, Noto Sans JP, sans-serif";
+
+/**
+ * ApexChartsの共通オプション。個々のチャートでmergeして使う。
+ * ApexChartsは渡されたoptionsのネストしたオブジェクトを直接書き換えるため、
+ * チャート間で同じオブジェクトを共有しないよう呼び出しごとに新しいオブジェクトを返す。
+ */
+export const baseChartOptions = () => ({
+  chart: {
+    fontFamily: CHART_FONT_FAMILY,
+    toolbar: { show: false },
+    // 初回描画時だけ動かす。データ更新時(MonthlyVolumeChartの期間切替など)まで
+    // 毎回再生されると煩わしい上、ApexChartsの再アニメーションはupdateOptions()の
+    // 連続呼び出しと競合しやすいため、dynamicAnimationは無効にする。
+    animations: {
+      enabled: true,
+      easing: "easeout",
+      speed: 650,
+      dynamicAnimation: { enabled: false },
+    },
+  },
+  grid: {
+    borderColor: CHART_INK.grid,
+    strokeDashArray: 0,
+  },
+  legend: {
+    fontFamily: CHART_FONT_FAMILY,
+    labels: { colors: CHART_INK.secondary },
+    markers: { size: 8 },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  tooltip: {
+    theme: "light",
+  },
+  xaxis: {
+    labels: { style: { colors: CHART_INK.muted, fontSize: "12px" } },
+    axisBorder: { color: CHART_INK.grid },
+    axisTicks: { color: CHART_INK.grid },
+  },
+  yaxis: {
+    labels: { style: { colors: CHART_INK.muted, fontSize: "12px" } },
+  },
+});
+
+/** ジャンルの表示色を返す(未分類はグレー)。 */
+export const genreColor = (largeGenre) => GENRE_COLORS[largeGenre] || OTHER_GENRE_COLOR;
