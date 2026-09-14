@@ -3,12 +3,12 @@
   "name": "ReadMyReads - Your reads can inspire someone's next favorite book.",
   "icons": [
     {
-      "src": "rmr_logo_192.png",
+      "src": "rmr_tablogo_192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "rmr_logo_512.png",
+      "src": "rmr_tablogo_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
