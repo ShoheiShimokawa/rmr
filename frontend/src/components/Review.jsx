@@ -43,7 +43,7 @@ export const Review = ({ visible = false, post, forNotification = false }) => {
         )}
         <div
           className={`text-sm mt-1 font-soft ${
-            forNotification ? "text-zinc-500" : ""
+            forNotification ? "text-zinc-500 dark:text-zinc-400" : ""
           }`}
         >
           <CollapsibleText text={post.reading.thoughts} maxLength={250} />

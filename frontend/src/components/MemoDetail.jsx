@@ -3,7 +3,8 @@ import { useState } from "react";
 import { MemoRegister } from "./MemoRegister";
 import AddIcon from "@mui/icons-material/Add";
 
-import { Typography, Chip, Box, Button } from "@mui/material";
+import { Typography, Chip, Box } from "@mui/material";
+import { PrimaryButton } from "../ui/PrimaryButton";
 
 export const MemoDetail = ({ memo, updated }) => {
   const [openRegister, setOpenRegister] = useState(false);
@@ -54,7 +55,7 @@ export const MemoDetail = ({ memo, updated }) => {
               {group.memos.map((memo) => (
                 <div key={memo.memoId}>
                   <div className="text-sm font-soft"> {memo.memo}</div>
-                  <div className="text-sm text-gray-500 italic mb-2 font-soft">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 italic mb-2 font-soft">
                     (page {memo.page ? memo.page : "-"})
                   </div>
                 </div>
@@ -62,25 +63,14 @@ export const MemoDetail = ({ memo, updated }) => {
             </Box>
           ))}
           <div className="mb-3">
-            <Button
-              variant="outlined"
+            <PrimaryButton
               size="small"
               startIcon={<AddIcon />}
               onClick={handleOpenRegister}
-              sx={{
-                textTransform: "none",
-                backgroundColor: "#000",
-
-                color: "#fff",
-                fontWeight: "bold",
-                fontFamily: "'Nunito sans'",
-                "&:hover": {
-                  backgroundColor: "#333",
-                },
-              }}
+              sx={{ fontFamily: "'Nunito sans'" }}
             >
               add
-            </Button>
+            </PrimaryButton>
           </div>
 
           <Typography variant="body2" color="text.secondary">

@@ -88,7 +88,7 @@ export const BookShelf = ({ account, onClick }) => {
               justifyContent: "center",
             }}
           >
-            <div className="font-soft text-zinc-500">No books.</div>
+            <div className="font-soft text-zinc-500 dark:text-zinc-400">No books.</div>
           </Box>
         )}
       </div>
@@ -115,7 +115,7 @@ export const BookShelf = ({ account, onClick }) => {
               justifyContent: "center",
             }}
           >
-            <div className="font-soft text-zinc-500">No books.</div>
+            <div className="font-soft text-zinc-500 dark:text-zinc-400">No books.</div>
           </Box>
         )}
       </div>

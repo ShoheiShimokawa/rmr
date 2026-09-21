@@ -6,8 +6,9 @@ import { useContext, useState } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "../hooks/NotifyProvider";
-import { TextField, Button, Rating, FormControlLabel } from "@mui/material";
+import { TextField, Rating, FormControlLabel } from "@mui/material";
 import { IOSSwitch } from "../ui/IOSSwitch";
+import { PrimaryButton } from "../ui/PrimaryButton";
 import { motion } from "framer-motion";
 
 export const ReadingRegister = ({
@@ -181,7 +182,7 @@ export const ReadingRegister = ({
             className={
               watchedThoughts.length > 600
                 ? "text-red-500 font-bold"
-                : "text-zinc-500"
+                : "text-zinc-500 dark:text-zinc-400"
             }
           >
             {watchedThoughts.length}/600
@@ -190,23 +191,13 @@ export const ReadingRegister = ({
 
         <div className="flex justify-end mt-4">
           <motion.div whileTap={{ scale: 0.9 }}>
-            <Button
+            <PrimaryButton
               type="submit"
-              variant="contained"
               disabled={isSubmitDisabled}
-              sx={{
-                textTransform: "none",
-                backgroundColor: "#000",
-                color: "#fff",
-                width: "150px",
-                fontWeight: "bold",
-                "&:hover": {
-                  backgroundColor: "#333",
-                },
-              }}
+              sx={{ width: "150px" }}
             >
               {isSubmitting ? (
-                <CircularProgress size={20} sx={{ color: "#fff" }} />
+                <CircularProgress size={20} sx={{ color: "background.default" }} />
               ) : isSkipped ? (
                 "Skip Review"
               ) : isReviewed ? (
@@ -214,7 +205,7 @@ export const ReadingRegister = ({
               ) : (
                 "Post"
               )}
-            </Button>
+            </PrimaryButton>
           </motion.div>
         </div>
       </form>

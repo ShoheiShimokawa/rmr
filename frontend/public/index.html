@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      // ThemeModeProvider.jsx の STORAGE_KEY と同じキー名を使うこと。
+      // React起動前に配色を確定させ、FOUC(一瞬だけ誤ったテーマが見える現象)を防ぐ。
+      (function () {
+        try {
+          var stored = localStorage.getItem("themeMode");
+          var isDark =
+            stored === "dark" ||
+            (stored !== "light" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", isDark);
+          document.documentElement.setAttribute(
+            "data-theme",
+            isDark ? "dark" : "light"
+          );
+        } catch (e) {}
+      })();
+    </script>
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-PRT7VT4KC1"

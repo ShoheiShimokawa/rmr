@@ -46,7 +46,7 @@ export const Community = () => {
     <div>
       <Box
         sx={{
-          backgroundColor: "white",
+          bgcolor: "background.paper",
           borderRadius: 2,
           boxShadow: 1,
           p: 2,

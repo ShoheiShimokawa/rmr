@@ -33,7 +33,11 @@ export const ReadingAnalytics = () => {
   }
 
   if (!analytics) {
-    return <div className="flex justify-center items-center min-h-[200px] text-zinc-500">No data.</div>;
+    return (
+      <div className="flex justify-center items-center min-h-[200px] text-zinc-500 dark:text-zinc-400">
+        No data.
+      </div>
+    );
   }
 
   const monthDelta = monthlyDelta(analytics.monthly);

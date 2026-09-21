@@ -7,9 +7,10 @@ import { useNotify } from "../hooks/NotifyProvider";
 import { getLabels } from "../api/label";
 import { BookInfo } from "../components/book/BookInfo";
 import { registerMemo } from "../api/memo";
-import { Button, TextField, InputAdornment } from "@mui/material";
+import { TextField, InputAdornment } from "@mui/material";
 import { useContext } from "react";
 import UserContext from "./UserProvider";
+import { PrimaryButton } from "../ui/PrimaryButton";
 
 export const MemoRegister = ({ updated, book, reading }) => {
   const { user } = useContext(UserContext);
@@ -125,28 +126,17 @@ export const MemoRegister = ({ updated, book, reading }) => {
             />
           )}
         />
-        <div className="text-sm mb-4 ml-1 italic text-zinc-500 font-soft">
+        <div className="text-sm mb-4 ml-1 italic text-zinc-500 dark:text-zinc-400 font-soft">
           E.g. For work, Investment tips, Inspiring quotes
         </div>
         <div className="flex justify-end mr-5">
-          <Button
+          <PrimaryButton
             type="submit"
-            variant="contained"
             // disabled={!selectedBook}
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#000",
-              color: "#fff",
-              fontFamily: "'Nunito sans'",
-              fontWeight: "bold",
-              width: "150px",
-              "&:hover": {
-                backgroundColor: "#333",
-              },
-            }}
+            sx={{ fontFamily: "'Nunito sans'", width: "150px" }}
           >
             create!
-          </Button>
+          </PrimaryButton>
         </div>
       </form>
     </div>

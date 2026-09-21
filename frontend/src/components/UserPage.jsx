@@ -98,7 +98,7 @@ export const UserPage = () => {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            bgcolor: "background.paper",
             borderRadius: 2,
             boxShadow: 1,
             p: 2,
@@ -111,7 +111,7 @@ export const UserPage = () => {
             onChange={handleTabChange}
             className="mb-4"
             textColor="inherit"
-            TabIndicatorProps={{ style: { backgroundColor: "black" } }}
+            TabIndicatorProps={{ style: { backgroundColor: "currentColor" } }}
           >
             <Tab
               label="BookShelf"
@@ -158,7 +158,7 @@ export const UserPage = () => {
                     </>
                   </div>
                 ) : (
-                  <div className="font-soft flex justify-center text-zinc-500">
+                  <div className="font-soft flex justify-center text-zinc-500 dark:text-zinc-400">
                     No Posts yet.
                   </div>
                 )}

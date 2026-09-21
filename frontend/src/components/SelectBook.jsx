@@ -8,19 +8,25 @@ import { registerBook } from "../api/book";
 import { GiBookshelf } from "react-icons/gi";
 import { BookInfo } from "../components/book/BookInfo";
 import UserContext from "./UserProvider";
-import { IconButton } from "@mui/material";
+import {
+  IconButton,
+  RadioGroup,
+  Radio,
+  Typography,
+  Paper,
+  Box,
+} from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useReading } from "../hooks/useReading";
-import { Button } from "@mui/material";
 import { getByUserIdAndBookId } from "../api/reading";
-import { RadioGroup, Radio, Typography, Sheet, Box } from "@mui/joy";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { genreToEnum } from "../util";
+import { PrimaryButton } from "../ui/PrimaryButton";
 
 export const SelectBook = ({ onClick, onNext }) => {
   const [openBookShelf, setOpenBookShelf] = useState(false);
@@ -162,22 +168,9 @@ export const SelectBook = ({ onClick, onNext }) => {
       </CustomDialog>
       <div className="font-bold mb-2 font-soft">Select a Book 📖</div>
       <div className="flex">
-        <Button
-          variant="contained"
-          endIcon={<GiBookshelf />}
-          onClick={handleOpenBookShelf}
-          sx={{
-            textTransform: "none",
-            backgroundColor: "#000",
-            color: "#fff",
-            fontWeight: "bold",
-            "&:hover": {
-              backgroundColor: "#333",
-            },
-          }}
-        >
+        <PrimaryButton endIcon={<GiBookshelf />} onClick={handleOpenBookShelf}>
           from my bookshelf
-        </Button>
+        </PrimaryButton>
         <IconButton>
           <SearchIcon onClick={handleOpenBookSearch} />
         </IconButton>
@@ -204,8 +197,9 @@ export const SelectBook = ({ onClick, onNext }) => {
                 sx={{ display: "flex", gap: 2, flexDirection: "row" }}
               >
                 {readingStates.map((state) => (
-                  <Sheet
+                  <Paper
                     key={state.value}
+                    component="label"
                     variant="outlined"
                     sx={{
                       p: 2,
@@ -213,48 +207,39 @@ export const SelectBook = ({ onClick, onNext }) => {
                       flexDirection: "column",
                       flex: 1,
                       alignItems: "center",
-                      boxShadow: "sm",
-                      borderRadius: "md",
+                      borderRadius: 2,
+                      borderColor:
+                        field.value === state.value ? "primary.main" : "divider",
                       opacity: selectedReading ? 0.5 : 1,
                     }}
                   >
                     <Radio
-                      overlay
                       value={state.value}
                       checked={field.value === state.value}
                       disabled={Boolean(selectedReading)}
+                      size="small"
+                      sx={{ p: 0 }}
                     />
                     <Box sx={{ mt: 1 }}>{state.icon}</Box>
-                    <Typography level="body-sm">{state.label}</Typography>
-                  </Sheet>
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      {state.label}
+                    </Typography>
+                  </Paper>
                 ))}
               </RadioGroup>
             )}
           />
 
           {errors.status && (
-            <Typography color="danger" level="body-sm" sx={{ mt: 1 }}>
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {errors.status.message}
             </Typography>
           )}
 
           <div className="mt-8 flex justify-end">
-            <Button
-              type="submit"
-              variant="contained"
-              endIcon={<NavigateNextIcon />}
-              sx={{
-                textTransform: "none",
-                backgroundColor: "#000",
-                color: "#fff",
-                fontWeight: "bold",
-                "&:hover": {
-                  backgroundColor: "#333",
-                },
-              }}
-            >
+            <PrimaryButton type="submit" endIcon={<NavigateNextIcon />}>
               Next
-            </Button>
+            </PrimaryButton>
           </div>
         </form>
       )}

@@ -26,6 +26,7 @@ import { useRequireLogin } from "../hooks/useRequireLogin";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkIcon from "@mui/icons-material/Link";
+import { PrimaryButton } from "../ui/PrimaryButton";
 
 export const Profile = ({ userId }) => {
   const { user, setUser } = useContext(UserContext);
@@ -162,57 +163,43 @@ export const Profile = ({ userId }) => {
                       <Button
                         size="small"
                         variant="outlined"
-                        color="primary"
                         startIcon={<SettingsIcon />}
                         onClick={handleChangeOpen}
                         sx={{
                           textTransform: "none",
-                          color: "#444",
-                          borderColor: "#444",
+                          color: "text.secondary",
+                          borderColor: "text.secondary",
                           fontFamily: "'Nunito sans'",
                           fontWeight: "bold",
                           "&:hover": {
-                            backgroundColor: "#eee",
-                            borderColor: "#444",
+                            bgcolor: "action.hover",
+                            borderColor: "text.secondary",
                           },
                         }}
                       >
                         Edit
                       </Button>
                     ) : !isFollowed ? (
-                      <Button
+                      <PrimaryButton
                         size="small"
-                        variant="contained"
-                        sx={{
-                          textTransform: "none",
-                          color: "#fff",
-                          backgroundColor: "#000",
-                          borderColor: "#444",
-                          fontWeight: "bold",
-                          fontFamily: "'Nunito sans'",
-                          "&:hover": {
-                            backgroundColor: "#333",
-                            borderColor: "#444",
-                          },
-                        }}
+                        sx={{ fontFamily: "'Nunito sans'" }}
                         onClick={() => handleFollow(account.userId)}
                       >
                         Follow
-                      </Button>
+                      </PrimaryButton>
                     ) : (
                       <Button
                         size="small"
                         variant="outlined"
-                        color="primary"
                         sx={{
                           textTransform: "none",
-                          borderColor: "#444",
+                          borderColor: "text.secondary",
                           fontWeight: "bold",
                           fontFamily: "'Nunito sans'",
-                          color: "#444",
+                          color: "text.secondary",
                           "&:hover": {
-                            backgroundColor: "#eee",
-                            borderColor: "#444",
+                            bgcolor: "action.hover",
+                            borderColor: "text.secondary",
                           },
                         }}
                         onClick={() =>
@@ -229,7 +216,7 @@ export const Profile = ({ userId }) => {
                 <div className="text-xl mt-3 font-bold font-soft">
                   {account.name}
                 </div>
-                <div className="text-zinc-500 font-soft text-lg">
+                <div className="text-zinc-500 dark:text-zinc-400 font-soft text-lg">
                   @{account.handle}
                 </div>
               </div>
@@ -239,7 +226,7 @@ export const Profile = ({ userId }) => {
               <div className="flex mb-2">
                 {" "}
                 <motion.div whileTap={{ scale: 0.9 }}>
-                  <div className="flex hover:text-zinc-500  cursor-pointer ml-2">
+                  <div className="flex hover:text-zinc-500 dark:hover:text-zinc-400 cursor-pointer ml-2">
                     <div
                       className="mr-1 font-soft text-sm flex"
                       onClick={handleSelectFollow}
@@ -254,7 +241,7 @@ export const Profile = ({ userId }) => {
                 <div className="flex ml-2">
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <div
-                      className="flex hover:text-zinc-500 cursor-pointer"
+                      className="flex hover:text-zinc-500 dark:hover:text-zinc-400 cursor-pointer"
                       onClick={handleSelectFollower}
                     >
                       <div className="mr-1 font-soft text-sm flex">
@@ -278,9 +265,7 @@ export const Profile = ({ userId }) => {
                         rel="noopener noreferrer"
                         color="inherit"
                       >
-                        <XIcon
-                          sx={{ fontSize: "20px", color: "rgba(0,0,0,0.4)" }}
-                        />
+                        <XIcon sx={{ fontSize: "20px", color: "text.disabled" }} />
                       </IconButton>
                     </Tooltip>
                   )}
@@ -294,7 +279,7 @@ export const Profile = ({ userId }) => {
                         color="inherit"
                       >
                         <FacebookIcon
-                          sx={{ fontSize: "20px", color: "rgba(0,0,0,0.4)" }}
+                          sx={{ fontSize: "20px", color: "text.disabled" }}
                         />
                       </IconButton>
                     </Tooltip>
@@ -308,9 +293,7 @@ export const Profile = ({ userId }) => {
                         rel="noopener noreferrer"
                         color="inherit"
                       >
-                        <LinkIcon
-                          sx={{ fontSize: "20px", color: "rgba(0,0,0,0.4)" }}
-                        />
+                        <LinkIcon sx={{ fontSize: "20px", color: "text.disabled" }} />
                       </IconButton>
                     </Tooltip>
                   )}

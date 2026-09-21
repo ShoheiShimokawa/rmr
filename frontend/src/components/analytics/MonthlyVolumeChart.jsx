@@ -4,6 +4,7 @@ import { toLargeGenre } from "../../util";
 import { CHART_INK, baseChartOptions } from "./chartTheme";
 import { fillMonths, formatMonthLabel, monthKeysForSelection, yearOptions } from "./transform";
 import { SegmentedControl } from "./SegmentedControl";
+import { useThemeMode } from "../../hooks/ThemeModeProvider";
 
 const RENDER_DEBOUNCE_MS = 200;
 
@@ -19,6 +20,7 @@ const formatBreakdown = (point) =>
     .join(", ");
 
 export const MonthlyVolumeChart = ({ monthly, yearly }) => {
+  const { resolvedMode } = useThemeMode();
   const years = useMemo(() => yearOptions(yearly), [yearly]);
   const [selection, setSelection] = useState("last12");
   // ボタンのハイライトはselectionで即時反映するが、ApexCharts側に渡す実際の
@@ -38,13 +40,14 @@ export const MonthlyVolumeChart = ({ monthly, yearly }) => {
   const hasData = points.some((p) => p.total > 0);
 
   const options = useMemo(() => {
-    const base = baseChartOptions();
+    const base = baseChartOptions(resolvedMode);
+    const ink = CHART_INK[resolvedMode] || CHART_INK.light;
     return {
       ...base,
       chart: {
         ...base.chart,
         type: "line",
-        dropShadow: { enabled: true, top: 6, left: 0, blur: 4, opacity: 0.15, color: CHART_INK.primary },
+        dropShadow: { enabled: true, top: 6, left: 0, blur: 4, opacity: 0.15, color: ink.primary },
       },
       stroke: { curve: "smooth", width: 3 },
       markers: { size: 0, hover: { size: 5 } },
@@ -56,7 +59,7 @@ export const MonthlyVolumeChart = ({ monthly, yearly }) => {
         axisTicks: { show: false },
       },
       yaxis: { show: false },
-      colors: [CHART_INK.primary],
+      colors: [ink.primary],
       legend: { show: false },
       // ApexChartsに生HTMLを直接DOM操作させるtooltip.customは、React側の
       // 再描画と競合してDOM例外を起こすことがあるため使わない。
@@ -74,7 +77,7 @@ export const MonthlyVolumeChart = ({ monthly, yearly }) => {
         },
       },
     };
-  }, [points]);
+  }, [points, resolvedMode]);
   const series = useMemo(() => [{ name: "Books read", data: points.map((p) => p.total) }], [points]);
 
   return (
@@ -96,7 +99,7 @@ export const MonthlyVolumeChart = ({ monthly, yearly }) => {
       <div className="relative min-h-[200px]">
         <Chart options={options} series={series} type="line" height={220} width="100%" />
         {!hasData && (
-          <div className="absolute inset-0 flex items-center justify-center text-zinc-500 bg-base-200">
+          <div className="absolute inset-0 flex items-center justify-center text-zinc-500 dark:text-zinc-400 bg-base-200">
             No data.
           </div>
         )}

@@ -4,8 +4,9 @@ import { useContext } from "react";
 import UserContext from "./UserProvider";
 import { registerAccount } from "../api/account";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button, InputAdornment } from "@mui/material";
+import { TextField, InputAdornment } from "@mui/material";
 import { useNotify } from "../hooks/NotifyProvider";
+import { PrimaryButton } from "../ui/PrimaryButton";
 export const HandleRegister = ({ account, updated }) => {
   const { notify } = useNotify();
   const { setUser, setToken } = useContext(UserContext);
@@ -81,23 +82,12 @@ export const HandleRegister = ({ account, updated }) => {
           You can change your display name later in your profile settings.
         </div>
         <div className="flex justify-end mr-6 mt-3">
-          <Button
+          <PrimaryButton
             type="submit"
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#000",
-              color: "#fff",
-              fontWeight: "bold",
-              fontFamily: "'Nunito sans'",
-              width: "150px",
-              "&:hover": {
-                backgroundColor: "#333",
-              },
-            }}
+            sx={{ fontFamily: "'Nunito sans'", width: "150px" }}
           >
             create!
-          </Button>
+          </PrimaryButton>
         </div>
       </form>
     </div>

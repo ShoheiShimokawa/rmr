@@ -204,7 +204,10 @@ export const BookSearch = ({ fromPost }) => {
                         maxWidth: 800,
                         transition: "0.3s ease",
                         "&:hover": {
-                          filter: "brightness(0.9)",
+                          filter: (theme) =>
+                            theme.palette.mode === "dark"
+                              ? "brightness(1.2)"
+                              : "brightness(0.9)",
                         },
                       }}
                       onClick={() =>
@@ -218,7 +221,7 @@ export const BookSearch = ({ fromPost }) => {
                           </div>
                           <div className="ml-2 text-sm">
                             <div className="font-soft">{book.title}</div>
-                            <div className="text-zinc-500 mt-2 text-sm font-soft">
+                            <div className="text-zinc-500 dark:text-zinc-300 mt-2 text-sm font-soft">
                               {book.author || ""}
                             </div>
                             <div className="mt-3 font-soft">
@@ -232,7 +235,7 @@ export const BookSearch = ({ fromPost }) => {
                 ))}
               </div>
             ) : (
-              <div className="font-soft text-center text-sm text-zinc-600">
+              <div className="font-soft text-center text-sm text-zinc-600 dark:text-zinc-400">
                 No results were found. Try fewer keywords, check for typos,
                 or search using the original title.
               </div>

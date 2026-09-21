@@ -12,7 +12,9 @@ export const DeltaBadge = ({ current, previous }) => {
   return (
     <span
       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${
-        positive ? "bg-emerald-100 text-emerald-600" : "bg-zinc-100 text-zinc-500"
+        positive
+          ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300"
+          : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800/60 dark:text-zinc-300"
       }`}
     >
       {label}
