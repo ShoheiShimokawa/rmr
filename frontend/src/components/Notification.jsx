@@ -46,7 +46,7 @@ export const Notification = () => {
     <div>
       <Box
         sx={{
-          backgroundColor: "white",
+          bgcolor: "background.paper",
           borderRadius: 2,
           boxShadow: 1,
           p: 2,
@@ -92,27 +92,19 @@ export const Notification = () => {
                                       liked your post!
                                     </div>
                                   </div>
-                                  <div className="ml-2  text-zinc-500 font-soft text-xs">
+                                  <div className="ml-2  text-zinc-500 dark:text-zinc-400 font-soft text-xs">
                                     {timeAgo(notification.registerDate)}
                                   </div>
                                 </div>
                               </div>
 
-                              {/* <Card
-                                elevation={0}
-                                sx={{
-                                  width: "100%",
-                                  border: "1px solid #e0e0e0",
-                                }}
-                              > */}
-                              {/* <CardContent> */}
                               <div className="flex">
                                 <Divider
                                   orientation="vertical"
                                   flexItem
                                   sx={{
                                     borderWidth: "1.5px",
-                                    borderColor: "#ddd",
+                                    borderColor: "divider",
                                     borderRadius: "4px",
                                     mx: 3,
                                   }}
@@ -123,8 +115,6 @@ export const Notification = () => {
                                   forNotification={true}
                                 />
                               </div>
-                              {/* </CardContent> */}
-                              {/* </Card> */}
                             </div>
                           ) : notification.notificationType === "FOLLOW" ? (
                             <div className="font-soft mt-2 mb-2 text-sm ">
@@ -148,7 +138,7 @@ export const Notification = () => {
                                     </div>
                                     <div></div>
                                   </div>
-                                  <div className="ml-2 text-zinc-500 text-xs">
+                                  <div className="ml-2 text-zinc-500 dark:text-zinc-400 text-xs">
                                     {timeAgo(notification.registerDate)}
                                   </div>
                                 </div>

@@ -13,3 +13,19 @@
 .color-scale-4 {
   fill: #196127;
 }
+
+html.dark .color-empty {
+  fill: #2d333b;
+}
+html.dark .color-scale-1 {
+  fill: #0e4429;
+}
+html.dark .color-scale-2 {
+  fill: #006d32;
+}
+html.dark .color-scale-3 {
+  fill: #26a641;
+}
+html.dark .color-scale-4 {
+  fill: #39d353;
+}

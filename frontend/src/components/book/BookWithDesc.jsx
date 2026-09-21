@@ -15,9 +15,9 @@ export const BookWithDesc = ({ book, width, height, maxLength }) => {
                 height={height ? height : "130px"}
               />
             </div>
-            <div className="ml-3 text-zinc-800 font-bold font-soft">
+            <div className="ml-3 text-zinc-800 dark:text-white font-bold font-soft">
               <div>{book.title}</div>
-              <div className="text-zinc-500 mt-2 text-sm font-soft">
+              <div className="text-zinc-500 dark:text-zinc-300 mt-2 text-sm font-soft">
                 {book.author}
               </div>
             </div>

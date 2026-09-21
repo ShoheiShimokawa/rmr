@@ -16,8 +16,10 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
+import { useThemeMode } from "../hooks/ThemeModeProvider";
 
 export const Sidebar = ({ mobile = false }) => {
+  const { resolvedMode } = useThemeMode();
   const location = useLocation();
   const items = [
     {
@@ -51,7 +53,8 @@ export const Sidebar = ({ mobile = false }) => {
       <Box
         className="flex justify-around items-center py-2 border-t"
         sx={{
-          backgroundColor: "#f9fafb",
+          bgcolor:
+            resolvedMode === "dark" ? "background.default" : "background.paper",
         }}
       >
         {items.map((item) => (
@@ -59,7 +62,7 @@ export const Sidebar = ({ mobile = false }) => {
             <Link
               to={item.path}
               key={item.text}
-              className="flex flex-col items-center text-xs text-zinc-700"
+              className="flex flex-col items-center text-xs text-zinc-700 dark:text-zinc-300"
             >
               <div>
                 {React.cloneElement(
@@ -70,8 +73,8 @@ export const Sidebar = ({ mobile = false }) => {
                     sx: {
                       color:
                         location.pathname === item.path
-                          ? "#000"
-                          : "rgba(0,0,0,0.4)",
+                          ? "text.primary"
+                          : "text.disabled",
                     },
                   }
                 )}
@@ -90,9 +93,8 @@ export const Sidebar = ({ mobile = false }) => {
         width: "250px",
         position: "sticky",
         top: "100px",
-        bgcolor: "background.paper",
+        bgcolor: "background.default",
         alignSelf: "flex-start",
-        backgroundColor: "#F5F5F5",
         p: 4,
       }}
     >
@@ -137,8 +139,8 @@ export const Sidebar = ({ mobile = false }) => {
                       sx: {
                         color:
                           location.pathname === item.path
-                            ? "#000"
-                            : "rgba(0,0,0,0.4)",
+                            ? "text.primary"
+                            : "text.disabled",
                       },
                     }
                   )}
@@ -154,7 +156,7 @@ export const Sidebar = ({ mobile = false }) => {
                       color:
                         location.pathname === item.path
                           ? "inherit"
-                          : "rgba(0, 0, 0, 0.5)",
+                          : "text.disabled",
                     },
                   }}
                 />

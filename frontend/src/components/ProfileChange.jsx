@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button, InputAdornment } from "@mui/material";
+import { TextField, InputAdornment } from "@mui/material";
 import { updateProfile } from "../api/account";
+import { PrimaryButton } from "../ui/PrimaryButton";
 import { useNotify } from "../hooks/NotifyProvider";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -274,22 +275,9 @@ export const ProfileChange = ({ account, update }) => {
           />
         </div>
         <motion.div whileTap={{ scale: 0.95 }}>
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#000",
-              color: "#fff",
-              fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "#333",
-              },
-            }}
-          >
+          <PrimaryButton type="submit" fullWidth>
             Edit
-          </Button>
+          </PrimaryButton>
         </motion.div>
       </form>
     </div>

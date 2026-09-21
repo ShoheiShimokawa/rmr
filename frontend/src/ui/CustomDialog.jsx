@@ -19,6 +19,7 @@ export const CustomDialog = ({
     <Dialog
       open={open}
       onClose={onClose}
+      slotProps={{ paper: { elevation: 1 } }}
       sx={{
         "& .MuiDialog-paper": {
           borderRadius: 1,

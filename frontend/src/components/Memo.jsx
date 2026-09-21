@@ -13,11 +13,11 @@ import {
   Typography,
   Chip,
   Box,
-  Button,
   Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { MemoDetail } from "./MemoDetail";
+import { PrimaryButton } from "../ui/PrimaryButton";
 
 export const Memo = () => {
   const [memos, setMemos] = useState([]);
@@ -120,24 +120,14 @@ export const Memo = () => {
         {memos.length >= 1 ? (
           <>
             <div className="mb-2 mt-3 flex justify-end">
-              <Button
-                variant="outlined"
+              <PrimaryButton
                 size="small"
                 startIcon={<AddIcon />}
                 onClick={handleOpenRegister}
-                sx={{
-                  textTransform: "none",
-                  backgroundColor: "#000",
-                  color: "#fff",
-                  fontWeight: "bold",
-                  fontFamily: "'Nunito sans'",
-                  "&:hover": {
-                    backgroundColor: "#333",
-                  },
-                }}
+                sx={{ fontFamily: "'Nunito sans'" }}
               >
                 New Highlight
-              </Button>
+              </PrimaryButton>
             </div>
             {formatted.map((entry, i) => (
               <Card sx={{ mb: 1 }}>
@@ -151,7 +141,7 @@ export const Memo = () => {
                     justifyContent: "space-between",
                     alignItems: "flex-start",
                     "&:hover": {
-                      backgroundColor: "#f5f5f5",
+                      bgcolor: "action.hover",
                       boxShadow: 3,
                     },
                   }}
@@ -223,7 +213,7 @@ export const Memo = () => {
               textAlign: "center",
               borderRadius: 2,
               my: 16,
-              backgroundColor: "#F5F5F5",
+              bgcolor: "background.paper",
             }}
           >
             <MenuBookIcon sx={{ fontSize: 40, mb: 1 }} />
@@ -234,23 +224,9 @@ export const Memo = () => {
               <div className="mb-2">Note your favorite phrases here!</div>
             </div>
             <div className="mt-5">
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={handleOpenRegister}
-                sx={{
-                  textTransform: "none",
-                  backgroundColor: "#000",
-                  color: "#fff",
-                  fontWeight: "bold",
-                  "&:hover": {
-                    backgroundColor: "#333",
-                  },
-                }}
-              >
+              <PrimaryButton size="small" startIcon={<AddIcon />} onClick={handleOpenRegister}>
                 New Highlight
-              </Button>
+              </PrimaryButton>
             </div>
           </Paper>
         )}

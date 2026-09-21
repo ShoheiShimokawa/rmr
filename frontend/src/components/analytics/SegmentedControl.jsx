@@ -7,7 +7,9 @@ export const SegmentedControl = ({ options, value, onChange }) => (
         type="button"
         onClick={() => onChange(option.value)}
         className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-          option.value === value ? "bg-base-100 shadow text-zinc-800" : "text-zinc-500 hover:text-zinc-700"
+          option.value === value
+            ? "bg-base-100 shadow text-zinc-800 dark:text-white"
+            : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
         }`}
       >
         {option.label}

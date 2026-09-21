@@ -175,7 +175,7 @@ export const Post = ({ post, visible, fromDetail }) => {
                       </div>
                     )}
                   </div>
-                  <div className="flex text-xs text-zinc-500 font-soft mt-1 mb-1">
+                  <div className="flex text-xs text-zinc-500 dark:text-zinc-400 font-soft mt-1 mb-1">
                     <div>(last updated: </div>
                     {formatDateTime(
                       post.updateDate ? post.updateDate : post.registerDate
@@ -240,7 +240,7 @@ export const Post = ({ post, visible, fromDetail }) => {
                             {!isGooded ? (
                               <FavoriteBorderIcon
                                 sx={{ fontSize: "15px" }}
-                                className="text-zinc-600 hover:text-red-500 transition-colors duration-200"
+                                className="text-zinc-600 dark:text-zinc-400 hover:text-red-500 transition-colors duration-200"
                                 fontSize="small"
                               />
                             ) : (

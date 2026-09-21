@@ -73,7 +73,7 @@ export const PostRegister = () => {
       >
         <Box
           sx={{
-            backgroundColor: "white",
+            bgcolor: "background.paper",
             borderRadius: 2,
             boxShadow: 1,
             p: 2,
@@ -93,7 +93,7 @@ export const PostRegister = () => {
               <div className="ml-2 mt-2 mb-4">
                 {recently.length >= 1 && (
                   <>
-                    <div className="mb-2 ml-1 font-soft font-bold text-stone-800">
+                    <div className="mb-2 ml-1 font-soft font-bold text-stone-800 dark:text-stone-200">
                       Recently
                     </div>
                     <div className="w-full  overflow-x-auto">

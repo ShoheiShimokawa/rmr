@@ -29,7 +29,7 @@ export const CollapsibleText = ({ text, maxLength = 150, maxNewlines = 3 }) => {
             fontSize: "0.85rem",
             fontWeight: "bold",
           }}
-          className="text-blue-600 hover:underline mt-1"
+          className="text-blue-600 dark:text-blue-400 hover:underline mt-1"
         >
           {expanded ? "Close" : "Show all"}
         </Button>

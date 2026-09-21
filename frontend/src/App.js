@@ -8,13 +8,14 @@ import { UserPage } from "./components/UserPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { Memo } from "./components/Memo";
 import { NotifyProvider } from "./hooks/NotifyProvider";
+import { ThemeModeProvider } from "./hooks/ThemeModeProvider";
 import { Login } from "./components/Login";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { UserProvider } from "./components/UserProvider";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import { Box, CssBaseline, Container, Divider } from "@mui/material";
+import { Box, Container, Divider } from "@mui/material";
 import { HandleRegister } from "./components/HandleRegister";
 import { Notification } from "./components/Notification";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -58,59 +59,60 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <Router>
-          <div className="App">
-            <UserProvider>
-              <ScrollToTop />
-              <NotifyProvider>
-                <CssBaseline />
-                <Box
-                  sx={{
-                    mx: "auto",
-                    backgroundColor: "white",
-                  }}
-                >
-                  <Header />
-                </Box>
-                <Box sx={{ backgroundColor: "#F5F5F5", minHeight: "100vh" }}>
-                  <Container
-                    maxWidth="lg"
+          <ThemeModeProvider>
+            <div className="App">
+              <UserProvider>
+                <ScrollToTop />
+                <NotifyProvider>
+                  <Box
                     sx={{
-                      px: 1,
-                      overflow: "visible",
-                      mt: "65px",
+                      mx: "auto",
+                      bgcolor: "background.paper",
                     }}
                   >
-                    <Box>
-                      <Box
-                        component="main"
-                        className="flex flex-col md:flex-row gap-2 pb-[50px] md:pb-0"
-                        sx={{
-                          flexGrow: 1,
-                          display: "flex",
-                          minHeight: "100vh",
-                          gap: 3,
-                        }}
-                      >
-                        <div className="hidden md:block">
-                          <Sidebar />
-                        </div>
-                        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-                          <Sidebar mobile />
-                        </div>
-                        <Divider
-                          orientation="vertical"
-                          className="hidden md:block"
-                          flexItem
-                          sx={{ borderColor: "#ddd", alignSelf: "stretch" }}
-                        />
-                        <MainContent />
+                    <Header />
+                  </Box>
+                  <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
+                    <Container
+                      maxWidth="lg"
+                      sx={{
+                        px: 1,
+                        overflow: "visible",
+                        mt: "65px",
+                      }}
+                    >
+                      <Box>
+                        <Box
+                          component="main"
+                          className="flex flex-col md:flex-row gap-2 pb-[50px] md:pb-0"
+                          sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            minHeight: "100vh",
+                            gap: 3,
+                          }}
+                        >
+                          <div className="hidden md:block">
+                            <Sidebar />
+                          </div>
+                          <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+                            <Sidebar mobile />
+                          </div>
+                          <Divider
+                            orientation="vertical"
+                            className="hidden md:block"
+                            flexItem
+                            sx={{ borderColor: "divider", alignSelf: "stretch" }}
+                          />
+                          <MainContent />
+                        </Box>
                       </Box>
-                    </Box>
-                  </Container>
-                </Box>
-              </NotifyProvider>
-            </UserProvider>
-          </div>
+                    </Container>
+                  </Box>
+                </NotifyProvider>
+              </UserProvider>
+            </div>
+          </ThemeModeProvider>
         </Router>
       </HelmetProvider>
     </QueryClientProvider>

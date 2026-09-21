@@ -19,7 +19,6 @@ import { motion } from "framer-motion";
 import { useRequireLogin } from "../../hooks/useRequireLogin";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  Button,
   Chip,
   Box,
   Divider,
@@ -32,6 +31,7 @@ import {
 import { ReadingRegister } from "../ReadingRegister";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import { BookWithDesc } from "./BookWithDesc";
+import { PrimaryButton } from "../../ui/PrimaryButton";
 
 export const BookDetail = ({ book, updated, visible = true }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -244,7 +244,9 @@ export const BookDetail = ({ book, updated, visible = true }) => {
       </CustomDialog>
       <BookWithDesc book={book} maxLength={100} />
       <div className="flex place-items-center  mt-2 ml-1 mb-1">
-        <div className="text-xs mr-1 text-stone-600">Genre: </div>
+        <div className="text-xs mr-1 text-stone-600 dark:text-stone-300">
+          Genre:{" "}
+        </div>
         <Chip
           label={enumToGenre(book.genre)}
           size="small"
@@ -258,7 +260,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
             },
           }}
         />
-        <div className="ml-2 text-xs text-stone-600 font-soft">
+        <div className="ml-2 text-xs text-stone-600 dark:text-stone-300 font-soft">
           Published : {book.publishedDate ? book.publishedDate : "-"}
         </div>
       </div>
@@ -294,31 +296,24 @@ export const BookDetail = ({ book, updated, visible = true }) => {
                   <div>
                     <motion.div whileTap={{ scale: 0.95 }}>
                       <div className="mt-1 flex justify-center">
-                        <Button
-                          variant="contained"
+                        <PrimaryButton
                           endIcon={!isSubmitting && <GiBookshelf />}
                           disabled={isSubmitting}
                           onClick={handleOpenAdd}
-                          sx={{
-                            textTransform: "none",
-                            backgroundColor: "#000",
-                            color: "#fff",
-                            fontWeight: "bold",
-                            width: "160px",
-                            "&:hover": {
-                              backgroundColor: "#333",
-                            },
-                          }}
+                          sx={{ width: "160px" }}
                         >
                           {isSubmitting ? (
-                            <CircularProgress size={20} sx={{ color: "#fff" }} />
+                            <CircularProgress
+                              size={20}
+                              sx={{ color: "background.default" }}
+                            />
                           ) : (
                             "Add bookshelf"
                           )}
-                        </Button>
+                        </PrimaryButton>
                       </div>
                     </motion.div>
-                    <div className="text-sm text-zinc-700 font-soft">
+                    <div className="text-sm text-zinc-700 dark:text-zinc-300 font-soft">
                       Not on your Bookshelf yet.
                     </div>
                   </div>
@@ -590,7 +585,7 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           ))}
         </>
       ) : (
-        <div className="mt-2 flex justify-center text-stone-600 text-sm font-soft">
+        <div className="mt-2 flex justify-center text-stone-600 dark:text-stone-300 text-sm font-soft">
           no comments yet.
         </div>
       )}

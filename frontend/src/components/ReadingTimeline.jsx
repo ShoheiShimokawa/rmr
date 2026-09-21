@@ -15,7 +15,7 @@ const CustomConnector = styled(StepConnector)(({ theme }) => ({
   left: "calc(-50% + 22px)",
   right: "calc(50% + 22px)",
   "& .MuiStepConnector-line": {
-    borderColor: "#cbd5e1",
+    borderColor: theme.palette.divider,
     borderTopWidth: 2,
     borderRadius: 2,
   },
@@ -89,12 +89,15 @@ export const ReadingTimeline = ({ reading }) => {
                 height: 40,
                 borderRadius: "50%",
                 backgroundColor:
-                  reading.statusType === step.type ? "#1976d2" : "transparent",
-                color: reading.statusType === step.type ? "#fff" : "#000",
-                border:
                   reading.statusType === step.type
-                    ? "none"
-                    : "1px solid #cbd5e1",
+                    ? "primary.main"
+                    : "transparent",
+                color:
+                  reading.statusType === step.type
+                    ? "primary.contrastText"
+                    : "text.disabled",
+                border: reading.statusType === step.type ? "none" : "1px solid",
+                borderColor: "divider",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -106,7 +109,7 @@ export const ReadingTimeline = ({ reading }) => {
               {step.icon}
             </Box>
 
-            <div className="font-soft text-xs text-zinc-600">
+            <div className="font-soft text-xs text-zinc-600 dark:text-zinc-400">
               {new Date(step.date).toLocaleDateString()}
             </div>
           </CustomStep>

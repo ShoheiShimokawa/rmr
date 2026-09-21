@@ -14,8 +14,12 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import UserContext from "./UserProvider";
 import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
+import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import { useRequireLogin } from "../hooks/useRequireLogin";
+import { useThemeMode } from "../hooks/ThemeModeProvider";
+import { IOSSwitch } from "../ui/IOSSwitch";
 import { motion } from "framer-motion";
 import {
   ListItemIcon,
@@ -38,6 +42,7 @@ export const Header = () => {
   const [hasUnread, setHasUnread] = useState(false);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const { notify } = useNotify();
+  const { resolvedMode, setMode } = useThemeMode();
 
   const find = useCallback(async () => {
     if (user) {
@@ -119,8 +124,9 @@ export const Header = () => {
         elevation={0}
         sx={{
           height: 65,
-          backgroundColor: "white",
-          color: "black",
+          bgcolor:
+            resolvedMode === "dark" ? "background.default" : "background.paper",
+          color: "text.primary",
           alignSelf: "flex-start",
         }}
       >
@@ -152,6 +158,8 @@ export const Header = () => {
                     width: "auto",
                     height: "120px",
                     objectFit: "contain",
+                    // ロゴは黒一色の透過PNGのため、dark時はinvertで白ロゴ相当にする
+                    filter: resolvedMode === "dark" ? "invert(1)" : "none",
                   }}
                 />
               </Link>
@@ -219,6 +227,42 @@ export const Header = () => {
                       <InfoIcon />
                     </ListItemIcon>
                     <div className="font-soft">About</div>
+                  </MenuItem>
+                  <MenuItem
+                    sx={{
+                      py: 1.2,
+                      justifyContent: "center",
+                      gap: 1,
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                      },
+                    }}
+                  >
+                    <LightModeRoundedIcon
+                      fontSize="small"
+                      sx={{
+                        color:
+                          resolvedMode === "dark"
+                            ? "text.disabled"
+                            : "warning.main",
+                      }}
+                    />
+                    <IOSSwitch
+                      checked={resolvedMode === "dark"}
+                      onChange={(_, checked) =>
+                        setMode(checked ? "dark" : "light")
+                      }
+                      inputProps={{ "aria-label": "Toggle dark mode" }}
+                    />
+                    <DarkModeRoundedIcon
+                      fontSize="small"
+                      sx={{
+                        color:
+                          resolvedMode === "dark"
+                            ? "primary.light"
+                            : "text.disabled",
+                      }}
+                    />
                   </MenuItem>
                   {user ? (
                     <MenuItem
