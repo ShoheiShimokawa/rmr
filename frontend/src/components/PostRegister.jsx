@@ -1,9 +1,9 @@
-import { findReadingByUser } from "../api/reading";
 import { registerBook } from "../api/book";
-import { useContext, useEffect, useState, useCallback } from "react";
-import { IconButton, Box } from "@mui/material";
+import { useContext, useEffect, useState, useCallback, useRef } from "react";
+import { IconButton, Box, CircularProgress } from "@mui/material";
 import { CustomDialog } from "../ui/CustomDialog";
 import { BookArray } from "./book/BookArray";
+import { Book } from "./book/Book";
 import SearchIcon from "@mui/icons-material/Search";
 import { ReadingRegister } from "./ReadingRegister";
 import { BookSearch } from "./book/BookSearch";
@@ -11,25 +11,46 @@ import { BookWithDesc } from "./book/BookWithDesc";
 import UserContext from "./UserProvider";
 import { genreToEnum } from "../util";
 import { motion } from "framer-motion";
+import { useReadingsByUser } from "../hooks/useReading";
+import {
+  draftStatusLabel,
+  useReadingDraft,
+  useReadingDrafts,
+} from "../hooks/useReadingDraft";
 
 export const PostRegister = () => {
   const { user } = useContext(UserContext);
-  const [readings, setReadings] = useState([]);
+  const userId = user?.userId;
   const [open, setOpen] = useState(false);
-  const [selectedReading, setSelectedReading] = useState(null);
   const [selectedBook, setSelectedBook] = useState(null);
+  const restoredRef = useRef(false);
+
+  const { data: readings = [] } = useReadingsByUser(userId);
+  const { data: drafts = [], isLoading: loadingDrafts } = useReadingDrafts(userId);
+  const { saveDraft, deleteDraft, status: draftStatus } = useReadingDraft(userId);
 
   const recently = readings.filter((r) => {
     return r.statusType === "NONE" || r.statusType === "DOING";
   });
+  // 選択中の本に自分の読書が既にあればそれを使う(更新経路になる)
+  const selectedReading = selectedBook
+    ? readings.find((r) => r.book.bookId === selectedBook.bookId) ?? null
+    : null;
+  const selectedDraft = selectedBook
+    ? drafts.find((d) => d.book.bookId === selectedBook.bookId)
+    : undefined;
+  const draftLabel = draftStatusLabel(draftStatus, !!selectedDraft);
 
-  const find = useCallback(async () => {
-    const result = await findReadingByUser(user.userId);
-    setReadings(result.data);
-  }, [user]);
+  // 画面を開いたとき、書きかけの下書きがあれば最新のものを選択した状態にする(初回のみ)
+  useEffect(() => {
+    if (restoredRef.current || loadingDrafts) return;
+    restoredRef.current = true;
+    if (!selectedBook && drafts.length > 0) {
+      setSelectedBook(drafts[0].book);
+    }
+  }, [drafts, loadingDrafts, selectedBook]);
 
   const handleSelect = (selectedReading) => {
-    setSelectedReading(selectedReading);
     setSelectedBook(selectedReading.book);
   };
 
@@ -54,13 +75,26 @@ export const PostRegister = () => {
     };
     const result = await registerBook(book);
     setSelectedBook(result.data);
-    setSelectedReading(null);
     setOpen(false);
   };
 
-  useEffect(() => {
-    find();
-  }, [find]);
+  const handleDraftChange = useCallback(
+    (values) => {
+      if (selectedBook) {
+        saveDraft({ bookId: selectedBook.bookId, ...values });
+      }
+    },
+    [selectedBook, saveDraft]
+  );
+
+  // 投稿完了・下書き破棄のどちらも、その本の下書きを消して選択を解除する
+  const clearDraftAndSelection = () => {
+    if (selectedBook) {
+      deleteDraft(selectedBook.bookId);
+    }
+    setSelectedBook(null);
+  };
+
   return (
     <div>
       <CustomDialog open={open} title="search" onClose={handleClose}>
@@ -91,6 +125,31 @@ export const PostRegister = () => {
                 </IconButton>
               </div>
               <div className="ml-2 mt-2 mb-4">
+                {drafts.length >= 1 && (
+                  <>
+                    <div className="mb-2 ml-1 font-soft font-bold text-stone-800 dark:text-stone-200">
+                      Drafts
+                    </div>
+                    <div className="w-full overflow-x-auto mb-3">
+                      <div className="ml-2">
+                        <div
+                          className="flex overflow-x-auto gap-4"
+                          style={{ minWidth: "max-content" }}
+                        >
+                          {drafts.map((draft) => (
+                            <Book
+                              key={draft.book.bookId}
+                              book={draft.book}
+                              onClick={() => setSelectedBook(draft.book)}
+                              width={"70px"}
+                              height={"100px"}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 {recently.length >= 1 && (
                   <>
                     <div className="mb-2 ml-1 font-soft font-bold text-stone-800 dark:text-stone-200">
@@ -118,16 +177,45 @@ export const PostRegister = () => {
                   {selectedBook && <BookWithDesc book={selectedBook} />}
                 </div>
               </motion.div>
+              {selectedBook && (
+                <div className="mt-2 ml-1 text-xs font-soft text-zinc-500 dark:text-zinc-400 flex items-center gap-3">
+                  <span
+                    className={draftStatus === "error" ? "text-red-500" : ""}
+                  >
+                    {draftLabel}
+                  </span>
+                  {selectedDraft && (
+                    <button
+                      type="button"
+                      className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
+                      onClick={clearDraftAndSelection}
+                    >
+                      Discard
+                    </button>
+                  )}
+                </div>
+              )}
               <div className="mt-4 mb-5">
-                <ReadingRegister
-                  book={selectedBook && selectedBook}
-                  reading={selectedReading && selectedReading}
-                  updated={() => {
-                    find();
-                    setSelectedBook(null);
-                    setSelectedReading(null);
-                  }}
-                />
+                {loadingDrafts ? (
+                  <div className="flex justify-center items-center min-h-[150px]">
+                    <CircularProgress size={20} />
+                  </div>
+                ) : (
+                  <ReadingRegister
+                    key={selectedBook?.bookId ?? "none"}
+                    book={selectedBook && selectedBook}
+                    reading={selectedReading && selectedReading}
+                    initialValues={
+                      selectedDraft && {
+                        rate: selectedDraft.rate,
+                        thoughts: selectedDraft.thoughts,
+                        recommended: selectedDraft.recommended,
+                      }
+                    }
+                    onDraftChange={handleDraftChange}
+                    updated={clearDraftAndSelection}
+                  />
+                )}
               </div>
             </div>
           </div>

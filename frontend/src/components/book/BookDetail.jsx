@@ -2,11 +2,16 @@ import { Post } from "../Post";
 import { CustomDialog } from "../../ui/CustomDialog";
 import { useNotify } from "../../hooks/NotifyProvider";
 import { FaPenNib } from "react-icons/fa";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ReadingTimeline } from "../ReadingTimeline";
 import { useContext } from "react";
 import UserContext from "../UserProvider";
 import { useReading, useReadingsByBook } from "../../hooks/useReading";
+import {
+  draftStatusLabel,
+  useReadingDraft,
+  useReadingDrafts,
+} from "../../hooks/useReadingDraft";
 import { usePostsByBook } from "../../hooks/usePost";
 import { GiBookshelf } from "react-icons/gi";
 import { Menu, MenuItem, Tooltip } from "@mui/material";
@@ -65,6 +70,25 @@ export const BookDetail = ({ book, updated, visible = true }) => {
         ? readingsForBook.find((r) => r.user.userId === user.userId)
         : undefined,
     [readingsForBook, user]
+  );
+
+  // Reviewダイアログの入力を下書きとして自動保存する
+  const { data: drafts = [], isLoading: loadingDrafts } = useReadingDrafts(
+    user?.userId
+  );
+  const { saveDraft, deleteDraft, status: draftStatus } = useReadingDraft(
+    user?.userId
+  );
+  const draftBookId = myReading?.book?.bookId ?? bookForReading?.bookId;
+  const draft = drafts.find((d) => d.book.bookId === draftBookId);
+  const draftLabel = draftStatusLabel(draftStatus, !!draft);
+  const handleDraftChange = useCallback(
+    (values) => {
+      if (draftBookId) {
+        saveDraft({ bookId: draftBookId, ...values });
+      }
+    },
+    [draftBookId, saveDraft]
   );
   const doing = useMemo(
     () => readingsForBook.filter((r) => r.statusType === "DOING"),
@@ -232,15 +256,43 @@ export const BookDetail = ({ book, updated, visible = true }) => {
         title="Review"
         onClose={handleCloseRegister}
       >
-        <ReadingRegister
-          book={bookForReading}
-          sourceId={book.id}
-          updated={() => {
-            handleCloseRegister();
-            updated && updated();
-          }}
-          reading={myReading && myReading} //ここreadingId引渡しに変えて、readingRegisterに検索させるようにする？
-        />
+        {loadingDrafts ? (
+          <div className="flex justify-center items-center min-h-[150px]">
+            <CircularProgress size={20} />
+          </div>
+        ) : (
+          <ReadingRegister
+            book={bookForReading}
+            sourceId={book.id}
+            updated={() => {
+              if (draftBookId) {
+                deleteDraft(draftBookId);
+              }
+              handleCloseRegister();
+              updated && updated();
+            }}
+            reading={myReading && myReading} //ここreadingId引渡しに変えて、readingRegisterに検索させるようにする？
+            initialValues={
+              draft && {
+                rate: draft.rate,
+                thoughts: draft.thoughts,
+                recommended: draft.recommended,
+              }
+            }
+            onDraftChange={handleDraftChange}
+          />
+        )}
+        {!loadingDrafts && (
+          <div
+            className={`mt-1 text-xs font-soft ${
+              draftStatus === "error"
+                ? "text-red-500"
+                : "text-zinc-500 dark:text-zinc-400"
+            }`}
+          >
+            {draftLabel}
+          </div>
+        )}
       </CustomDialog>
       <BookWithDesc book={book} maxLength={100} />
       <div className="flex place-items-center  mt-2 ml-1 mb-1">

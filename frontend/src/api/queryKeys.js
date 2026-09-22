@@ -10,5 +10,6 @@ export const queryKeys = {
   follows: (followerId) => ["follows", followerId],
   readingsByBook: (bookId) => ["readingsByBook", bookId],
   readingsByUser: (userId) => ["readingsByUser", userId],
+  readingDrafts: (userId) => ["readingDrafts", userId],
   analytics: (userId) => ["analytics", userId],
 };
