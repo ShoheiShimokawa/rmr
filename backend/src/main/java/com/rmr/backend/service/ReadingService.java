@@ -13,9 +13,11 @@ import org.springframework.web.server.ResponseStatusException;
 import com.rmr.backend.context.AccountRepository;
 import com.rmr.backend.context.BookRepository;
 import com.rmr.backend.context.PostRepository;
+import com.rmr.backend.context.ReadingDraftRepository;
 import com.rmr.backend.context.ReadingRepository;
 import com.rmr.backend.model.Post;
 import com.rmr.backend.model.Reading;
+import com.rmr.backend.model.ReadingDraft;
 import com.rmr.backend.model.Reading.RegisterReading;
 import com.rmr.backend.model.Reading.UpdateReading;
 import com.rmr.backend.type.BookStatusType;
@@ -30,6 +32,7 @@ public class ReadingService {
 	private final BookRepository bRep;
 	private final PostRepository pRep;
 	private final AccountRepository aRep;
+	private final ReadingDraftRepository dRep;
 
 	public Reading getByUserIdAndBookId(Integer userId,Integer bookId){
 		return Reading.getByUserIdAndBookId(rep, userId,bookId).orElse(null); 
@@ -60,6 +63,7 @@ public class ReadingService {
 		var readingId = reading.getReadingId();
 		if(reading.getStatusType()==BookStatusType.DONE && (!reading.getThoughts().equals("")) || param.isRecommended()  ){
 			Post.registerPost(pRep,rep,readingId,param.isRecommended());
+			ReadingDraft.delete(dRep, reading.getUser().getUserId(), reading.getBook().getBookId());
 		}
 		return reading;
 	}
@@ -70,6 +74,7 @@ public class ReadingService {
 		Reading reading = Reading.update(rep, params);
 		if (reading.getStatusType().equals(BookStatusType.DONE) && (!reading.getThoughts().equals("") || reading.getRate()!=0)) {
 			Post.registerPost(pRep, rep, reading.getReadingId(),params.recommended());
+			ReadingDraft.delete(dRep, reading.getUser().getUserId(), reading.getBook().getBookId());
 		}
 		return reading;
 	}

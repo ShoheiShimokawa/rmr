@@ -2,7 +2,7 @@ import { useReading } from "../hooks/useReading";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "../hooks/NotifyProvider";
@@ -17,6 +17,8 @@ export const ReadingRegister = ({
   updated,
   isRecommended,
   sourceId,
+  initialValues,
+  onDraftChange,
 }) => {
   const { user } = useContext(UserContext);
   const { registerReading, updateReading } = useReading();
@@ -54,15 +56,48 @@ export const ReadingRegister = ({
     reset,
   } = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      rate: reading ? reading.rate : 0,
-      thoughts: reading ? reading.thoughts : "",
-      recommended: isRecommended ? true : false,
-    },
+    // 下書き(initialValues)があれば既存の読書内容より優先して復元する
+    defaultValues: initialValues
+      ? {
+          rate: initialValues.rate ?? 0,
+          thoughts: initialValues.thoughts ?? "",
+          recommended: !!initialValues.recommended,
+        }
+      : {
+          rate: reading ? reading.rate : 0,
+          thoughts: reading ? reading.thoughts : "",
+          recommended: isRecommended ? true : false,
+        },
   });
   const watchedRate = useWatch({ control, name: "rate" });
   const watchedThoughts = useWatch({ control, name: "thoughts" });
   const watchedRecommended = useWatch({ control, name: "recommended" });
+
+  // 入力が前回通知した内容から変わったときだけ呼び出し元へ通知する(下書き保存用)。
+  // 初期値の描画時とコールバックの差し替えでは通知しない。
+  const onDraftChangeRef = useRef(onDraftChange);
+  const lastNotifiedRef = useRef(null);
+  useEffect(() => {
+    onDraftChangeRef.current = onDraftChange;
+  }, [onDraftChange]);
+  useEffect(() => {
+    const values = {
+      rate: watchedRate || 0,
+      thoughts: watchedThoughts ?? "",
+      recommended: !!watchedRecommended,
+    };
+    const last = lastNotifiedRef.current;
+    lastNotifiedRef.current = values;
+    if (
+      last === null ||
+      (last.rate === values.rate &&
+        last.thoughts === values.thoughts &&
+        last.recommended === values.recommended)
+    ) {
+      return;
+    }
+    onDraftChangeRef.current && onDraftChangeRef.current(values);
+  }, [watchedRate, watchedThoughts, watchedRecommended]);
 
   const isSkipped =
     !watchedRate && (!watchedThoughts || watchedThoughts.trim() === "");

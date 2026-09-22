@@ -78,6 +78,9 @@ export const useReading = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.analytics(params.userId),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.readingDrafts(params.userId),
+      });
       return result;
     },
     [queryClient]
@@ -103,6 +106,9 @@ export const useReading = () => {
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.analytics(params.userId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.readingDrafts(params.userId),
       });
       return result;
     },
