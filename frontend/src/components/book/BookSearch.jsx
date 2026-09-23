@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { statusTypeStr, judgeIcon } from "../../badge/index";
 import { useContext } from "react";
 import UserContext from "../UserProvider";
@@ -9,7 +9,8 @@ import { isBlank } from "../../util";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { findReadingByUser } from "../../api/reading";
+import CloseIcon from "@mui/icons-material/Close";
+import { useReadingsByUser } from "../../hooks/useReading";
 import { genreToEnum } from "../../util";
 import { BookDetail } from "./BookDetail";
 import { CustomDialog } from "../../ui/CustomDialog";
@@ -52,14 +53,19 @@ export const sortByLanguagePreference = (items, preferredLanguage) => {
   return [...items].sort((a, b) => score(a) - score(b));
 };
 
-export const BookSearch = ({ fromPost }) => {
+/**
+ * 本の検索窓と結果一覧。embeddedを渡すと見出しを省き、幅いっぱいに広がる
+ * (PostRegisterへの埋め込み用)。onResultsChangeで検索結果を表示中かどうかを
+ * 呼び出し元へ伝える(入力が空の間はfalse)。
+ */
+export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
   const [query, setQuery] = useState("");
   const { notify } = useNotify();
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState();
   const [loading, setLoading] = useState(false);
   const { user } = useContext(UserContext);
-  const [myReadings, setMyReadings] = useState([]);
+  const { data: myReadings = [] } = useReadingsByUser(user?.userId);
   const [myReading, setMyReading] = useState();
   const [open, setOpen] = useState(false);
   const [iniSearch, setIniSearch] = useState(false);
@@ -68,6 +74,10 @@ export const BookSearch = ({ fromPost }) => {
   // 送られず壊れていた)。セッション中に変わるものではないのでsetterは使わない
   const [country] = useState(() => getCountryCodeFromLanguage());
   const [langRestrict] = useState(() => getLanguageCodeFromLocale());
+
+  useEffect(() => {
+    onResultsChange && onResultsChange(!isBlank(query));
+  }, [query, onResultsChange]);
 
   const handleOpenDetail = (selectedBook) => {
     const book = {
@@ -135,27 +145,33 @@ export const BookSearch = ({ fromPost }) => {
     }
   };
 
-  const find = useCallback(async () => {
-    if (user) {
-      const myR = await findReadingByUser(user && user.userId);
-      setMyReadings(myR.data);
+  const handleQueryChange = (event) => {
+    const next = event.target.value;
+    setQuery(next);
+    if (isBlank(next)) {
+      setBooks([]);
+      setIniSearch(false);
     }
-  }, [user]);
+  };
 
-  useEffect(() => {
-    find();
-  }, [find]);
+  const handleClear = () => {
+    setQuery("");
+    setBooks([]);
+    setIniSearch(false);
+  };
 
   return (
     <div>
       <CustomDialog open={open} title="detail" onClose={handleCloseDetail}>
         <BookDetail reading={myReading} book={selectedBook} />
       </CustomDialog>
-      <div className="text-2xl font-soft font-bold ml-4 mt-4 mb-4 flex justify-center">
-        Explore Books📚
-      </div>
+      {!embedded && (
+        <div className="text-2xl font-soft font-bold ml-4 mt-4 mb-4 flex justify-center">
+          Explore Books📚
+        </div>
+      )}
       <div className="my-1">
-        <form style={{ maxWidth: "400px", margin: "0 auto" }}>
+        <div style={embedded ? undefined : { maxWidth: "400px", margin: "0 auto" }}>
           <Paper
             component="form"
             sx={{
@@ -166,11 +182,21 @@ export const BookSearch = ({ fromPost }) => {
           >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Search by Title or Author"
+              placeholder="Search books by title or author"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={handleQueryChange}
               onKeyDown={handleKeyDown}
             />
+            {!isBlank(query) && (
+              <IconButton
+                type="button"
+                sx={{ p: "10px" }}
+                aria-label="clear search"
+                onClick={handleClear}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
             <IconButton
               type="button"
               sx={{ p: "10px" }}
@@ -182,7 +208,7 @@ export const BookSearch = ({ fromPost }) => {
               <SearchIcon />
             </IconButton>
           </Paper>
-        </form>
+        </div>
       </div>
       {loading && (
         <div className="flex justify-center items-center min-h-[300px]">

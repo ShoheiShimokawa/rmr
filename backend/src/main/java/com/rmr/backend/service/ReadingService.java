@@ -59,10 +59,12 @@ public class ReadingService {
 
 	/** 読書を登録します。*/
 	public Reading register(RegisterReading param) {
-		var reading =Reading.register(rep, bRep,aRep, param);
+		var reading = Reading.register(rep, bRep, aRep, param);
 		var readingId = reading.getReadingId();
-		if(reading.getStatusType()==BookStatusType.DONE && (!reading.getThoughts().equals("")) || param.isRecommended()  ){
-			Post.registerPost(pRep,rep,readingId,param.isRecommended());
+		if ((reading.getStatusType() == BookStatusType.DONE
+				&& (!reading.getThoughts().equals("") || reading.getRate() != 0))
+				|| param.isRecommended()) {
+			Post.registerPost(pRep, rep, readingId, param.isRecommended());
 			ReadingDraft.delete(dRep, reading.getUser().getUserId(), reading.getBook().getBookId());
 		}
 		return reading;
@@ -72,8 +74,10 @@ public class ReadingService {
 	public Reading update(Integer currentUserId, UpdateReading params) {
 		requireOwnership(params.readingId(), currentUserId);
 		Reading reading = Reading.update(rep, params);
-		if (reading.getStatusType().equals(BookStatusType.DONE) && (!reading.getThoughts().equals("") || reading.getRate()!=0)) {
-			Post.registerPost(pRep, rep, reading.getReadingId(),params.recommended());
+		if ((reading.getStatusType() == BookStatusType.DONE
+				&& (!reading.getThoughts().equals("") || reading.getRate() != 0))
+				|| params.recommended()) {
+			Post.registerPost(pRep, rep, reading.getReadingId(), params.recommended());
 			ReadingDraft.delete(dRep, reading.getUser().getUserId(), reading.getBook().getBookId());
 		}
 		return reading;

@@ -71,7 +71,7 @@ export const judgePostLabel = (post) => {
   } else if (post.postType === "WITH_THOUGHTS") {
     return (
       <Chip
-        label="Reviewed!"
+        label="Read it!"
         size="small"
         color="info"
         sx={{

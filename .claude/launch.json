@@ -6,6 +6,12 @@
       "runtimeExecutable": "bash",
       "runtimeArgs": ["-c", "cd frontend && npm start"],
       "port": 3000
+    },
+    {
+      "name": "backend",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd backend && set -a && source .env && set +a && ./mvnw spring-boot:run"],
+      "port": 8080
     }
   ]
 }

@@ -29,7 +29,7 @@ export const Sidebar = ({ mobile = false }) => {
       outlineIcon: <PeopleAltOutlinedIcon />,
     },
     {
-      text: "Search",
+      text: "Books",
       path: "/book",
       icon: <SearchIcon />,
       outlineIcon: <SearchIcon />,
@@ -58,10 +58,9 @@ export const Sidebar = ({ mobile = false }) => {
         }}
       >
         {items.map((item) => (
-          <motion.div whileTap={{ scale: 0.95 }}>
+          <motion.div key={item.text} whileTap={{ scale: 0.95 }}>
             <Link
               to={item.path}
-              key={item.text}
               className="flex flex-col items-center text-xs text-zinc-700 dark:text-zinc-300"
             >
               <div>
@@ -100,8 +99,8 @@ export const Sidebar = ({ mobile = false }) => {
     >
       <List>
         {items.map((item) => (
-          <motion.div whileTap={{ scale: 0.95 }}>
-            <ListItem key={item.text} disablePadding>
+          <motion.div key={item.text} whileTap={{ scale: 0.95 }}>
+            <ListItem disablePadding>
               <ListItemButton
                 component={Link}
                 to={item.path}
