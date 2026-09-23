@@ -1,4 +1,5 @@
 import { useReading } from "../hooks/useReading";
+import { hasDraftContent } from "../hooks/useReadingDraft";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -19,6 +20,8 @@ export const ReadingRegister = ({
   sourceId,
   initialValues,
   onDraftChange,
+  statusType = "DONE",
+  draftStatusSlot,
 }) => {
   const { user } = useContext(UserContext);
   const { registerReading, updateReading } = useReading();
@@ -45,7 +48,7 @@ export const ReadingRegister = ({
       {
         path: ["thoughts"],
         message: "Thought is required if you recommend this book.",
-      }
+      },
     );
 
   const {
@@ -99,14 +102,17 @@ export const ReadingRegister = ({
     onDraftChangeRef.current && onDraftChangeRef.current(values);
   }, [watchedRate, watchedThoughts, watchedRecommended]);
 
-  const isSkipped =
-    !watchedRate && (!watchedThoughts || watchedThoughts.trim() === "");
-
-  const isReviewed =
-    watchedRate && (!watchedThoughts || watchedThoughts.trim() === "");
+  // rate・recommend・感想のいずれかが入っていないとPostできない
+  // (何も無い状態での完了はReadingStatusChipの「Completed」から行う)
+  const hasContent = hasDraftContent({
+    rate: watchedRate,
+    thoughts: watchedThoughts,
+    recommended: watchedRecommended,
+  });
 
   const isSubmitDisabled =
     isDisabled ||
+    !hasContent ||
     (watchedRecommended && (!watchedThoughts || watchedThoughts.trim() === ""));
 
   const onSubmit = async (values) => {
@@ -119,7 +125,7 @@ export const ReadingRegister = ({
           ...values,
           bookId: reading.book.bookId,
           userId: user.userId,
-          statusType: "DONE",
+          statusType,
           readingId: reading.readingId,
         };
         await updateReading(updateParam, { sourceId: resolvedSourceId });
@@ -135,7 +141,7 @@ export const ReadingRegister = ({
           ...values,
           bookId: book ? book.bookId : reading.book.bookId,
           userId: user.userId,
-          statusType: "DONE",
+          statusType,
         };
         await registerReading(param, { sourceId: resolvedSourceId });
         updated && updated();
@@ -155,6 +161,7 @@ export const ReadingRegister = ({
 
   return (
     <div>
+      <div className="font-soft font-bold mt-4 mb-4">Share your thoughts!</div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <Controller
@@ -163,6 +170,7 @@ export const ReadingRegister = ({
             render={({ field }) => (
               <Rating
                 {...field}
+                size="small"
                 value={field.value || 0}
                 disabled={isDisabled}
                 onChange={(event, newValue) => field.onChange(newValue || 0)}
@@ -175,7 +183,7 @@ export const ReadingRegister = ({
             </p>
           )}
         </div>
-        <div className="font-soft mt-1 mb-2 font-bold">
+        <div className="font-soft mt-1 mb-1 text-sm font-bold">
           Recommend this book to others?
         </div>
         <div className="ml-3">
@@ -190,12 +198,17 @@ export const ReadingRegister = ({
                     {...field}
                     checked={field.value}
                     onChange={(e) => field.onChange(e.target.checked)}
+                    sx={{
+                      transform: "scale(0.85)",
+                      transformOrigin: "left center",
+                    }}
                   />
                 }
               />
             )}
           />
         </div>
+
         <TextField
           {...register("thoughts")}
           placeholder={
@@ -212,15 +225,16 @@ export const ReadingRegister = ({
           helperText={errors.thoughts?.message}
           disabled={isDisabled}
         />
-        <div className="text-xs text-right mt-1 font-soft">
+        <div className="flex items-center justify-between mt-1 text-xs font-soft">
+          <div>{draftStatusSlot}</div>
           <span
             className={
-              watchedThoughts.length > 600
+              (watchedThoughts ?? "").length > 600
                 ? "text-red-500 font-bold"
                 : "text-zinc-500 dark:text-zinc-400"
             }
           >
-            {watchedThoughts.length}/600
+            {(watchedThoughts ?? "").length}/600
           </span>
         </div>
 
@@ -232,11 +246,10 @@ export const ReadingRegister = ({
               sx={{ width: "150px" }}
             >
               {isSubmitting ? (
-                <CircularProgress size={20} sx={{ color: "background.default" }} />
-              ) : isSkipped ? (
-                "Skip Review"
-              ) : isReviewed ? (
-                "Submit"
+                <CircularProgress
+                  size={20}
+                  sx={{ color: "background.default" }}
+                />
               ) : (
                 "Post"
               )}

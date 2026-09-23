@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.rmr.backend.context.AccountRepository;
 import com.rmr.backend.context.BookRepository;
@@ -20,10 +21,12 @@ import com.rmr.backend.context.ReadingDraftRepository;
 import com.rmr.backend.context.ReadingRepository;
 import com.rmr.backend.model.Account;
 import com.rmr.backend.model.Book;
+import com.rmr.backend.model.Post;
 import com.rmr.backend.model.Reading;
 import com.rmr.backend.model.Reading.RegisterReading;
 import com.rmr.backend.model.ReadingDraft;
 import com.rmr.backend.type.BookStatusType;
+import com.rmr.backend.type.PostType;
 import com.rmr.backend.util.BadRequestException;
 
 class ReadingServiceTest {
@@ -102,6 +105,37 @@ class ReadingServiceTest {
 				.userId(2).bookId(1).rate(0).thoughts("").statusType(BookStatusType.DOING).build());
 
 		verifyNoInteractions(dRep);
+	}
+
+	@Test
+	void registerCreatesAnOnlyStarPostWhenDoneWithRatingButNoThoughts() {
+		ReadingRepository rep = mock(ReadingRepository.class);
+		BookRepository bRep = mock(BookRepository.class);
+		PostRepository pRep = mock(PostRepository.class);
+		AccountRepository aRep = mock(AccountRepository.class);
+		ReadingDraftRepository dRep = mock(ReadingDraftRepository.class);
+		Book book = Book.builder().bookId(1).build();
+		Account user = Account.builder().userId(2).build();
+		Reading existing = Reading.builder().readingId(10).book(book).user(user)
+				.statusType(BookStatusType.DOING).thoughts("").rate(0).build();
+		ReadingDraft draft = ReadingDraft.builder().draftId(5).user(user).book(book).build();
+		when(bRep.findById(1)).thenReturn(Optional.of(book));
+		when(aRep.findByUserId(2)).thenReturn(Optional.of(user));
+		when(rep.findByUserUserIdAndBookBookId(2, 1)).thenReturn(Optional.of(existing));
+		when(rep.findById(10)).thenReturn(Optional.of(existing));
+		when(rep.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+		when(pRep.findByReadingId(10)).thenReturn(List.of());
+		when(pRep.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+		when(dRep.findByUserUserIdAndBookBookId(2, 1)).thenReturn(Optional.of(draft));
+
+		ReadingService service = new ReadingService(rep, bRep, pRep, aRep, dRep);
+		service.register(RegisterReading.builder()
+				.userId(2).bookId(1).rate(4).thoughts("").statusType(BookStatusType.DONE).build());
+
+		ArgumentCaptor<Post> captor = ArgumentCaptor.forClass(Post.class);
+		verify(pRep).save(captor.capture());
+		assertThat(captor.getValue().getPostType()).isEqualTo(PostType.ONLY_STAR);
+		verify(dRep).delete(draft);
 	}
 
 	@Test
