@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.rmr.backend.context.BookRepository;
 import com.rmr.backend.type.GenreType;
 import com.rmr.backend.type.LargeGenreType;
+import com.rmr.backend.type.SuggestionType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -113,6 +114,9 @@ public static class RegisterBook {
 	public void delete(BookRepository rep, Book book) {
 		rep.deleteById(bookId);
 	}
-	
-	
+
+	/** 予測変換候補。typeがTITLEならタイトル一致、AUTHORなら著者一致。 */
+	public record Suggestion(SuggestionType type, String text) {
+	}
+
 }
