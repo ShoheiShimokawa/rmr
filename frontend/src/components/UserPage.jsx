@@ -1,3 +1,4 @@
+import React from "react";
 import { Profile } from "./Profile";
 import { getPostAllByUser, getGoodPostAll } from "../api/post";
 import { BookShelf } from "./book/BookShelf";
@@ -69,6 +70,34 @@ export const UserPage = () => {
   // SNSでシェアされた際の説明文にのみ公式ハッシュタグを付ける
   const shareBio = `${bio} #ReadMyReads`;
 
+  const postsContent = loading ? (
+    <div className="flex justify-center items-center min-h-[300px]">
+      <CircularProgress />
+    </div>
+  ) : posts.length !== 0 ? (
+    <div className="space-y-1">
+      {posts.map((post) => (
+        <React.Fragment key={post.postId}>
+          <Post
+            post={post}
+            visible={true}
+            isInitiallyGooded={goodPostIds.includes(post.postId)}
+          />
+          {posts.length > 1 && <Divider />}
+        </React.Fragment>
+      ))}
+    </div>
+  ) : (
+    <div className="font-soft flex justify-center text-zinc-500 dark:text-zinc-400">
+      No Posts yet.
+    </div>
+  );
+
+  const tabDefs = [
+    { label: "BookShelf", content: account && <BookShelf account={account} /> },
+    { label: "Posts", content: postsContent },
+  ];
+
   return (
     <div>
       {account && (
@@ -113,58 +142,23 @@ export const UserPage = () => {
             textColor="inherit"
             TabIndicatorProps={{ style: { backgroundColor: "currentColor" } }}
           >
-            <Tab
-              label="BookShelf"
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                fontFamily: "'Nunito sans'",
-              }}
-            />
-            <Tab
-              label="Posts"
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                fontFamily: "'Nunito sans'",
-              }}
-            />
+            {tabDefs.map((tab) => (
+              <Tab
+                key={tab.label}
+                label={tab.label}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  fontFamily: "'Nunito sans'",
+                }}
+              />
+            ))}
           </Tabs>
-          <TabPanel value={tabIndex} index={0}>
-            {account && <BookShelf account={account && account} />}
-          </TabPanel>
-          <TabPanel value={tabIndex} index={1}>
-            {loading ? (
-              <div className="flex justify-center items-center min-h-[300px]">
-                <CircularProgress />
-              </div>
-            ) : (
-              <>
-                {posts.length !== 0 ? (
-                  <div className="space-y-1">
-                    <>
-                      {posts.map((post) => (
-                        <>
-                          <Post
-                            post={post}
-                            visible={true}
-                            isInitiallyGooded={goodPostIds.includes(
-                              post.postId
-                            )}
-                          />
-                          {posts.length > 1 && <Divider />}
-                        </>
-                      ))}
-                    </>
-                  </div>
-                ) : (
-                  <div className="font-soft flex justify-center text-zinc-500 dark:text-zinc-400">
-                    No Posts yet.
-                  </div>
-                )}
-              </>
-            )}
-          </TabPanel>
+          {tabDefs.map((tab, index) => (
+            <TabPanel key={tab.label} value={tabIndex} index={index}>
+              {tab.content}
+            </TabPanel>
+          ))}
         </Box>
       </motion.div>
     </div>

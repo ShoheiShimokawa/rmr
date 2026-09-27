@@ -625,13 +625,11 @@ export const BookDetail = ({ book, updated, visible = true }) => {
         <>
           {posts.map((post) => (
             <>
-              <Box key={post.postId} sx={{ width: "95%", margin: "0 auto" }}>
+              <Box key={post.postId} sx={{ width: "100%" }}>
                 <Post post={post} fromDetail={true} />
               </Box>
               <>
-                {posts.length >= 2 && (
-                  <Divider sx={{ width: "95%", margin: "0 auto" }} />
-                )}
+                {posts.length >= 2 && <Divider sx={{ width: "100%" }} />}
               </>
             </>
           ))}

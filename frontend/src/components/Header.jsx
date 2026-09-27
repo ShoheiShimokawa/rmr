@@ -1,12 +1,15 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { FaPenNib } from "react-icons/fa";
 import { useNotify } from "../hooks/NotifyProvider";
 import { Login } from "./Login";
-import { getNotificationAll, markAllAsDone } from "../api/notification";
-import { useContext, useState, useEffect, useCallback } from "react";
+import {
+  useHasUnreadNotification,
+  useMarkNotificationsAsDoneMutation,
+} from "../hooks/useNotification";
+import { useContext, useState } from "react";
 import { CustomDialog } from "../ui/CustomDialog";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
@@ -17,6 +20,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
+import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneRounded";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { useThemeMode } from "../hooks/ThemeModeProvider";
 import { IOSSwitch } from "../ui/IOSSwitch";
@@ -38,25 +42,14 @@ export const Header = () => {
   const [open, setOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isNotificationActive = location.pathname === "/notifications";
   const goToCommunity = () => navigate("/");
-  const [hasUnread, setHasUnread] = useState(false);
+  const hasUnread = useHasUnreadNotification(user?.userId);
+  const markAsDoneMutation = useMarkNotificationsAsDoneMutation(user?.userId);
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const { notify } = useNotify();
   const { resolvedMode, setMode } = useThemeMode();
-
-  const find = useCallback(async () => {
-    if (user) {
-      const result = await getNotificationAll();
-      if (result.data.length >= 1) {
-        const unread = result.data.filter((n) => n.statusType === "NONE");
-        setHasUnread(unread.length > 0);
-      }
-    }
-  }, [user]);
-
-  useEffect(() => {
-    find();
-  }, [find]);
 
   const handleClick = (e) => {
     setAnchor(e.currentTarget);
@@ -82,6 +75,7 @@ export const Header = () => {
     setShowLogin(false);
   };
   const handleLogout = () => {
+    if (!window.confirm("Log out?")) return;
     logout();
     goToCommunity();
     handleClose();
@@ -93,14 +87,10 @@ export const Header = () => {
       handleClose();
     }
   };
-  const handleMarkAsDone = async () => {
-    await markAllAsDone();
-  };
   const handleNotificationClick = () => {
     if (isLoggedIn()) {
       navigate("/notifications");
-      handleMarkAsDone();
-      setHasUnread(false);
+      markAsDoneMutation.mutate();
     }
   };
   return (
@@ -153,11 +143,8 @@ export const Header = () => {
                 <img
                   src="/rmr_logo.png"
                   alt="rmr Logo"
-                  className="select-none"
+                  className="select-none h-[108px] md:h-[120px] w-auto object-contain"
                   style={{
-                    width: "auto",
-                    height: "120px",
-                    objectFit: "contain",
                     // ロゴは黒一色の透過PNGのため、dark時はinvertで白ロゴ相当にする
                     filter: resolvedMode === "dark" ? "invert(1)" : "none",
                   }}
@@ -172,7 +159,7 @@ export const Header = () => {
                   alignItems: "center",
                 }}
               >
-                <motion.div whileTap={{ scale: 0.9 }}>
+                <motion.div className="hidden md:block" whileTap={{ scale: 0.9 }}>
                   <IconButton onClick={handlePostClick}>
                     <FaPenNib size="24px" />
                   </IconButton>
@@ -180,7 +167,11 @@ export const Header = () => {
                 <motion.div whileTap={{ scale: 0.9 }}>
                   <IconButton onClick={handleNotificationClick}>
                     <Badge color="warning" variant="dot" invisible={!hasUnread}>
-                      <NotificationsRoundedIcon />
+                      {isNotificationActive ? (
+                        <NotificationsRoundedIcon />
+                      ) : (
+                        <NotificationsNoneRoundedIcon />
+                      )}
                     </Badge>
                   </IconButton>
                 </motion.div>

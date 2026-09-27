@@ -224,7 +224,7 @@ export const Post = ({ post, visible, fromDetail }) => {
               <div>
                 {post.reading && (
                   <>
-                    <div>
+                    <div className={fromDetail ? "-ml-11" : undefined}>
                       <Review post={post} visible={fromDetail ? false : true} />
                       <div className="flex items-center mt-1 ">
                         <motion.div whileTap={{ scale: 0.9 }}>
