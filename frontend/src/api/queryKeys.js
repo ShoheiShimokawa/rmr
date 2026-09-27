@@ -12,4 +12,5 @@ export const queryKeys = {
   readingsByUser: (userId) => ["readingsByUser", userId],
   readingDrafts: (userId) => ["readingDrafts", userId],
   analytics: (userId) => ["analytics", userId],
+  bookSuggestions: (query) => ["bookSuggestions", query],
 };

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rmr.backend.model.Book;
+import com.rmr.backend.service.BookService;
 import com.rmr.backend.service.booksearch.BookSearchContext;
 import com.rmr.backend.service.booksearch.BookSearchOrchestrator;
 import com.rmr.backend.service.booksearch.BookSearchResult;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class BookSearchController {
 
     private final BookSearchOrchestrator orchestrator;
+    private final BookService bookService;
 
     @GetMapping
     public Map<String, List<BookSearchResult>> searchBooks(
@@ -29,5 +32,11 @@ public class BookSearchController {
             @RequestParam(required = false) String langRestrict) {
         List<BookSearchResult> results = orchestrator.search(query, new BookSearchContext(langRestrict, country));
         return Map.of("items", results);
+    }
+
+    /** RMRに登録済みの本のタイトル・著者から予測変換候補を返す(外部APIは呼ばない)。 */
+    @GetMapping("/suggest")
+    public Map<String, List<Book.Suggestion>> suggestBooks(@RequestParam String query) {
+        return Map.of("items", bookService.suggest(query));
     }
 }

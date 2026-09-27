@@ -17,6 +17,10 @@ import { CustomDialog } from "../../ui/CustomDialog";
 import { motion } from "framer-motion";
 import { Chip, Card, CardContent } from "@mui/material";
 import { useNotify } from "../../hooks/NotifyProvider";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { useBookSuggestions } from "../../hooks/useBookSuggestions";
+
+const SUGGEST_DEBOUNCE_MS = 300;
 
 /**
  * ブラウザのlocale(例: "ja-JP")から地域コード(例: "JP")を推定する。
@@ -75,6 +79,15 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
   const [country] = useState(() => getCountryCodeFromLanguage());
   const [langRestrict] = useState(() => getLanguageCodeFromLocale());
 
+  // 予測変換(登録済みの本のタイトル・著者からの候補)の状態
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const [isComposing, setIsComposing] = useState(false);
+  const debouncedQuery = useDebouncedValue(query, SUGGEST_DEBOUNCE_MS);
+  const { data: suggestions = [] } = useBookSuggestions(debouncedQuery, {
+    enabled: suggestOpen && !isComposing,
+  });
+
   useEffect(() => {
     onResultsChange && onResultsChange(!isBlank(query));
   }, [query, onResultsChange]);
@@ -120,10 +133,10 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
     }
   };
 
-  const searchBooks = async () => {
+  const searchBooks = async (searchQuery) => {
     try {
       setLoading(true);
-      const result = await findBooks(query, country, langRestrict);
+      const result = await findBooks(searchQuery, country, langRestrict);
       const items = result.data.items || [];
       setBooks(sortByLanguagePreference(items, langRestrict));
       setIniSearch(true);
@@ -134,11 +147,46 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
     }
   };
 
-  const handleSearch = () => {
-    !isBlank(query) && searchBooks();
+  // 引数を省略すると入力欄の現在値で検索する(候補選択時は選んだ文字列を明示的に渡す)。
+  const handleSearch = (searchQuery = query) => {
+    if (isBlank(searchQuery)) return;
+    setSuggestOpen(false);
+    setActiveSuggestionIndex(-1);
+    searchBooks(searchQuery);
+  };
+
+  const handleSelectSuggestion = (suggestion) => {
+    setQuery(suggestion.text);
+    handleSearch(suggestion.text);
   };
 
   const handleKeyDown = (event) => {
+    if (event.nativeEvent?.isComposing) return;
+
+    if (suggestOpen && suggestions.length > 0) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActiveSuggestionIndex((i) => (i + 1) % suggestions.length);
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActiveSuggestionIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setSuggestOpen(false);
+        setActiveSuggestionIndex(-1);
+        return;
+      }
+      if (event.key === "Enter" && activeSuggestionIndex >= 0) {
+        event.preventDefault();
+        handleSelectSuggestion(suggestions[activeSuggestionIndex]);
+        return;
+      }
+    }
+
     if (!isBlank(query) && event.key === "Enter") {
       event.preventDefault();
       handleSearch();
@@ -148,9 +196,13 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
   const handleQueryChange = (event) => {
     const next = event.target.value;
     setQuery(next);
+    setActiveSuggestionIndex(-1);
     if (isBlank(next)) {
       setBooks([]);
       setIniSearch(false);
+      setSuggestOpen(false);
+    } else {
+      setSuggestOpen(true);
     }
   };
 
@@ -158,6 +210,8 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
     setQuery("");
     setBooks([]);
     setIniSearch(false);
+    setSuggestOpen(false);
+    setActiveSuggestionIndex(-1);
   };
 
   return (
@@ -171,7 +225,12 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
         </div>
       )}
       <div className="my-1">
-        <div style={embedded ? undefined : { maxWidth: "400px", margin: "0 auto" }}>
+        <div
+          style={{
+            position: "relative",
+            ...(embedded ? undefined : { maxWidth: "400px", margin: "0 auto" }),
+          }}
+        >
           <Paper
             component="form"
             sx={{
@@ -186,6 +245,17 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
               value={query}
               onChange={handleQueryChange}
               onKeyDown={handleKeyDown}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
+              onFocus={() => !isBlank(query) && setSuggestOpen(true)}
+              onBlur={() => {
+                // 候補クリックはonMouseDownでpreventDefaultしてフォーカスを保つため、
+                // ここで閉じても選択のクリックは先に処理される。
+                setTimeout(() => setSuggestOpen(false), 100);
+              }}
+              role="combobox"
+              aria-expanded={suggestOpen && suggestions.length > 0}
+              aria-autocomplete="list"
             />
             {!isBlank(query) && (
               <IconButton
@@ -208,6 +278,41 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
               <SearchIcon />
             </IconButton>
           </Paper>
+          {suggestOpen && !isComposing && suggestions.length > 0 && (
+            <Paper
+              role="listbox"
+              sx={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                zIndex: 10,
+                mt: "-4px",
+                maxHeight: 280,
+                overflowY: "auto",
+              }}
+            >
+              {suggestions.map((suggestion, index) => (
+                <div
+                  key={`${suggestion.type}-${suggestion.text}`}
+                  role="option"
+                  aria-selected={index === activeSuggestionIndex}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => handleSelectSuggestion(suggestion)}
+                  onMouseEnter={() => setActiveSuggestionIndex(index)}
+                  className="px-3 py-2 text-sm font-soft cursor-pointer flex items-center gap-2"
+                  style={{
+                    backgroundColor:
+                      index === activeSuggestionIndex ? "rgba(127,127,127,0.15)" : undefined,
+                  }}
+                >
+                  <span className="text-zinc-500 dark:text-zinc-400 text-xs shrink-0">
+                    {suggestion.type === "AUTHOR" ? "Author" : "Title"}
+                  </span>
+                  <span className="truncate">{suggestion.text}</span>
+                </div>
+              ))}
+            </Paper>
+          )}
         </div>
       </div>
       {loading && (
