@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import { toLargeGenre } from "../../util";
-import { CHART_INK, baseChartOptions } from "./chartTheme";
+import { baseChartOptions } from "./chartTheme";
 import { fillMonths, formatMonthLabel, monthKeysForSelection, yearOptions } from "./transform";
 import { SegmentedControl } from "./SegmentedControl";
 import { useThemeMode } from "../../hooks/ThemeModeProvider";
 
 const RENDER_DEBOUNCE_MS = 200;
+// このチャートだけ強調のため専用のアクセントカラーを使う(他チャートのCHART_INK.primaryとは独立)
+const LINE_COLOR = "#4F60F4";
 
 const formatMonthTitle = (monthKey) => {
   const [year, month] = monthKey.split("-").map(Number);
@@ -41,15 +43,18 @@ export const MonthlyVolumeChart = ({ monthly, yearly }) => {
 
   const options = useMemo(() => {
     const base = baseChartOptions(resolvedMode);
-    const ink = CHART_INK[resolvedMode] || CHART_INK.light;
     return {
       ...base,
       chart: {
         ...base.chart,
-        type: "line",
-        dropShadow: { enabled: true, top: 6, left: 0, blur: 4, opacity: 0.15, color: ink.primary },
+        type: "area",
+        dropShadow: { enabled: true, top: 6, left: 0, blur: 4, opacity: 0.15, color: LINE_COLOR },
       },
       stroke: { curve: "smooth", width: 3 },
+      fill: {
+        type: "gradient",
+        gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 90, 100] },
+      },
       markers: { size: 0, hover: { size: 5 } },
       grid: { ...base.grid, xaxis: { lines: { show: false } }, yaxis: { lines: { show: true } } },
       xaxis: {
@@ -59,7 +64,7 @@ export const MonthlyVolumeChart = ({ monthly, yearly }) => {
         axisTicks: { show: false },
       },
       yaxis: { show: false },
-      colors: [ink.primary],
+      colors: [LINE_COLOR],
       legend: { show: false },
       // ApexChartsに生HTMLを直接DOM操作させるtooltip.customは、React側の
       // 再描画と競合してDOM例外を起こすことがあるため使わない。
@@ -97,7 +102,7 @@ export const MonthlyVolumeChart = ({ monthly, yearly }) => {
           内部の非同期クリーンアップとReactの再描画が競合してDOM例外を
           起こすことがあるため、常時マウントしたままオーバーレイで隠す。 */}
       <div className="relative min-h-[200px]">
-        <Chart options={options} series={series} type="line" height={220} width="100%" />
+        <Chart options={options} series={series} type="area" height={220} width="100%" />
         {!hasData && (
           <div className="absolute inset-0 flex items-center justify-center text-zinc-500 dark:text-zinc-400 bg-base-200">
             No data.

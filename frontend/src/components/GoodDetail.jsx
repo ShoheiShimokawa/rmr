@@ -32,7 +32,7 @@ export const GoodDetail = ({ postId }) => {
       ) : (
         <>
           {goods.length !== 0 ? (
-            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+            <List sx={{ width: "100%" }}>
               {goods.map((good) => (
                 <ListItem
                   key={good.goodId}

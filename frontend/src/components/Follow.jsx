@@ -32,7 +32,7 @@ export const Follow = ({ followerId }) => {
       ) : (
         <>
           {follows.length !== 0 ? (
-            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+            <List sx={{ width: "100%" }}>
               {follows.map((follow) => (
                 <ListItem
                   key={follow.id}
