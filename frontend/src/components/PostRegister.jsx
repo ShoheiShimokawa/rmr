@@ -89,11 +89,6 @@ export const PostRegister = () => {
   const { saveDraft, deleteDraft, status: draftStatus } =
     useReadingDraft(userId);
   const { data: myHighlights = [] } = useMyHighlights();
-  // 本を切り替えた瞬間の初期タブ判定用に、readingsの最新値をeffectの依存に入れず参照する。
-  const readingsRef = useRef(readings);
-  useEffect(() => {
-    readingsRef.current = readings;
-  }, [readings]);
 
   const shelf = useMemo(() => recentShelf(readings), [readings]);
   const draftBookIds = useMemo(
@@ -132,16 +127,11 @@ export const PostRegister = () => {
     }
   }, [searchParams, readings, loadingReadings]);
 
-  // 本を選び直したら、前の本の楽観的なステータス表示を引き継がず、読書中の本はQuotes、
-  // それ以外はReviewを初期タブにする。
+  // 本を選び直したら、前の本の楽観的なステータス表示を引き継がず、初期タブは常にReviewにする。
   useEffect(() => {
     setPendingStatus(null);
     setDiscardVersion(0);
-    const reading =
-      selectedBookId != null
-        ? readingsRef.current.find((r) => r.book.bookId === selectedBookId)
-        : null;
-    setMode(reading?.statusType === "DOING" ? "highlight" : "review");
+    setMode("review");
   }, [selectedBookId]);
 
   // Quotesタブを開いたのが初めてなら、使い方ヒントを一度だけ自動で出す。
