@@ -22,6 +22,7 @@ export const ReadingRegister = ({
   onDraftChange,
   statusType = "DONE",
   draftStatusSlot,
+  draftDiscardSlot,
 }) => {
   const { user } = useContext(UserContext);
   const { registerReading, updateReading } = useReading();
@@ -161,7 +162,6 @@ export const ReadingRegister = ({
 
   return (
     <div>
-      <div className="font-soft font-bold mt-4 mb-4">Share your thoughts!</div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <Controller
@@ -214,7 +214,7 @@ export const ReadingRegister = ({
           placeholder={
             watchedRecommended
               ? "Tell us why you'd recommend this book!"
-              : "Share your thoughts or feelings."
+              : "Share your thoughts or feelings!"
           }
           variant="outlined"
           multiline
@@ -238,7 +238,8 @@ export const ReadingRegister = ({
           </span>
         </div>
 
-        <div className="flex justify-end mt-4">
+        <div className="flex items-center justify-end gap-4 mt-4">
+          {draftDiscardSlot}
           <motion.div whileTap={{ scale: 0.9 }}>
             <PrimaryButton
               type="submit"

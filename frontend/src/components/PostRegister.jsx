@@ -222,12 +222,11 @@ export const PostRegister = () => {
             p: 2,
           }}
         >
-          <div className="text-2xl font-soft font-bold mb-3">
-            Record Your Reading ✍🏻
-          </div>
-
           {!selectedBook && (
             <>
+              <div className="text-2xl font-soft font-bold mb-3">
+                Record Your Reading ✍🏻
+              </div>
               <BookSearch
                 embedded
                 fromPost={handleBookFromSearch}
@@ -334,22 +333,22 @@ export const PostRegister = () => {
                     onDraftChange={handleDraftChange}
                     updated={clearDraftAndSelection}
                     draftStatusSlot={
-                      <span className="flex items-center gap-3 font-soft text-zinc-500 dark:text-zinc-400 hover:no-underline">
-                        <span
-                          className={`hover:no-underline ${draftStatus === "error" ? "text-red-500" : ""}`}
-                        >
-                          {draftLabel}
-                        </span>
-                        {selectedDraft && (
-                          <button
-                            type="button"
-                            className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
-                            onClick={handleDiscardDraft}
-                          >
-                            Discard
-                          </button>
-                        )}
+                      <span
+                        className={`font-soft text-zinc-500 dark:text-zinc-400 hover:no-underline ${draftStatus === "error" ? "text-red-500" : ""}`}
+                      >
+                        {draftLabel}
                       </span>
+                    }
+                    draftDiscardSlot={
+                      selectedDraft && (
+                        <button
+                          type="button"
+                          className="font-soft text-xs underline text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                          onClick={handleDiscardDraft}
+                        >
+                          Discard
+                        </button>
+                      )
                     }
                   />
                 )}
