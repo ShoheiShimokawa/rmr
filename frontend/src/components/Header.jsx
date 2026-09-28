@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import { alpha } from "@mui/material/styles";
 import { FaPenNib } from "react-icons/fa";
 import { useNotify } from "../hooks/NotifyProvider";
 import { Login } from "./Login";
@@ -9,7 +10,7 @@ import {
   useHasUnreadNotification,
   useMarkNotificationsAsDoneMutation,
 } from "../hooks/useNotification";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CustomDialog } from "../ui/CustomDialog";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
@@ -50,6 +51,14 @@ export const Header = () => {
   const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
   const { notify } = useNotify();
   const { resolvedMode, setMode } = useThemeMode();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 8);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleClick = (e) => {
     setAnchor(e.currentTarget);
@@ -106,13 +115,18 @@ export const Header = () => {
       <AppBar
         position="fixed"
         elevation={0}
-        sx={{
+        sx={(theme) => ({
           height: 65,
-          bgcolor:
-            resolvedMode === "dark" ? "background.default" : "background.paper",
+          bgcolor: scrolled
+            ? alpha(theme.palette.background.default, 0.72)
+            : "background.default",
+          backdropFilter: scrolled ? "blur(16px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
+          transition:
+            "background-color 0.2s ease, backdrop-filter 0.2s ease",
           color: "text.primary",
           alignSelf: "flex-start",
-        }}
+        })}
       >
         <Toolbar
           variant="dense"
