@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   Box,
   IconButton,
+  ButtonBase,
 } from "@mui/material";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FaPenNib } from "react-icons/fa";
@@ -16,6 +17,8 @@ import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
 import { useThemeMode } from "../hooks/ThemeModeProvider";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 
@@ -39,6 +42,39 @@ const items = [
     outlineIcon: <AutoGraphOutlinedIcon />,
   },
 ];
+
+const desktopItemButtonSx = {
+  borderRadius: 4,
+  mb: 1,
+  px: 2,
+  py: 1.5,
+  transition: "0.2s",
+  textDecoration: "none",
+  "&:hover": {
+    textDecoration: "none",
+  },
+  "& a": {
+    textDecoration: "none",
+    color: "inherit",
+  },
+  "&:hover a": {
+    textDecoration: "none",
+  },
+  "& .MuiTypography-root": {
+    textDecoration: "none",
+  },
+  "&:hover .MuiTypography-root": {
+    textDecoration: "none",
+  },
+};
+
+const desktopLabelSx = (active) => ({
+  textDecoration: "none",
+  fontWeight: "bold",
+  fontFamily: "'Nunito sans'",
+  fontSize: "1.1rem",
+  color: active ? "inherit" : "text.disabled",
+});
 
 const NavItem = ({ item, location }) => (
   <motion.div whileTap={{ scale: 0.95 }}>
@@ -66,11 +102,16 @@ export const Sidebar = ({ mobile = false }) => {
   const { resolvedMode } = useThemeMode();
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
+  const { user, isLoggedIn, LoginDialog, showLoginDialog } = useRequireLogin();
 
   const handlePostClick = () => {
     if (isLoggedIn()) navigate("/postRegister");
   };
+
+  const handleMyPageClick = () => {
+    if (isLoggedIn()) navigate(`/${user.handle}`);
+  };
+  const isMyPageActive = !!user && location.pathname === `/${user.handle}`;
 
   if (mobile) {
     return (
@@ -104,6 +145,21 @@ export const Sidebar = ({ mobile = false }) => {
           {items.slice(2).map((item) => (
             <NavItem key={item.text} item={item} location={location} />
           ))}
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <ButtonBase
+              onClick={handleMyPageClick}
+              disableRipple
+              sx={{ flexDirection: "column" }}
+              className="text-zinc-700 dark:text-zinc-300"
+            >
+              {isMyPageActive ? (
+                <PersonRoundedIcon sx={{ color: "text.primary" }} />
+              ) : (
+                <PersonOutlineRoundedIcon sx={{ color: "text.disabled" }} />
+              )}
+              <div className="text-[0.64rem] mt-1 font-soft">My Page</div>
+            </ButtonBase>
+          </motion.div>
         </Box>
       </>
     );
@@ -120,6 +176,7 @@ export const Sidebar = ({ mobile = false }) => {
         p: 4,
       }}
     >
+      {showLoginDialog && <LoginDialog />}
       <List>
         {items.map((item) => (
           <motion.div key={item.text} whileTap={{ scale: 0.95 }}>
@@ -127,30 +184,7 @@ export const Sidebar = ({ mobile = false }) => {
               <ListItemButton
                 component={Link}
                 to={item.path}
-                sx={{
-                  borderRadius: 4,
-                  mb: 1,
-                  px: 2,
-                  py: 1.5,
-                  transition: "0.2s",
-                  textDecoration: "none",
-                  "&:hover": {
-                    textDecoration: "none",
-                  },
-                  "& a": {
-                    textDecoration: "none",
-                    color: "inherit",
-                  },
-                  "&:hover a": {
-                    textDecoration: "none",
-                  },
-                  "& .MuiTypography-root": {
-                    textDecoration: "none",
-                  },
-                  "&:hover .MuiTypography-root": {
-                    textDecoration: "none",
-                  },
-                }}
+                sx={desktopItemButtonSx}
               >
                 <ListItemIcon>
                   {React.cloneElement(
@@ -170,22 +204,30 @@ export const Sidebar = ({ mobile = false }) => {
                 <ListItemText
                   primary={item.text}
                   primaryTypographyProps={{
-                    sx: {
-                      textDecoration: "none",
-                      fontWeight: "bold",
-                      fontFamily: "'Nunito sans'",
-                      fontSize: "1.1rem",
-                      color:
-                        location.pathname === item.path
-                          ? "inherit"
-                          : "text.disabled",
-                    },
+                    sx: desktopLabelSx(location.pathname === item.path),
                   }}
                 />
               </ListItemButton>
             </ListItem>
           </motion.div>
         ))}
+        <motion.div whileTap={{ scale: 0.95 }}>
+          <ListItem disablePadding>
+            <ListItemButton onClick={handleMyPageClick} sx={desktopItemButtonSx}>
+              <ListItemIcon>
+                {isMyPageActive ? (
+                  <PersonRoundedIcon sx={{ color: "text.primary" }} />
+                ) : (
+                  <PersonOutlineRoundedIcon sx={{ color: "text.disabled" }} />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primary="My Page"
+                primaryTypographyProps={{ sx: desktopLabelSx(isMyPageActive) }}
+              />
+            </ListItemButton>
+          </ListItem>
+        </motion.div>
       </List>
     </Box>
   );
