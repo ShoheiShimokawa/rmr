@@ -1,7 +1,7 @@
 import { Box, Slide } from "@mui/material";
 import { CustomStepper } from "../ui/CustomStepper";
 import { SelectBook } from "./SelectBook";
-import { MemoRegister } from "./MemoRegister";
+import { HighlightComposer } from "./highlight/HighlightComposer";
 
 import { useState } from "react";
 
@@ -61,10 +61,14 @@ export const StepMemoRegister = ({ updated }) => {
               pr: 1,
             }}
           >
-            <MemoRegister
-              reading={selectedReading && selectedReading}
-              updated={updated}
-            />
+            {selectedReading && (
+              <HighlightComposer
+                book={selectedReading.book}
+                reading={selectedReading}
+                entryPoint="highlights_page"
+                onSaved={updated}
+              />
+            )}
           </Box>
         </Slide>
       </Box>

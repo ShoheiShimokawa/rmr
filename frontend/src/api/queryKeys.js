@@ -14,4 +14,11 @@ export const queryKeys = {
   analytics: (userId) => ["analytics", userId],
   bookSuggestions: (query) => ["bookSuggestions", query],
   notifications: (userId) => ["notifications", userId],
+  // ハイライトは閲覧者によって見える範囲が変わるため、キーにviewerIdを含める。
+  // invalidateQueriesはキーの前方一致で効くので、viewerIdを問わず消したい場合は
+  // highlightsByUserAll/highlightAll (userId/memoIdのみ)を使う。
+  highlightsByUserAll: (userId) => ["highlightsByUser", userId],
+  highlightsByUser: (userId, viewerId) => ["highlightsByUser", userId, viewerId ?? null],
+  highlightAll: (memoId) => ["highlight", Number(memoId)],
+  highlight: (memoId, viewerId) => ["highlight", Number(memoId), viewerId ?? null],
 };
