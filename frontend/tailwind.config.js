@@ -11,9 +11,36 @@ module.exports = {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    // "dark"はDaisyUI組み込みテーマをそのまま使う(base-100:#1d232a等)。
-    // MUI側のパレット(src/theme/appTheme.js)もこれと同じ値に合わせている。
-    themes: ["light", "dark"],
+    // "dark"はDaisyUI組み込みテーマではなく、無彩色寄りのグレー基調にしたカスタムテーマ。
+    // base-100/200/300はMUI側のパレット(src/theme/appTheme.js)と同じ値に合わせている。
+    themes: [
+      "light",
+      {
+        dark: {
+          "color-scheme": "dark",
+          "base-100": "#171717",
+          "base-200": "#101010",
+          "base-300": "#0a0a0a",
+          "base-content": "#e5e5e5",
+          primary: "#ffffff",
+          "primary-content": "#0a0a0a",
+          secondary: "#a3a3a3",
+          "secondary-content": "#0a0a0a",
+          accent: "#a3a3a3",
+          "accent-content": "#0a0a0a",
+          neutral: "#1f1f1f",
+          "neutral-content": "#d4d4d4",
+          info: "#8a8a8a",
+          "info-content": "#0a0a0a",
+          success: "#4ade80",
+          "success-content": "#052e12",
+          warning: "#fbbf24",
+          "warning-content": "#451a03",
+          error: "#f87171",
+          "error-content": "#450a0a",
+        },
+      },
+    ],
     darkTheme: "dark",
     base: false,
     logs: false,
