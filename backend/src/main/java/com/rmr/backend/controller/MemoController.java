@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rmr.backend.model.Memo;
-import com.rmr.backend.model.Memo.ReadingMemoGroup;
-import com.rmr.backend.model.Memo.RegisterMemo;
+import com.rmr.backend.model.Memo.HighlightView;
+import com.rmr.backend.model.Memo.RegisterHighlight;
+import com.rmr.backend.model.Memo.SpecifyMemoId;
+import com.rmr.backend.model.Memo.UpdateHighlight;
 import com.rmr.backend.service.MemoService;
 
 import lombok.AllArgsConstructor;
@@ -23,25 +24,28 @@ import lombok.AllArgsConstructor;
 public class MemoController {
     private final MemoService service;
 
- @GetMapping("/memo/id")
-    public Memo getById(@RequestParam Integer memoId) {
-        return service.getById(memoId);
+    @GetMapping("/memo")
+    public List<HighlightView> get(@RequestParam Integer userId, @AuthenticationPrincipal Integer currentUserId) {
+        return service.findByUser(userId, currentUserId);
     }
 
-    // @GetMapping("/memo")
-    // public List<Memo> get(Integer userId) {
-    //     return service.get(userId);
-    // }
-    
-    @GetMapping("/memo")
-    public List<ReadingMemoGroup> get(@RequestParam Integer userId) {
-        return service.getGroupedMemos(userId);
+    @GetMapping("/memo/id")
+    public HighlightView getById(@RequestParam Integer memoId, @AuthenticationPrincipal Integer currentUserId) {
+        return service.findById(memoId, currentUserId);
     }
-    
-     @PostMapping("/memo")
-     public Memo register(@AuthenticationPrincipal Integer currentUserId, @RequestBody RegisterMemo params) {
-         return this.service.register(currentUserId, params);
-     }
-    
-     
+
+    @PostMapping("/memo")
+    public HighlightView register(@AuthenticationPrincipal Integer currentUserId, @RequestBody RegisterHighlight params) {
+        return service.register(currentUserId, params);
+    }
+
+    @PostMapping("/memo/update")
+    public HighlightView update(@AuthenticationPrincipal Integer currentUserId, @RequestBody UpdateHighlight params) {
+        return service.update(currentUserId, params);
+    }
+
+    @PostMapping("/memo/delete")
+    public void delete(@AuthenticationPrincipal Integer currentUserId, @RequestBody SpecifyMemoId params) {
+        service.delete(currentUserId, params.memoId());
+    }
 }

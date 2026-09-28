@@ -131,6 +131,15 @@ public class Account {
 	public static Optional<Account> get(String sub,AccountRepository rep){
 		return rep.findByGoogleSub(sub);
 	}
-	
-	
+
+	/** 他エンティティに埋め込む、公開可能な範囲のユーザ情報。 */
+	public record UserSummary(Integer userId, String handle, String name, String picture) {
+		public static UserSummary of(Account account) {
+			if (account == null) {
+				return null;
+			}
+			return new UserSummary(account.getUserId(), account.getHandle(), account.getName(), account.getPicture());
+		}
+	}
+
 }

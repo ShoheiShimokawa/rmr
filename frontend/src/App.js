@@ -6,7 +6,7 @@ import { ReadingAnalytics } from "./components/analytics/ReadingAnalytics";
 import { Information } from "./components/Information";
 import { UserPage } from "./components/UserPage";
 import { ScrollToTop } from "./components/ScrollToTop";
-import { Memo } from "./components/Memo";
+import { HighlightsPage } from "./components/highlight/HighlightsPage";
 import { NotifyProvider } from "./hooks/NotifyProvider";
 import { ThemeModeProvider } from "./hooks/ThemeModeProvider";
 import { Login } from "./components/Login";
@@ -35,7 +35,7 @@ const MainContent = () => {
         <Route path="/" element={<Community />} />
         <Route path="/analytics" element={<ReadingAnalytics />} />
         <Route path="/information" element={<Information />} />
-        <Route path="highlights" element={<Memo />} />
+        <Route path="highlights" element={<HighlightsPage />} />
         <Route path="/postRegister" element={<PostRegister />} />
         <Route path="/:handle" element={<UserPage />} />
         <Route path="/handleRegister" element={<HandleRegister />} />

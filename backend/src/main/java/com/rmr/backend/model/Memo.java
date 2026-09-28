@@ -1,16 +1,15 @@
 package com.rmr.backend.model;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.time.Instant;
 
-import com.rmr.backend.context.MemoRepository;
-import com.rmr.backend.context.ReadingRepository;
+import com.rmr.backend.model.Account.UserSummary;
+import com.rmr.backend.model.Label.LabelView;
+import com.rmr.backend.type.HighlightVisibility;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,91 +36,138 @@ public class Memo {
     private Reading reading;
     /** ユーザID */
     @NotNull
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
     private Account user;
-    /** メモ */
+    /** 引用文 */
+    @Column(columnDefinition = "text")
     private String memo;
+    /** メモ(なぜ心に残ったか) */
+    @Column(columnDefinition = "text")
+    private String note;
     /** ページ数 */
     private Integer page;
     /** ラベルID */
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
     @JoinColumn(name = "label_id",referencedColumnName = "labelId")
     private Label label;
+    /** 公開範囲。nullはPRIVATE扱い */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 16)
+    private HighlightVisibility visibility;
+    /** ネタバレを含むか。nullはfalse扱い */
+    private Boolean spoiler;
     /** 登録日 */
-    private LocalDate registerDate;
+    private Instant registerDate;
     /** 更新日 */
-    private LocalDate updateDate;
+    private Instant updateDate;
+    /** 公開日 */
+    private Instant publishedAt;
 
-    /** メモを返します。 */
-    public static Optional<Memo> getById(MemoRepository rep, Integer memoId) {
-        return rep.findById(memoId);
+    /** 本人のIDと一致するかを返します。 */
+    public boolean isOwnedBy(Integer userId) {
+        return this.user.getUserId().equals(userId);
     }
 
-    /** ユーザに紐づくメモを返します。 */
-    public static List<Memo> get(MemoRepository rep, Integer userId) {
-        return rep.findByUserId(userId);
+    /** 公開設定かどうかを返します。 */
+    public boolean isPublished() {
+        return this.visibility == HighlightVisibility.PUBLIC;
     }
 
-    /** メモを登録します。 */
-    public static Memo register(MemoRepository rep, ReadingRepository rRep,RegisterMemo params, Label label) {
-        var reading=Reading.get(rRep,params.readingId);
-        var user = reading.getUser();
-        Memo memo = Memo.builder().reading(reading).user(user)
-                .memo(params.memo).label(label)
-                .page(params.page).build();
-        return rep.save(memo);
+    /** ハイライトを新規作成します。非公開・ネタバレなしが初期状態。 */
+    public static Memo create(Reading reading, Account user, HighlightFields fields, Label label, Instant now) {
+        return Memo.builder()
+                .reading(reading)
+                .user(user)
+                .memo(fields.quote())
+                .note(fields.note())
+                .page(fields.page())
+                .label(label)
+                .visibility(HighlightVisibility.PRIVATE)
+                .spoiler(false)
+                .registerDate(now)
+                .updateDate(now)
+                .build();
+    }
+
+    /** ハイライトの内容を変更します。更新日のみ進めます。 */
+    public void applyEdit(HighlightFields fields, Label label, Boolean spoiler, Instant now) {
+        this.memo = fields.quote();
+        this.note = fields.note();
+        this.page = fields.page();
+        this.label = label;
+        this.spoiler = spoiler != null && spoiler;
+        this.updateDate = now;
+    }
+
+    /** 公開範囲を変更します。公開にした日時をpublishedAtに記録し、非公開に戻すとクリアします。 */
+    public void changeVisibility(HighlightVisibility visibility, Boolean spoiler, Instant now) {
+        this.visibility = visibility;
+        this.spoiler = spoiler != null && spoiler;
+        this.publishedAt = visibility == HighlightVisibility.PUBLIC ? now : null;
+    }
+
+    /** 入力項目(登録・更新共通) */
+    public record HighlightFields(String quote, String note, Integer page, String label) {
     }
 
     /** 登録パラメタ */
-  @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public static class RegisterMemo {
-    private Integer readingId;
-    private Integer userId;
-    private String memo;
-    private Integer page;
-    private String label;
-}
+    public record RegisterHighlight(Integer readingId, String quote, String note, Integer page, String label) {
+    }
 
- 
-    /** ラベリングされたメモを返します。 */
-    public static List<ReadingMemoGroup> getGroupedMemos(MemoRepository rep,Integer userId) {
-    List<Memo> memos = rep.findByUserId(userId);
+    /** 更新パラメタ */
+    public record UpdateHighlight(Integer memoId, String quote, String note, Integer page, String label, Boolean spoiler) {
+    }
 
-    Map<Reading, Map<Label, List<Memo>>> grouped = memos.stream()
-        .collect(Collectors.groupingBy(
-            Memo::getReading,
-            Collectors.groupingBy(Memo::getLabel)
-        ));
+    /** 削除・単体取得の更新系パラメタ */
+    public record SpecifyMemoId(Integer memoId) {
+    }
 
-    return grouped.entrySet().stream().map(readingEntry -> {
-        Reading reading = readingEntry.getKey();
+    /** 公開範囲変更パラメタ */
+    public record ChangeVisibility(Integer memoId, HighlightVisibility visibility, Boolean spoiler) {
+    }
 
-        List<LabelingMemo> labelingMemo = readingEntry.getValue().entrySet().stream()
-            .map(labelEntry -> new LabelingMemo(
-                new LabelDto(labelEntry.getKey().getLabelId(), labelEntry.getKey().getLabel()),
-                labelEntry.getValue().stream()
-                    .map(memo -> new MemoDto(memo.getMemoId(), memo.getMemo(),memo.getPage(), memo.getRegisterDate()))
-                    .toList()
-            ))
-                .toList();
+    /** レスポンス用のハイライト表現。本人向けと公開向けでラベルの有無が異なる。 */
+    public record HighlightView(
+            Integer memoId,
+            String quote,
+            String note,
+            Integer page,
+            LabelView label,
+            HighlightVisibility visibility,
+            boolean spoiler,
+            Instant registerDate,
+            Instant updateDate,
+            Instant publishedAt,
+            Integer readingId,
+            Book book,
+            UserSummary user) {
 
-        return new ReadingMemoGroup(
-            reading,
-            labelingMemo
-        );
-    }).toList();
-}
+        /** 本人向け(ラベルを含む全項目)のビューを返します。 */
+        public static HighlightView forOwner(Memo memo) {
+            return of(memo, LabelView.viewOf(memo.getLabel()));
+        }
 
-public record MemoDto(Integer memoId, String memo,Integer page, LocalDate registerDate) {}
+        /** 他人向け(ラベルを除いた)のビューを返します。 */
+        public static HighlightView forPublic(Memo memo) {
+            return of(memo, null);
+        }
 
-public record LabelDto(Integer labelId, String label) {}
-
-public record LabelingMemo(LabelDto label, List<MemoDto> memos) {}
-
-public record ReadingMemoGroup(Reading reading,  List<LabelingMemo> labelingMemo) {}
-    
+        private static HighlightView of(Memo memo, LabelView label) {
+            return new HighlightView(
+                    memo.getMemoId(),
+                    memo.getMemo(),
+                    memo.getNote(),
+                    memo.getPage(),
+                    label,
+                    memo.getVisibility() == null ? HighlightVisibility.PRIVATE : memo.getVisibility(),
+                    Boolean.TRUE.equals(memo.getSpoiler()),
+                    memo.getRegisterDate(),
+                    memo.getUpdateDate(),
+                    memo.getPublishedAt(),
+                    memo.getReading().getReadingId(),
+                    memo.getReading().getBook(),
+                    UserSummary.of(memo.getUser()));
+        }
+    }
 }
