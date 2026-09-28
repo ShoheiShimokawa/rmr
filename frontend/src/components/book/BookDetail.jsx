@@ -37,6 +37,7 @@ import { ReadingRegister } from "../ReadingRegister";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import { BookWithDesc } from "./BookWithDesc";
 import { PrimaryButton } from "../../ui/PrimaryButton";
+import { BookHighlightsSection } from "../highlight/BookHighlightsSection";
 
 export const BookDetail = ({ book, updated, visible = true }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -559,6 +560,12 @@ export const BookDetail = ({ book, updated, visible = true }) => {
           </>
         )}
       </div>
+      {myReading && (
+        <>
+          <Divider />
+          <BookHighlightsSection book={book} reading={myReading} userId={user?.userId} />
+        </>
+      )}
       <Divider />
       <div className="flex mt-4 mb-4 justify-evenly">
         <div className="flex place-items-center">

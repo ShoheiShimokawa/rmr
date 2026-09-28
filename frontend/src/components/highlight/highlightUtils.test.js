@@ -1,4 +1,15 @@
-import { joinLines, filterHighlights, distinctLabels, distinctBooks, formatCitation } from "./highlightUtils";
+import {
+  joinLines,
+  filterHighlights,
+  distinctBooks,
+  groupHighlightsByBook,
+  formatCitation,
+  formatQuote,
+  appendQuote,
+  hasSeenQuotesIntro,
+  markQuotesIntroSeen,
+  isJapaneseLocale,
+} from "./highlightUtils";
 
 describe("joinLines", () => {
   test("日本語の改行は空白を入れずに連結する", () => {
@@ -44,21 +55,18 @@ describe("filterHighlights", () => {
       memoId: 1,
       quote: "人生は短い",
       note: null,
-      label: { labelId: 1, name: "work" },
       book: { bookId: 10, title: "吾輩は猫である", author: "夏目漱石" },
     },
     {
       memoId: 2,
       quote: "The only way out is through.",
       note: "自分への言い聞かせ",
-      label: { labelId: 2, name: "life" },
       book: { bookId: 20, title: "Some Book", author: "Some Author" },
     },
     {
       memoId: 3,
-      quote: "ラベルなしの一文",
+      quote: "別の一文",
       note: null,
-      label: null,
       book: { bookId: 10, title: "吾輩は猫である", author: "夏目漱石" },
     },
   ];
@@ -76,35 +84,52 @@ describe("filterHighlights", () => {
     expect(filterHighlights(highlights, { query: "ＴＨＲＯＵＧＨ" }).map((h) => h.memoId)).toEqual([2]);
   });
 
-  test("labelで絞り込める", () => {
-    expect(filterHighlights(highlights, { label: "work" }).map((h) => h.memoId)).toEqual([1]);
-  });
-
   test("bookIdで絞り込める", () => {
     expect(filterHighlights(highlights, { bookId: 10 }).map((h) => h.memoId)).toEqual([1, 3]);
   });
 
   test("複数条件はAND条件で絞り込む", () => {
-    expect(filterHighlights(highlights, { bookId: 10, query: "ラベルなし" }).map((h) => h.memoId)).toEqual([3]);
+    expect(filterHighlights(highlights, { bookId: 10, query: "別の" }).map((h) => h.memoId)).toEqual([3]);
   });
 });
 
-describe("distinctLabels / distinctBooks", () => {
+describe("distinctBooks", () => {
   const highlights = [
-    { label: { labelId: 1, name: "work" }, book: { bookId: 10, title: "A" } },
-    { label: { labelId: 1, name: "work" }, book: { bookId: 10, title: "A" } },
-    { label: null, book: { bookId: 20, title: "B" } },
+    { book: { bookId: 10, title: "A" } },
+    { book: { bookId: 10, title: "A" } },
+    { book: { bookId: 20, title: "B" } },
   ];
-
-  test("distinctLabelsは名前の重複を除いたラベルを返す", () => {
-    expect(distinctLabels(highlights)).toEqual([{ labelId: 1, name: "work" }]);
-  });
 
   test("distinctBooksはbookIdの重複を除いた本を返す", () => {
     expect(distinctBooks(highlights)).toEqual([
       { bookId: 10, title: "A" },
       { bookId: 20, title: "B" },
     ]);
+  });
+});
+
+describe("groupHighlightsByBook", () => {
+  const highlights = [
+    { memoId: 1, book: { bookId: 10, title: "A" } },
+    { memoId: 2, book: { bookId: 20, title: "B" } },
+    { memoId: 3, book: { bookId: 10, title: "A" } },
+  ];
+
+  test("bookIdごとにグルーピングし、各グループのhighlightsは元の順序を保つ", () => {
+    expect(groupHighlightsByBook(highlights)).toEqual([
+      { book: { bookId: 10, title: "A" }, highlights: [highlights[0], highlights[2]] },
+      { book: { bookId: 20, title: "B" }, highlights: [highlights[1]] },
+    ]);
+  });
+
+  test("グループの順序は一覧内でその本が最初に現れた位置を保つ", () => {
+    const reordered = [highlights[1], highlights[0], highlights[2]];
+    expect(groupHighlightsByBook(reordered).map((g) => g.book.bookId)).toEqual([20, 10]);
+  });
+
+  test("空・未指定の場合は空配列を返す", () => {
+    expect(groupHighlightsByBook([])).toEqual([]);
+    expect(groupHighlightsByBook(undefined)).toEqual([]);
   });
 });
 
@@ -121,5 +146,76 @@ describe("formatCitation", () => {
 
   test("本情報が無い場合は空文字を返す", () => {
     expect(formatCitation({})).toBe("");
+  });
+});
+
+describe("formatQuote", () => {
+  test("日本語を含む引用は「」で囲む", () => {
+    expect(formatQuote({ quote: "吾輩は猫である。" })).toBe("「吾輩は猫である。」");
+  });
+
+  test("日本語を含まない引用は\"\"で囲む", () => {
+    expect(formatQuote({ quote: "To be or not to be." })).toBe('"To be or not to be."');
+  });
+
+  test("引用が無い場合は空文字を返す", () => {
+    expect(formatQuote({})).toBe("");
+    expect(formatQuote(null)).toBe("");
+  });
+});
+
+describe("appendQuote", () => {
+  test("既存の感想の末尾に空行区切りで引用を追記する", () => {
+    expect(appendQuote("great book", { quote: "a line" }, 600)).toBe(
+      'great book\n\n"a line"'
+    );
+  });
+
+  test("感想が空の場合は引用のみを返す", () => {
+    expect(appendQuote("", { quote: "a line" }, 600)).toBe('"a line"');
+    expect(appendQuote("   ", { quote: "a line" }, 600)).toBe('"a line"');
+  });
+
+  test("上限文字数に収まらない場合はnullを返す", () => {
+    const longThoughts = "a".repeat(590);
+    expect(appendQuote(longThoughts, { quote: "a line that is long" }, 600)).toBeNull();
+  });
+
+  test("引用が無い場合は感想をそのまま返す", () => {
+    expect(appendQuote("great book", {}, 600)).toBe("great book");
+  });
+});
+
+describe("isJapaneseLocale", () => {
+  test("言語設定がjaで始まる場合はtrueを返す", () => {
+    expect(isJapaneseLocale({ language: "ja-JP" })).toBe(true);
+    expect(isJapaneseLocale({ language: "ja" })).toBe(true);
+  });
+
+  test("日本語以外の場合はfalseを返す", () => {
+    expect(isJapaneseLocale({ language: "en-US" })).toBe(false);
+  });
+
+  test("languageが無い場合はlanguagesの先頭を見る", () => {
+    expect(isJapaneseLocale({ language: "", languages: ["ja-JP", "en-US"] })).toBe(true);
+  });
+
+  test("navが無い場合はfalseを返す", () => {
+    expect(isJapaneseLocale(undefined)).toBe(false);
+  });
+});
+
+describe("hasSeenQuotesIntro / markQuotesIntroSeen", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  test("未確認の状態ではfalseを返す", () => {
+    expect(hasSeenQuotesIntro()).toBe(false);
+  });
+
+  test("markQuotesIntroSeenを呼ぶと以後hasSeenQuotesIntroはtrueを返す", () => {
+    markQuotesIntroSeen();
+    expect(hasSeenQuotesIntro()).toBe(true);
   });
 });

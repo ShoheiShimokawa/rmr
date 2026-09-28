@@ -1,7 +1,9 @@
 import { registerBook } from "../api/book";
-import { useContext, useEffect, useState, useCallback, useMemo } from "react";
+import { useContext, useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Box, CircularProgress, Divider, IconButton } from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import { Book } from "./book/Book";
 import { BookArray } from "./book/BookArray";
 import { BookSearch } from "./book/BookSearch";
@@ -12,6 +14,13 @@ import { genreToEnum } from "../util";
 import { motion } from "framer-motion";
 import { useReading, useReadingsByUser } from "../hooks/useReading";
 import { useNotify } from "../hooks/NotifyProvider";
+import { RecordModeToggle } from "./highlight/RecordModeToggle";
+import { HighlightComposer } from "./highlight/HighlightComposer";
+import { HighlightList } from "./highlight/HighlightList";
+import { QuotePicker } from "./highlight/QuotePicker";
+import { QuotesIntroDialog } from "./highlight/QuotesIntroDialog";
+import { useMyHighlights } from "../hooks/useHighlight";
+import { filterHighlights, hasSeenQuotesIntro, markQuotesIntroSeen } from "./highlight/highlightUtils";
 import {
   draftStatusLabel,
   hasDraftContent,
@@ -57,13 +66,21 @@ export const PostRegister = () => {
   const userId = user?.userId;
   const { notify } = useNotify();
   const { registerReading, deleteReading } = useReading();
+  const [searchParams] = useSearchParams();
   const [selectedBook, setSelectedBook] = useState(null);
+  // Review/Quotesはここからワンタップで切り替える。初期タブは選んだ本の読書状態で決める。
+  const [mode, setMode] = useState("review");
   const [showingSearchResults, setShowingSearchResults] = useState(false);
   const [pendingStatus, setPendingStatus] = useState(null);
   const [changingStatus, setChangingStatus] = useState(false);
   // Discard後にReadingRegisterを再マウントして入力欄をその場で空にするためのカウンタ。
   // react-hook-formはinitialValuesを初回マウント時にしか読まないため、keyを変えて強制的に作り直す。
   const [discardVersion, setDiscardVersion] = useState(0);
+  // ?bookId= の本選択は初回の1回だけ適用する
+  const appliedBookIdParam = useRef(false);
+  // Quotesタブの「Use in review」から、Review側の感想欄に直接挿入するための参照。
+  const reviewRef = useRef(null);
+  const [showQuotesIntro, setShowQuotesIntro] = useState(false);
 
   const { data: readings = [], isLoading: loadingReadings } =
     useReadingsByUser(userId);
@@ -71,6 +88,12 @@ export const PostRegister = () => {
     useReadingDrafts(userId);
   const { saveDraft, deleteDraft, status: draftStatus } =
     useReadingDraft(userId);
+  const { data: myHighlights = [] } = useMyHighlights();
+  // 本を切り替えた瞬間の初期タブ判定用に、readingsの最新値をeffectの依存に入れず参照する。
+  const readingsRef = useRef(readings);
+  useEffect(() => {
+    readingsRef.current = readings;
+  }, [readings]);
 
   const shelf = useMemo(() => recentShelf(readings), [readings]);
   const draftBookIds = useMemo(
@@ -78,6 +101,7 @@ export const PostRegister = () => {
     [drafts]
   );
 
+  const selectedBookId = selectedBook?.bookId;
   const selectedReading = selectedBook
     ? readings.find((r) => r.book.bookId === selectedBook.bookId) ?? null
     : null;
@@ -86,12 +110,46 @@ export const PostRegister = () => {
     : undefined;
   const draftLabel = draftStatusLabel(draftStatus, !!selectedDraft);
   const displayedStatus = pendingStatus ?? selectedReading?.statusType ?? null;
+  const bookHighlights = useMemo(
+    () =>
+      selectedBook
+        ? filterHighlights(myHighlights, { bookId: selectedBook.bookId })
+        : [],
+    [myHighlights, selectedBook]
+  );
 
-  // 本を選び直したら、前の本の楽観的なステータス表示を引き継がない
+  // ?bookId= があれば、その本を一度だけ選択済みにする(ホームの誘導からの遷移用)
+  useEffect(() => {
+    if (appliedBookIdParam.current || loadingReadings) return;
+    const requestedBookId = searchParams.get("bookId");
+    if (!requestedBookId) return;
+    appliedBookIdParam.current = true;
+    const reading = readings.find(
+      (r) => String(r.book.bookId) === requestedBookId
+    );
+    if (reading) {
+      setSelectedBook(reading.book);
+    }
+  }, [searchParams, readings, loadingReadings]);
+
+  // 本を選び直したら、前の本の楽観的なステータス表示を引き継がず、読書中の本はQuotes、
+  // それ以外はReviewを初期タブにする。
   useEffect(() => {
     setPendingStatus(null);
     setDiscardVersion(0);
-  }, [selectedBook?.bookId]);
+    const reading =
+      selectedBookId != null
+        ? readingsRef.current.find((r) => r.book.bookId === selectedBookId)
+        : null;
+    setMode(reading?.statusType === "DOING" ? "highlight" : "review");
+  }, [selectedBookId]);
+
+  // Quotesタブを開いたのが初めてなら、使い方ヒントを一度だけ自動で出す。
+  useEffect(() => {
+    if (mode === "highlight" && !hasSeenQuotesIntro()) {
+      setShowQuotesIntro(true);
+    }
+  }, [mode]);
 
   const handleBookFromSearch = async (pickedBook) => {
     const book = {
@@ -118,6 +176,17 @@ export const PostRegister = () => {
 
   const handleChangeBook = () => {
     setSelectedBook(null);
+  };
+
+  // Quotesタブのカードから、その一節をReviewの感想欄へ挿入してReviewタブへ切り替える。
+  const handleUseInReview = (highlight) => {
+    setMode("review");
+    reviewRef.current?.insertQuote(highlight);
+  };
+
+  const handleCloseQuotesIntro = () => {
+    setShowQuotesIntro(false);
+    markQuotesIntroSeen();
   };
 
   // ReadingStatusChipからの状態変更はいずれも即時書き込み
@@ -269,34 +338,35 @@ export const PostRegister = () => {
                   top: "65px",
                   zIndex: 1,
                   bgcolor: "background.paper",
-                  pt: 0.5,
-                  pb: 1.5,
+                  pt: 0.25,
+                  pb: 1,
                 }}
               >
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 1.5,
+                    gap: 1,
                     bgcolor: "background.default",
                     borderRadius: 2,
-                    p: 1.5,
+                    p: 1,
                   }}
                 >
                   <motion.div whileTap={{ scale: 0.9 }}>
                     <IconButton
+                      size="small"
                       onClick={handleChangeBook}
                       aria-label="Back to your shelf"
                     >
                       <ArrowBackRoundedIcon />
                     </IconButton>
                   </motion.div>
-                  <Book book={selectedBook} width={"56px"} height={"80px"} />
+                  <Book book={selectedBook} width={"44px"} height={"62px"} />
                   <div className="min-w-0 flex-1">
                     <div className="font-soft font-bold text-base truncate">
                       {selectedBook.title}
                     </div>
-                    <div className="font-soft text-sm text-zinc-500 dark:text-zinc-400 truncate mb-1.5">
+                    <div className="font-soft text-sm text-zinc-500 dark:text-zinc-400 truncate mb-1">
                       {selectedBook.author}
                     </div>
                     <ReadingStatusChip
@@ -310,15 +380,29 @@ export const PostRegister = () => {
                 </Box>
               </Box>
 
-              <Divider sx={{ mt: 2, mb: 1 }} />
+              <Divider sx={{ mt: 1, mb: 1 }} />
 
-              <div className="mt-3">
+              <div className="mt-2 mb-1">
+                <RecordModeToggle value={mode} onChange={setMode} quoteCount={bookHighlights.length} />
+              </div>
+
+              {/* 両パネルともmountしたまま非表示で切り替える。作り直すと下書きの自動保存(800ms)と競合するため。 */}
+              <div
+                className="mt-2"
+                style={{ display: mode === "review" ? "block" : "none" }}
+              >
+                {selectedReading?.statusType !== "DONE" && (
+                  <div className="text-xs text-zinc-500 dark:text-zinc-400 font-soft mb-2">
+                    Posting is public on your profile, and marks this book as Completed.
+                  </div>
+                )}
                 {loadingDrafts ? (
                   <div className="flex justify-center items-center min-h-[150px]">
                     <CircularProgress size={20} />
                   </div>
                 ) : (
                   <ReadingRegister
+                    ref={reviewRef}
                     key={`${selectedBook.bookId}-${discardVersion}`}
                     book={selectedBook}
                     reading={selectedReading}
@@ -350,8 +434,45 @@ export const PostRegister = () => {
                         </button>
                       )
                     }
+                    renderQuotePicker={(onInsert) => (
+                      <QuotePicker bookId={selectedBook.bookId} onInsert={onInsert} />
+                    )}
                   />
                 )}
+              </div>
+
+              <div
+                className="mt-2"
+                style={{ display: mode === "highlight" ? "block" : "none" }}
+              >
+                <div className="flex justify-end -mt-1 mb-1">
+                  <IconButton
+                    size="small"
+                    aria-label="How Quotes work"
+                    onClick={() => setShowQuotesIntro(true)}
+                  >
+                    <HelpOutlineRoundedIcon fontSize="small" />
+                  </IconButton>
+                </div>
+                <HighlightComposer
+                  book={selectedBook}
+                  reading={selectedReading}
+                  entryPoint="record"
+                  autoFocus={false}
+                  showBookInfo={false}
+                />
+                {bookHighlights.length > 0 && (
+                  <div className="mt-3">
+                    <HighlightList
+                      highlights={bookHighlights}
+                      isOwner
+                      ownerId={userId}
+                      showBook={false}
+                      onUseInReview={handleUseInReview}
+                    />
+                  </div>
+                )}
+                <QuotesIntroDialog open={showQuotesIntro} onClose={handleCloseQuotesIntro} />
               </div>
             </div>
           )}

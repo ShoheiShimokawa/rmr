@@ -21,7 +21,7 @@ const variantIcon = {
   warning: WarningAmberIcon,
 };
 
-export const CustomSnackbar = forwardRef(({ message, variant }, ref) => {
+export const CustomSnackbar = forwardRef(({ message, variant, action, onClose }, ref) => {
   const Icon = variantIcon[variant] || InfoIcon;
 
   return (
@@ -32,7 +32,19 @@ export const CustomSnackbar = forwardRef(({ message, variant }, ref) => {
       }`}
     >
       <Icon className="mt-[2px]" fontSize="small" />
-      <span>{message}</span>
+      <span className="flex-1">{message}</span>
+      {action && (
+        <button
+          type="button"
+          className="underline font-semibold text-xs whitespace-nowrap"
+          onClick={() => {
+            action.onClick && action.onClick();
+            onClose && onClose();
+          }}
+        >
+          {action.label}
+        </button>
+      )}
     </div>
   );
 });

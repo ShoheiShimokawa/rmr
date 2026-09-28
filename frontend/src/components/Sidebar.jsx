@@ -13,9 +13,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FaPenNib } from "react-icons/fa";
 import SearchIcon from "@mui/icons-material/Search";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
-import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AutoGraphOutlinedIcon from "@mui/icons-material/AutoGraphOutlined";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import { useThemeMode } from "../hooks/ThemeModeProvider";
@@ -33,12 +31,6 @@ const items = [
     path: "/book",
     icon: <SearchIcon />,
     outlineIcon: <SearchIcon />,
-  },
-  {
-    text: "Highlights",
-    path: "/highlights",
-    icon: <DescriptionRoundedIcon />,
-    outlineIcon: <DescriptionOutlinedIcon />,
   },
   {
     text: "Analytics",
