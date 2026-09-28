@@ -3,7 +3,7 @@ import Chart from "react-apexcharts";
 import { toLargeGenre } from "../../util";
 import { baseChartOptions } from "./chartTheme";
 import { fillMonths, formatMonthLabel, monthKeysForSelection, yearOptions } from "./transform";
-import { SegmentedControl } from "./SegmentedControl";
+import { SegmentedControl } from "../../ui/SegmentedControl";
 import { useThemeMode } from "../../hooks/ThemeModeProvider";
 
 const RENDER_DEBOUNCE_MS = 200;

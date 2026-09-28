@@ -3,7 +3,7 @@ import { hasDraftContent } from "../hooks/useReadingDraft";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { z } from "zod";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useContext, useEffect, useRef, useState } from "react";
+import { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
 import UserContext from "./UserProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "../hooks/NotifyProvider";
@@ -11,8 +11,11 @@ import { TextField, Rating, FormControlLabel } from "@mui/material";
 import { IOSSwitch } from "../ui/IOSSwitch";
 import { PrimaryButton } from "../ui/PrimaryButton";
 import { motion } from "framer-motion";
+import { appendQuote } from "./highlight/highlightUtils";
 
-export const ReadingRegister = ({
+const THOUGHTS_MAX = 600;
+
+export const ReadingRegister = forwardRef(function ReadingRegister({
   book,
   reading,
   updated,
@@ -23,7 +26,8 @@ export const ReadingRegister = ({
   statusType = "DONE",
   draftStatusSlot,
   draftDiscardSlot,
-}) => {
+  renderQuotePicker,
+}, ref) {
   const { user } = useContext(UserContext);
   const { registerReading, updateReading } = useReading();
   const { notify } = useNotify();
@@ -37,7 +41,7 @@ export const ReadingRegister = ({
       rate: z.number().optional(),
       thoughts: z
         .string()
-        .max(600, "Your thoughts must be under 600 characters."),
+        .max(THOUGHTS_MAX, `Your thoughts must be under ${THOUGHTS_MAX} characters.`),
       recommended: z.boolean(),
     })
     .refine(
@@ -58,6 +62,9 @@ export const ReadingRegister = ({
     handleSubmit,
     formState: { errors },
     reset,
+    getValues,
+    setValue,
+    setFocus,
   } = useForm({
     resolver: zodResolver(formSchema),
     // 下書き(initialValues)があれば既存の読書内容より優先して復元する
@@ -160,10 +167,25 @@ export const ReadingRegister = ({
     }
   };
 
+  const handleInsertQuote = (highlight) => {
+    const next = appendQuote(getValues("thoughts"), highlight, THOUGHTS_MAX);
+    if (next === null) {
+      notify("Not enough room to insert this quote.", "error");
+      return;
+    }
+    setValue("thoughts", next, { shouldDirty: true, shouldValidate: true });
+    setFocus("thoughts");
+  };
+
+  // Quotesタブの「Use in review」から、外側(親)がこの感想欄に直接挿入できるようにする。
+  useImperativeHandle(ref, () => ({
+    insertQuote: handleInsertQuote,
+  }));
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
+        <div className="flex items-center justify-between flex-wrap gap-x-2">
           <Controller
             name="rate"
             control={control}
@@ -177,22 +199,15 @@ export const ReadingRegister = ({
               />
             )}
           />
-          {errors.rate && (
-            <p style={{ color: "red", marginLeft: "8px" }}>
-              {errors.rate.message}
-            </p>
-          )}
-        </div>
-        <div className="font-soft mt-1 mb-1 text-sm font-bold">
-          Recommend this book to others?
-        </div>
-        <div className="ml-3">
           <Controller
             name="recommended"
             control={control}
             disabled={isDisabled}
             render={({ field }) => (
               <FormControlLabel
+                labelPlacement="start"
+                label={<span className="font-soft text-sm font-bold">Recommend?</span>}
+                sx={{ ml: 0 }}
                 control={
                   <IOSSwitch
                     {...field}
@@ -208,7 +223,11 @@ export const ReadingRegister = ({
             )}
           />
         </div>
+        {errors.rate && (
+          <p style={{ color: "red", marginLeft: "8px" }}>{errors.rate.message}</p>
+        )}
 
+        {renderQuotePicker && renderQuotePicker(handleInsertQuote)}
         <TextField
           {...register("thoughts")}
           placeholder={
@@ -219,7 +238,7 @@ export const ReadingRegister = ({
           variant="outlined"
           multiline
           fullWidth
-          rows={8}
+          rows={10}
           margin="normal"
           error={!!errors.thoughts}
           helperText={errors.thoughts?.message}
@@ -229,16 +248,16 @@ export const ReadingRegister = ({
           <div>{draftStatusSlot}</div>
           <span
             className={
-              (watchedThoughts ?? "").length > 600
+              (watchedThoughts ?? "").length > THOUGHTS_MAX
                 ? "text-red-500 font-bold"
                 : "text-zinc-500 dark:text-zinc-400"
             }
           >
-            {(watchedThoughts ?? "").length}/600
+            {(watchedThoughts ?? "").length}/{THOUGHTS_MAX}
           </span>
         </div>
 
-        <div className="flex items-center justify-end gap-4 mt-4">
+        <div className="flex items-center justify-end gap-4 mt-3">
           {draftDiscardSlot}
           <motion.div whileTap={{ scale: 0.9 }}>
             <PrimaryButton
@@ -260,4 +279,4 @@ export const ReadingRegister = ({
       </form>
     </div>
   );
-};
+});

@@ -7,12 +7,18 @@ const NotifyContext = createContext();
 export const useNotify = () => useContext(NotifyContext);
 
 const NotifyWrapper = ({ children }) => {
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const notify = (messageText, variant = "info") => {
+  const notify = (messageText, variant = "info", options = {}) => {
     enqueueSnackbar("", {
-      content: (key, _) => (
-        <CustomSnackbar key={key} message={messageText} variant={variant} />
+      content: (key) => (
+        <CustomSnackbar
+          key={key}
+          message={messageText}
+          variant={variant}
+          action={options.action}
+          onClose={() => closeSnackbar(key)}
+        />
       ),
     });
   };

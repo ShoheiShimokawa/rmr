@@ -5,6 +5,7 @@ export const SegmentedControl = ({ options, value, onChange }) => (
       <button
         key={option.value}
         type="button"
+        aria-pressed={option.value === value}
         onClick={() => onChange(option.value)}
         className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
           option.value === value

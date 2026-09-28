@@ -8,19 +8,27 @@ import UserContext from "./UserProvider";
 import { getByHandle } from "../api/account";
 import { useState, useEffect, useCallback } from "react";
 import { Divider, Tabs, Tab, Box, CircularProgress } from "@mui/material";
-import { useParams } from "react-router-dom";
+import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import { RiBookShelfFill, RiBookShelfLine } from "react-icons/ri";
+import { BsChatSquareQuote, BsChatSquareQuoteFill } from "react-icons/bs";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useNotify } from "../hooks/NotifyProvider";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
+import { ProfileHighlights } from "./highlight/ProfileHighlights";
 
 export const UserPage = () => {
   const { handle } = useParams();
+  const [searchParams] = useSearchParams();
   const [account, setAccount] = useState();
   const { user } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [goodPostIds, setGoodPostIds] = useState([]);
   const { notify } = useNotify();
+  // Quotesは本人だけの引用なので、他人のプロフィールではタブごと出さない。
+  const isOwner = !!user && user.handle === handle;
 
   const find = useCallback(async () => {
     try {
@@ -60,11 +68,6 @@ export const UserPage = () => {
     );
   };
 
-  const [tabIndex, setTabIndex] = useState(0);
-
-  const handleTabChange = (event, newIndex) => {
-    setTabIndex(newIndex);
-  };
   const displayName = account?.name || account?.handle;
   const bio = account?.description || `${displayName}さんの読書記録`;
   // SNSでシェアされた際の説明文にのみ公式ハッシュタグを付ける
@@ -94,9 +97,42 @@ export const UserPage = () => {
   );
 
   const tabDefs = [
-    { label: "BookShelf", content: account && <BookShelf account={account} /> },
-    { label: "Posts", content: postsContent },
+    {
+      key: "bookshelf",
+      label: "Shelf",
+      iconFilled: <RiBookShelfFill size={18} />,
+      iconOutlined: <RiBookShelfLine size={18} />,
+      content: account && <BookShelf account={account} />,
+    },
+    {
+      key: "posts",
+      label: "Posts",
+      iconFilled: <DescriptionRoundedIcon sx={{ fontSize: 18 }} />,
+      iconOutlined: <DescriptionOutlinedIcon sx={{ fontSize: 18 }} />,
+      content: postsContent,
+    },
+    // Quotesは本人だけの引用なので、自分のプロフィールを見ているときだけタブに出す。
+    ...(isOwner
+      ? [
+          {
+            key: "highlights",
+            label: "Quotes",
+            iconFilled: <BsChatSquareQuoteFill size={16} />,
+            iconOutlined: <BsChatSquareQuote size={16} />,
+            content: account && <ProfileHighlights account={account} />,
+          },
+        ]
+      : []),
   ];
+
+  const [tabIndex, setTabIndex] = useState(() => {
+    const index = tabDefs.findIndex((tab) => tab.key === searchParams.get("tab"));
+    return index >= 0 ? index : 0;
+  });
+
+  const handleTabChange = (event, newIndex) => {
+    setTabIndex(newIndex);
+  };
 
   return (
     <div>
@@ -142,20 +178,23 @@ export const UserPage = () => {
             textColor="inherit"
             TabIndicatorProps={{ style: { backgroundColor: "currentColor" } }}
           >
-            {tabDefs.map((tab) => (
+            {tabDefs.map((tab, index) => (
               <Tab
-                key={tab.label}
+                key={tab.key}
+                icon={index === tabIndex ? tab.iconFilled : tab.iconOutlined}
+                iconPosition="start"
                 label={tab.label}
                 sx={{
                   textTransform: "none",
                   fontWeight: "bold",
                   fontFamily: "'Nunito sans'",
+                  minHeight: 48,
                 }}
               />
             ))}
           </Tabs>
           {tabDefs.map((tab, index) => (
-            <TabPanel key={tab.label} value={tabIndex} index={index}>
+            <TabPanel key={tab.key} value={tabIndex} index={index}>
               {tab.content}
             </TabPanel>
           ))}
