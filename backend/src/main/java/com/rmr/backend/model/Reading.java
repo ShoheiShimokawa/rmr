@@ -16,6 +16,7 @@ import com.rmr.backend.context.ReadingRepository;
 import com.rmr.backend.type.BookStatusType;
 import com.rmr.backend.type.LargeGenreType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Enumerated;
@@ -38,7 +39,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "reading", uniqueConstraints = { @UniqueConstraint(name = "reading_book", columnNames = { "book_id" }) })
+@Table(name = "reading", uniqueConstraints = {
+		@UniqueConstraint(name = "reading_user_book", columnNames = { "user_id", "book_id" }) })
 public class Reading {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
@@ -59,6 +61,7 @@ public class Reading {
 	/** 評価 */
 	private Integer rate;
 	/** 感想 */
+	@Column(columnDefinition = "text")
 	private String thoughts;
 	/** 登録日 */
 	private Instant registerDate;
