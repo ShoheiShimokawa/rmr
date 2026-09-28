@@ -13,7 +13,6 @@ import { useContext, useState } from "react";
 import { CustomDialog } from "../ui/CustomDialog";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import UserContext from "./UserProvider";
 import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
@@ -21,13 +20,14 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneRounded";
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { useRequireLogin } from "../hooks/useRequireLogin";
 import { useThemeMode } from "../hooks/ThemeModeProvider";
 import { IOSSwitch } from "../ui/IOSSwitch";
 import { motion } from "framer-motion";
 import {
   ListItemIcon,
-  Avatar,
   Stack,
   Menu,
   MenuItem,
@@ -60,12 +60,6 @@ export const Header = () => {
   };
   const handleInfo = () => {
     navigate("/information");
-    handleClose();
-  };
-  const handleUserPage = () => {
-    if (isLoggedIn()) {
-      navigate(`/${user && user.handle}`);
-    }
     handleClose();
   };
   const handleLogin = () => {
@@ -177,33 +171,15 @@ export const Header = () => {
                 </motion.div>
                 <motion.div whileTap={{ scale: 0.9 }}>
                   <IconButton
-                    aria-label="more"
+                    aria-label="settings"
                     id="long-button"
                     aria-haspopup="true"
                     onClick={handleClick}
                   >
-                    <Avatar
-                      src={user && user.picture}
-                      sx={{ width: 34, height: 34 }}
-                    />
+                    {open ? <SettingsRoundedIcon /> : <SettingsOutlinedIcon />}
                   </IconButton>
                 </motion.div>
                 <Menu anchorEl={anchor} open={open} onClose={handleClose}>
-                  <MenuItem
-                    onClick={handleUserPage}
-                    sx={{
-                      textDecoration: "none",
-                      py: 1.6,
-                      "&:hover": {
-                        textDecoration: "none",
-                      },
-                    }}
-                  >
-                    <ListItemIcon>
-                      <PersonRoundedIcon />
-                    </ListItemIcon>
-                    <div className="font-soft font-bold">My Page</div>
-                  </MenuItem>
                   <MenuItem
                     onClick={handleInfo}
                     sx={{
