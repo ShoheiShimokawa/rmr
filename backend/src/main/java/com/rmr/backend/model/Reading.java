@@ -16,6 +16,7 @@ import com.rmr.backend.context.ReadingRepository;
 import com.rmr.backend.type.BookStatusType;
 import com.rmr.backend.type.LargeGenreType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Enumerated;
@@ -25,7 +26,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -33,12 +33,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * ユーザと本の組み合わせの一意性は、削除済み(INVALID)行を除外した部分インデックス
+ * (reading_user_book_active_uidx, WHERE status_type <> 3)でDB側が担保する。
+ * @UniqueConstraintはWHERE条件を表現できないため、ここでは宣言しない。
+ */
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "reading", uniqueConstraints = { @UniqueConstraint(name = "reading_book", columnNames = { "book_id" }) })
+@Table(name = "reading")
 public class Reading {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
@@ -59,6 +64,7 @@ public class Reading {
 	/** 評価 */
 	private Integer rate;
 	/** 感想 */
+	@Column(columnDefinition = "text")
 	private String thoughts;
 	/** 登録日 */
 	private Instant registerDate;
