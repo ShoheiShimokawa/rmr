@@ -49,9 +49,14 @@ public class Follow {
 
 	/** ユーザーをフォローします。 */
 	public static Follow follow(FollowRepository rep, AccountRepository aRep, Integer userId, Integer followerId) {
-		Optional<Follow> follow = rep.findByUserUserIdAndFollowerUserId(userId, followerId);
-		if (follow.isPresent() && follow.get().statusType.equals(FollowStatusType.VALID)) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "Follow already exists.");
+		Optional<Follow> existing = rep.findByUserUserIdAndFollowerUserId(userId, followerId);
+		if (existing.isPresent()) {
+			Follow follow = existing.get();
+			if (follow.statusType.equals(FollowStatusType.VALID)) {
+				throw new ResponseStatusException(HttpStatus.CONFLICT, "Follow already exists.");
+			}
+			follow.setStatusType(FollowStatusType.VALID);
+			return rep.save(follow);
 		}
 		var user = aRep.findByUserId(userId).get();
 		var follower = aRep.findByUserId(followerId).get();
