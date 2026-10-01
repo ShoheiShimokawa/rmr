@@ -184,6 +184,7 @@ export const Profile = ({ userId }) => {
                         size="small"
                         sx={{ fontFamily: "'Nunito sans'" }}
                         onClick={() => handleFollow(account.userId)}
+                        disabled={followMutation.isPending}
                       >
                         Follow
                       </PrimaryButton>
@@ -205,6 +206,7 @@ export const Profile = ({ userId }) => {
                         onClick={() =>
                           handleCancelFollow(followed && followed.id)
                         }
+                        disabled={unfollowMutation.isPending}
                       >
                         Followed
                       </Button>
