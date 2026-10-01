@@ -1,4 +1,4 @@
-import { formatDescription } from "./util";
+import { formatDescription, toBookFromSearchResult } from "./util";
 
 describe("formatDescription", () => {
   test("空・未定義の場合はそのまま返す", () => {
@@ -26,5 +26,37 @@ describe("formatDescription", () => {
     expect(formatDescription(text)).toBe(
       "青豆はそう決めた。Qはquestion markのQだ。\n\n疑問を背負ったもの。彼女は歩きながら一人で肯いた。"
     );
+  });
+});
+
+describe("toBookFromSearchResult", () => {
+  test("検索結果(sourceId等)をbook形式(id等)に変換し、genreを内部enumに変換する", () => {
+    const result = {
+      sourceId: "abc123",
+      isbn: "9784000000001",
+      title: "Title",
+      author: "Author",
+      genre: "Fiction",
+      description: "desc",
+      thumbnail: "thumb.jpg",
+      publishedDate: "2020",
+    };
+
+    expect(toBookFromSearchResult(result)).toEqual({
+      id: "abc123",
+      isbn: "9784000000001",
+      title: "Title",
+      author: "Author",
+      genre: "FICTION",
+      description: "desc",
+      thumbnail: "thumb.jpg",
+      publishedDate: "2020",
+    });
+  });
+
+  test("未知のgenreはUNKNOWNになる", () => {
+    const result = { sourceId: "x", title: "T", author: "A", genre: "Nonsense" };
+
+    expect(toBookFromSearchResult(result).genre).toBe("UNKNOWN");
   });
 });

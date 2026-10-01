@@ -67,6 +67,7 @@ export const useFollowMutation = () => {
     onSettled: (_result, _err, { targetUserId, currentUserId }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.followers(targetUserId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.follows(currentUserId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.followingBooks(currentUserId) });
     },
   });
 };
@@ -94,6 +95,7 @@ export const useUnfollowMutation = () => {
     onSettled: (_result, _err, { targetUserId, currentUserId }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.followers(targetUserId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.follows(currentUserId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.followingBooks(currentUserId) });
     },
   });
 };

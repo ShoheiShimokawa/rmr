@@ -10,7 +10,7 @@ import { BookSearch } from "./book/BookSearch";
 import { ReadingRegister } from "./ReadingRegister";
 import { ReadingStatusChip } from "./book/ReadingStatusChip";
 import UserContext from "./UserProvider";
-import { genreToEnum } from "../util";
+import { toBookFromSearchResult } from "../util";
 import { motion } from "framer-motion";
 import { useReading, useReadingsByUser } from "../hooks/useReading";
 import { useNotify } from "../hooks/NotifyProvider";
@@ -142,16 +142,7 @@ export const PostRegister = () => {
   }, [mode]);
 
   const handleBookFromSearch = async (pickedBook) => {
-    const book = {
-      id: pickedBook.sourceId,
-      isbn: pickedBook.isbn,
-      title: pickedBook.title,
-      author: pickedBook.author,
-      genre: genreToEnum(pickedBook.genre),
-      description: pickedBook.description,
-      thumbnail: pickedBook.thumbnail,
-      publishedDate: pickedBook.publishedDate,
-    };
+    const book = toBookFromSearchResult(pickedBook);
     try {
       const result = await registerBook(book);
       setSelectedBook(result.data);

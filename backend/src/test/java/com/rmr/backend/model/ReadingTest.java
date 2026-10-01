@@ -149,4 +149,52 @@ class ReadingTest {
 		Book book = Book.builder().bookId(1).author(author).build();
 		return Reading.builder().book(book).user(user).statusType(BookStatusType.DONE).build();
 	}
+
+	@Test
+	void lastActivityAtReturnsTheMostRecentOfTheFiveDateFields() {
+		Instant registerDate = Instant.parse("2026-01-01T00:00:00Z");
+		Instant readingDate = Instant.parse("2026-03-01T00:00:00Z");
+		Reading reading = Reading.builder().book(book).user(user).statusType(BookStatusType.DOING)
+				.registerDate(registerDate).readingDate(readingDate).build();
+
+		assertThat(reading.lastActivityAt()).isEqualTo(readingDate);
+	}
+
+	@Test
+	void lastActivityAtFallsBackWhenUpdateDateIsNull() {
+		Instant registerDate = Instant.parse("2026-01-01T00:00:00Z");
+		Instant readDate = Instant.parse("2026-02-01T00:00:00Z");
+		Reading reading = Reading.builder().book(book).user(user).statusType(BookStatusType.DONE)
+				.registerDate(registerDate).readDate(readDate).build();
+
+		assertThat(reading.lastActivityAt()).isEqualTo(readDate);
+	}
+
+	@Test
+	void lastActivityAtReturnsNullWhenNoDateIsSet() {
+		Reading reading = Reading.builder().book(book).user(user).statusType(BookStatusType.NONE).build();
+
+		assertThat(reading.lastActivityAt()).isNull();
+	}
+
+	@Test
+	void activityRowFromRowMapsColumnsAndComputesLastActivityAt() {
+		Instant registerDate = Instant.parse("2026-01-01T00:00:00Z");
+		Instant updateDate = Instant.parse("2026-04-01T00:00:00Z");
+		Object[] row = { 1, "9784000000001", "Title", "Author", "thumb.jpg", 10, 2, BookStatusType.DONE, 5,
+				registerDate, updateDate, null, null, null };
+
+		Reading.ActivityRow activityRow = Reading.ActivityRow.fromRow(row);
+
+		assertThat(activityRow.bookId()).isEqualTo(1);
+		assertThat(activityRow.isbn()).isEqualTo("9784000000001");
+		assertThat(activityRow.title()).isEqualTo("Title");
+		assertThat(activityRow.author()).isEqualTo("Author");
+		assertThat(activityRow.thumbnail()).isEqualTo("thumb.jpg");
+		assertThat(activityRow.readingId()).isEqualTo(10);
+		assertThat(activityRow.userId()).isEqualTo(2);
+		assertThat(activityRow.statusType()).isEqualTo(BookStatusType.DONE);
+		assertThat(activityRow.rate()).isEqualTo(5);
+		assertThat(activityRow.lastActivityAt()).isEqualTo(updateDate);
+	}
 }

@@ -12,3 +12,18 @@ export const registerBook = (params) => {
 export const suggestBooks = (query, { signal } = {}) => {
   return http.get("books/suggest", { params: { query }, signal });
 };
+
+// ★とRecommendのベイズ平均で評価の高い本を返す。
+export const getTopRatedBooks = ({ signal } = {}) => {
+  return http.get("books/top-rated", { signal });
+};
+
+// 直近のアクティビティを重視した、今読まれている本を返す。
+export const getPopularBooks = ({ signal } = {}) => {
+  return http.get("books/popular", { signal });
+};
+
+// フォロー中の人が最近読んでいる本を返す(未ログインなら空)。
+export const getFollowingBooks = ({ signal } = {}) => {
+  return http.get("books/following", { signal });
+};

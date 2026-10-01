@@ -104,6 +104,18 @@ export const genreToEnum = (genre) => {
   }
 };
 
+/** 本の検索結果(BookSearchResult)を、本棚登録・詳細表示で使うbook形式に変換する。 */
+export const toBookFromSearchResult = (result) => ({
+  id: result.sourceId,
+  isbn: result.isbn,
+  title: result.title,
+  author: result.author,
+  genre: genreToEnum(result.genre),
+  description: result.description,
+  thumbnail: result.thumbnail,
+  publishedDate: result.publishedDate,
+});
+
 export const enumToGenre = (genre) => {
   switch (genre) {
     case "ARCHITECTURE":
