@@ -1,8 +1,11 @@
 package com.rmr.backend.model;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import com.rmr.backend.context.BookRepository;
+import com.rmr.backend.type.BookStatusType;
 import com.rmr.backend.type.GenreType;
 import com.rmr.backend.type.LargeGenreType;
 import com.rmr.backend.type.SuggestionType;
@@ -117,6 +120,18 @@ public static class RegisterBook {
 
 	/** 予測変換候補。typeがTITLEならタイトル一致、AUTHORなら著者一致。 */
 	public record Suggestion(SuggestionType type, String text) {
+	}
+
+	/**
+	 * ランキング表示用(評価の高い本・今読まれている本で共用)。averageRatingとratingCountは実際の★のみを
+	 * 集計したもので、recommendCountに合わせた補正はしていない(ランキング内部のスコア計算とは別)。
+	 */
+	public record Ranked(Book book, int readerCount, Double averageRating, int ratingCount, int recommendCount) {
+	}
+
+	/** フォロー中の人の読書アクティビティ表示用。 */
+	public record FollowingActivity(Book book, List<Account.UserSummary> readers, BookStatusType latestStatus,
+			Instant latestActivityAt) {
 	}
 
 }

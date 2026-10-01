@@ -13,6 +13,10 @@ export const queryKeys = {
   readingDrafts: (userId) => ["readingDrafts", userId],
   analytics: (userId) => ["analytics", userId],
   bookSuggestions: (query) => ["bookSuggestions", query],
+  topRatedBooks: () => ["topRatedBooks"],
+  popularBooks: () => ["popularBooks"],
+  // フォロー中の本はログインユーザーごとに内容が変わるため、キーにviewerIdを含める。
+  followingBooks: (viewerId) => ["followingBooks", viewerId ?? null],
   notifications: (userId) => ["notifications", userId],
   // ハイライトは閲覧者によって見える範囲が変わるため、キーにviewerIdを含める。
   // invalidateQueriesはキーの前方一致で効くので、viewerIdを問わず消したい場合は

@@ -77,6 +77,40 @@ public class Reading {
 	/** 読了日 */
 	private Instant readDate;
 
+	/** 最終アクティビティ日時(登録日・更新日・各ステータス変更日のうち最新のもの)。*/
+	public Instant lastActivityAt() {
+		return latestOf(registerDate, updateDate, toReadDate, readingDate, readDate);
+	}
+
+	/** 複数の日時のうち最新のものを返す(nullは無視する)。全てnullならnullを返す。 */
+	private static Instant latestOf(Instant... instants) {
+		Instant latest = null;
+		for (Instant instant : instants) {
+			if (instant != null && (latest == null || instant.isAfter(latest))) {
+				latest = instant;
+			}
+		}
+		return latest;
+	}
+
+	/**
+	 * 人気ランキング集計用の読書1行分。統計目的でReading/Bookをまるごとロードしないための射影。
+	 * bookIdが同じでも別の本の行として登録されていることがあるため、ISBN・タイトル+著者での
+	 * 束ね直しは呼び出し側(BookDiscoveryService)で行う。
+	 */
+	public record ActivityRow(Integer bookId, String isbn, String title, String author, String thumbnail,
+			Integer readingId, Integer userId, BookStatusType statusType, Integer rate, Instant lastActivityAt) {
+
+		/** {@link com.rmr.backend.context.ReadingRepository#findActivityRowsRaw}の行を変換します。 */
+		public static ActivityRow fromRow(Object[] row) {
+			Instant lastActivityAt = latestOf((Instant) row[9], (Instant) row[10], (Instant) row[11],
+					(Instant) row[12], (Instant) row[13]);
+			return new ActivityRow((Integer) row[0], (String) row[1], (String) row[2], (String) row[3],
+					(String) row[4], (Integer) row[5], (Integer) row[6], (BookStatusType) row[7], (Integer) row[8],
+					lastActivityAt);
+		}
+	}
+
 	/** ユーザIDと本IDで、そのユーザに紐づく有効な読書があれば返します。 */
 	public static Optional<Reading> getByUserIdAndBookId(ReadingRepository rep, Integer userId, Integer bookId) {
 		return rep.findByUserUserIdAndBookBookId(userId, bookId)

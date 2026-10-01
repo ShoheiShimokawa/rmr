@@ -5,13 +5,12 @@ import UserContext from "../UserProvider";
 import { findBooks } from "../../api/book";
 import { Paper, CircularProgress } from "@mui/material";
 import { Book } from "./Book";
-import { isBlank } from "../../util";
+import { isBlank, toBookFromSearchResult } from "../../util";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import { useReadingsByUser } from "../../hooks/useReading";
-import { genreToEnum } from "../../util";
 import { BookDetail } from "./BookDetail";
 import { CustomDialog } from "../../ui/CustomDialog";
 import { motion } from "framer-motion";
@@ -114,17 +113,7 @@ export const BookSearch = ({ fromPost, embedded, onResultsChange }) => {
   }, [query, onResultsChange]);
 
   const handleOpenDetail = (selectedBook) => {
-    const book = {
-      id: selectedBook.sourceId,
-      isbn: selectedBook.isbn,
-      title: selectedBook.title,
-      author: selectedBook.author,
-      genre: genreToEnum(selectedBook.genre),
-      description: selectedBook.description,
-      thumbnail: selectedBook.thumbnail,
-      publishedDate: selectedBook.publishedDate,
-    };
-    setSelectedBook(book);
+    setSelectedBook(toBookFromSearchResult(selectedBook));
     const reading = judgeRead(selectedBook);
     setMyReading(reading);
     setOpen(true);

@@ -1,6 +1,6 @@
 import "./App.css";
 import { Community } from "./components/Community";
-import { BookSearch } from "./components/book/BookSearch";
+import { BookExplore } from "./components/book/BookExplore";
 import { PostRegister } from "./components/PostRegister";
 import { ReadingAnalytics } from "./components/analytics/ReadingAnalytics";
 import { Information } from "./components/Information";
@@ -30,7 +30,7 @@ const MainContent = () => {
     <Box sx={{ width: "100%", maxWidth, mt: 2 }}>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/book" element={<BookSearch />} />
+        <Route path="/book" element={<BookExplore />} />
         <Route path="/" element={<Community />} />
         <Route path="/analytics" element={<ReadingAnalytics />} />
         <Route path="/information" element={<Information />} />
